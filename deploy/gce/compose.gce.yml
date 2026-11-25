@@ -1,4 +1,4 @@
-# Google Cloud e2-micro (2 vCPU burst, 1 GB RAM): run the image GitHub built instead of building here,
+# Google Cloud e2-small (2 GB RAM; limits sized to also fit an e2-micro with 1 GB): run the image GitHub built instead of building here,
 # and keep every process small enough to fit next to PostgreSQL with 2 GB of swap behind them.
 #   docker compose -f docker-compose.yml -f deploy/gce/compose.gce.yml pull
 #   docker compose -f docker-compose.yml -f deploy/gce/compose.gce.yml --profile https up -d

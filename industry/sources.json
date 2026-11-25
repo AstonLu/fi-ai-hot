@@ -454,7 +454,7 @@
       ],
       "site_fulltext": false,
       "syndicate_fulltext": false,
-      "enabled": true
+      "enabled": false
     },
     {
       "id": "rss-boe-speeches",
@@ -475,7 +475,7 @@
       ],
       "site_fulltext": false,
       "syndicate_fulltext": false,
-      "enabled": false
+      "enabled": true
     },
     {
       "id": "rss-fsb",
@@ -496,14 +496,14 @@
       ],
       "site_fulltext": false,
       "syndicate_fulltext": false,
-      "enabled": false
+      "enabled": true
     },
     {
       "id": "rss-bis-speeches",
       "name": "BIS 演講",
       "kind": "rss",
       "config": {
-        "feedUrl": "https://www.bis.org/doc/speeches.rss",
+        "feedUrl": "https://www.bis.org/doclist/cbspeeches.rss",
         "_aihot": {
           "initialBackfillLimit": 8
         }
@@ -517,14 +517,14 @@
       ],
       "site_fulltext": false,
       "syndicate_fulltext": false,
-      "enabled": false
+      "enabled": true
     },
     {
       "id": "rss-bis-research",
       "name": "BIS 研究出版",
       "kind": "rss",
       "config": {
-        "feedUrl": "https://www.bis.org/doc/bis_research.rss",
+        "feedUrl": "https://www.bis.org/doclist/bis_fsi_publs.rss",
         "_aihot": {
           "initialBackfillLimit": 8
         }
@@ -539,7 +539,7 @@
       ],
       "site_fulltext": false,
       "syndicate_fulltext": false,
-      "enabled": false
+      "enabled": true
     },
     {
       "id": "rss-finextra",
@@ -581,7 +581,7 @@
       ],
       "site_fulltext": false,
       "syndicate_fulltext": false,
-      "enabled": true
+      "enabled": false
     },
     {
       "id": "rss-banking-dive",
@@ -623,7 +623,7 @@
       ],
       "site_fulltext": false,
       "syndicate_fulltext": false,
-      "enabled": true
+      "enabled": false
     },
     {
       "id": "rss-financial-brand",
@@ -644,7 +644,7 @@
       ],
       "site_fulltext": false,
       "syndicate_fulltext": false,
-      "enabled": true
+      "enabled": false
     },
     {
       "id": "rss-pymnts-ai",
@@ -750,7 +750,7 @@
       ],
       "site_fulltext": false,
       "syndicate_fulltext": false,
-      "enabled": true
+      "enabled": false
     },
     {
       "id": "rss-this-week-in-fintech",
@@ -793,7 +793,7 @@
       ],
       "site_fulltext": false,
       "syndicate_fulltext": false,
-      "enabled": true
+      "enabled": false
     },
     {
       "id": "rss-bnext",
@@ -818,16 +818,14 @@
       "enabled": false
     },
     {
-      "id": "web-fsc-news",
+      "id": "rss-fsc-news",
       "name": "金管會 新聞稿",
-      "kind": "web_list",
+      "kind": "rss",
       "config": {
-        "url": "https://www.fsc.gov.tw/ch/home.jsp?id=96&parentpath=0,2",
-        "itemSelector": ".newslist li",
-        "linkSelector": "a",
-        "titleSelector": "a",
-        "publishedAtSelector": ".date",
-        "publishedAtUtcOffset": "+08:00"
+        "feedUrl": "https://www.fsc.gov.tw/RSS/Messages?serno=201202290009&language=chinese",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
       },
       "tier": "T1",
       "owner_entity_id": "fsc-tw",
@@ -839,7 +837,7 @@
       ],
       "site_fulltext": false,
       "syndicate_fulltext": false,
-      "enabled": false
+      "enabled": true
     }
   ]
 }
