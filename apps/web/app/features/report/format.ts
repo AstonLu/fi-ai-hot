@@ -235,7 +235,7 @@ export function periodGrid(kind: ReportKind, key: string, index: ReportNavigatio
     const cells = Array.from({ length: weeks }, (_, i) => {
       const k = `${year}-W${pad(i + 1)}`;
       const { start, end } = isoWeekRange(k)!;
-      return cell(k, t(`第 ${i + 1} 周（${start.slice(5).replace("-", ".")}—${end.slice(5).replace("-", ".")}）`, `Week ${i + 1} (${reportDateLabelEn("weekly", k)})`));
+      return cell(k, t(`第 ${i + 1} 週（${start.slice(5).replace("-", ".")}—${end.slice(5).replace("-", ".")}）`, `Week ${i + 1} (${reportDateLabelEn("weekly", k)})`));
     });
     return { title: t(`${year} 年`, year), note: t(`全年 ${count(cells)} 期`, issuesEn(count(cells))), columns: 13, heads: null, cells };
   }

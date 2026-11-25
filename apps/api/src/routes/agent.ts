@@ -73,7 +73,7 @@ export function registerAgent(app: FastifyInstance) {
     if (found.kind === "merged") found = await resolveStory(found.target);
     const body = found.kind === "found" ? await v1Story(found.storyId) : null;
     if (!body) {
-      const detail = lang === "en" ? "No such public story. Only use the “Full story” addresses the trending results give; don't guess." : "没有这个公开事件。只使用热点结果里给出的「来龙去脉」地址，不要猜。";
+      const detail = lang === "en" ? "No such public story. Only use the “Full story” addresses the trending results give; don't guess." : "沒有這個公開事件。只使用熱點結果裡給出的「來龍去脈」網址，不要猜。";
       return sendProblem(req, reply, { status: 404, code: "not_found", detail, cacheControl: "public, max-age=60" });
     }
     const story = (await inLanguage(body, english.v1StoryAnswer("text"), lang)).story;
@@ -83,7 +83,7 @@ export function registerAgent(app: FastifyInstance) {
   app.get("/api/v1/agent/daily", publicHandler(async (req, reply) => {
     const { lang } = readerQuery(req, LANG);
     const res = await dailyWithNotes("latest");
-    if (!res) return sendProblem(req, reply, { status: 404, code: "not_found", detail: lang === "en" ? "No daily has been published yet." : "还没有发布过日报。" });
+    if (!res) return sendProblem(req, reply, { status: 404, code: "not_found", detail: lang === "en" ? "No daily has been published yet." : "還沒有發布過日報。" });
     return markdown(req, reply, await dailyText(res, lang), "agent-daily", V1_OPERATIONS.latestDaily.cacheControl);
   }));
 
@@ -93,21 +93,21 @@ export function registerAgent(app: FastifyInstance) {
     if (!isValidDate(date)) throw new QueryError("date must be a real YYYY-MM-DD calendar date.");
     const res = await dailyWithNotes(date);
     if (!res) {
-      const detail = lang === "en" ? `There is no daily for ${date}; don't pass off another day's.` : `没有 ${date} 的日报；不要换一天冒充。`;
+      const detail = lang === "en" ? `There is no daily for ${date}; don't pass off another day's.` : `沒有 ${date} 的日報；不要換一天冒充。`;
       return sendProblem(req, reply, { status: 404, code: "not_found", detail, cacheControl: "public, max-age=60" });
     }
     return markdown(req, reply, await dailyText(res, lang), "agent-daily", V1_OPERATIONS.dailyByDate.cacheControl);
   }));
 
   for (const p of [
-    { kind: "weekly", name: "周报", param: "week", form: "a real ISO week such as 2026-W39", latest: V1_OPERATIONS.latestWeekly.cacheControl, byKey: V1_OPERATIONS.weeklyByWeek.cacheControl },
-    { kind: "monthly", name: "月报", param: "month", form: "a real month such as 2026-09", latest: V1_OPERATIONS.latestMonthly.cacheControl, byKey: V1_OPERATIONS.monthlyByMonth.cacheControl },
+    { kind: "weekly", name: "週報", param: "week", form: "a real ISO week such as 2026-W39", latest: V1_OPERATIONS.latestWeekly.cacheControl, byKey: V1_OPERATIONS.weeklyByWeek.cacheControl },
+    { kind: "monthly", name: "月報", param: "month", form: "a real month such as 2026-09", latest: V1_OPERATIONS.latestMonthly.cacheControl, byKey: V1_OPERATIONS.monthlyByMonth.cacheControl },
   ] as const) {
     const nameEn = REPORT_NAMES_EN[p.kind].toLowerCase();
     app.get(`/api/v1/agent/${p.kind}`, publicHandler(async (req, reply) => {
       const { lang } = readerQuery(req, LANG);
       const body = await v1Period(p.kind, "latest");
-      if (!body) return sendProblem(req, reply, { status: 404, code: "not_found", detail: lang === "en" ? `No ${nameEn} has been published yet.` : `还没有发布过${p.name}。` });
+      if (!body) return sendProblem(req, reply, { status: 404, code: "not_found", detail: lang === "en" ? `No ${nameEn} has been published yet.` : `還沒有發布過${p.name}。` });
       const report = (await inLanguage(body, english.v1PeriodAnswer(p.kind, "text"), lang)).report;
       return markdown(req, reply, periodAnswer(report, p.kind, "http", lang), `agent-${p.kind}`, p.latest);
     }));
@@ -117,7 +117,7 @@ export function registerAgent(app: FastifyInstance) {
       if (!isPeriodKey(p.kind, key)) throw new QueryError(`${p.param} must be ${p.form}.`);
       const body = await v1Period(p.kind, key);
       if (!body) {
-        const detail = lang === "en" ? `There is no ${nameEn} for ${key}; don't pass off another issue.` : `没有 ${key} 的${p.name}；不要换一期冒充。`;
+        const detail = lang === "en" ? `There is no ${nameEn} for ${key}; don't pass off another issue.` : `沒有 ${key} 的${p.name}；不要換一期冒充。`;
         return sendProblem(req, reply, { status: 404, code: "not_found", detail, cacheControl: "public, max-age=60" });
       }
       const report = (await inLanguage(body, english.v1PeriodAnswer(p.kind, "text"), lang)).report;

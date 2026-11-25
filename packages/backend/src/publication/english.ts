@@ -280,8 +280,8 @@ const citation = (x: ReportCitation, c: Copy): ReportCitation => {
 /** The issue's own name: a daily's, or the composer's for a weekly or monthly without a headline of its own. */
 function issueTitle(r: ReportDetail, c: Copy): string {
   if (r.kind === "daily") return `${withSubject(REPORT_NAMES_EN.daily)} · ${r.key}`;
-  const composed = `${SITE.name} ${r.kind === "weekly" ? "周报" : "月报"} · ${r.key}`;
-  return r.title === composed ? `${SITE.name} ${REPORT_NAMES_EN[r.kind]} · ${r.key}` : c.one("headline", r.title);
+  const composed = (r.kind === "weekly" ? ["週報", "周报"] : ["月報", "月报"]).map((name) => `${SITE.name} ${name} · ${r.key}`);
+  return composed.includes(r.title) ? `${SITE.name} ${REPORT_NAMES_EN[r.kind]} · ${r.key}` : c.one("headline", r.title);
 }
 
 /**
