@@ -41,6 +41,8 @@ export interface ItemRow {
   x_post: Record<string, any> | null;
   /** Saved long article, projected only where the publication allows full text; lists leave out its page HTML. */
   x_article: { title?: string; text?: string; html?: string | null } | null;
+  /** The publisher's cover, else the body's first sizeable picture; none for posts and suppressed originals. */
+  card_picture?: Record<string, any> | null;
   /** Current source icon only when that account is this post's author. */
   author_avatar_url?: string | null;
   author: string | null;
@@ -62,6 +64,9 @@ export const ITEM_COLUMNS = sql`
   p.body_mode, p.suppress_original, p.indexable, p.fact_id, s.id AS source_id, s.participation_mode AS source_mode,
   CASE WHEN NOT p.suppress_original THEN a.x_post END AS x_post,
   CASE WHEN p.body_mode = 'full' THEN a.x_article - 'html' END AS x_article,
+  CASE WHEN p.channel = 'news' AND NOT p.suppress_original THEN coalesce(a.cover, (
+    SELECT m FROM jsonb_array_elements(a.media) m
+    WHERE m->>'kind' = 'image' AND coalesce((m->>'width')::numeric, 800) >= 480 LIMIT 1)) END AS card_picture,
   a.author, a.language,
   CASE WHEN NOT p.suppress_original AND s.kind = 'x_search' AND ${sourceOwnsPost(sql`s.config`, sql`a.x_post`)} THEN s.icon_url END AS author_avatar_url,
   st.public_id::text AS story_public_id, st.title AS story_title,
@@ -260,10 +265,20 @@ export function toItemSummary(row: ItemRow): ItemSummary {
   };
 }
 
+/**
+ * The picture a report's card shows. The site shows an article's pictures where its source allows full text;
+ * for the sources in `allowed` (POLICY.coverSources) its card has one beside the summary too.
+ */
+export function cardPicture(row: Pick<ItemRow, "source_id" | "body_mode" | "card_picture">, allowed: "all" | readonly string[] = POLICY.coverSources): MediaView | null {
+  if (!row.card_picture || !(row.body_mode === "full" || allowed === "all" || allowed.includes(row.source_id))) return null;
+  return mediaView(row.card_picture, "thumb", true);
+}
+
 /** Project the shared public article into the exact fields a site card renders. */
 export function toFeedItemSummary(row: ItemRow): FeedItemSummary {
   const item = toItemSummary(row);
   const x = showsPost(row) ? xView(row, true) : null;
+  const cover = cardPicture(row);
   return {
     id: item.id, title: item.title, summary: item.summary ?? (x?.text || null), reason: item.reason,
     source: item.source, publishedAt: item.publishedAt, timelineAt: item.timelineAt,
@@ -273,6 +288,7 @@ export function toFeedItemSummary(row: ItemRow): FeedItemSummary {
       ...(x.avatarSrcSet ? { avatarSrcSet: x.avatarSrcSet } : {}), media: x.media, article: x.article,
       quoted: x.quoted ? { authorName: x.quoted.authorName, handle: x.quoted.handle, text: x.quoted.text, translation: x.quoted.translation } : null,
     } : null,
+    ...(cover ? { cover } : {}),
   };
 }
 
