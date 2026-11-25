@@ -18,7 +18,8 @@ import { copyText } from "../lib/clipboard";
 import { SameEventBadge, SelectedBadge } from "../components/ui/Badge";
 import { ScoreLabel, shownScore } from "../components/ui/Score";
 import { PillTabs } from "../components/ui/Tabs";
-import { ArticleLayout, RailSection, useContainedScroll } from "../components/ui/Page";
+import { SourceAvatar } from "../components/ui/SourceAvatar";
+import { sourceIcon } from "@aihot/site/brand/source-icons.ts";
 import { Menu, MenuItem } from "../components/ui/Menu";
 import { StarButton } from "../features/feed/parts";
 import { GroupButton, GroupSources } from "../features/feed/ReadingGroup";
@@ -29,15 +30,13 @@ import { ArticleBody } from "../features/item/ArticleBody";
 import { MentionText } from "../components/ui/MentionText";
 import { ActionsSheet, ReaderToolbar, type ActionRow } from "../features/item/ReaderTools";
 import { OutlineSheet } from "../components/ui/OutlineSheet";
-import { scrollToAnchor } from "../lib/motion";
 import { takePreview } from "../features/item/preview";
 import { IconArrowLeft, IconCopy, IconDownload, IconExternal, IconImage, IconList, IconMenu, IconMore, IconShare } from "../components/icons";
 import { BarButton, PhoneBar } from "../components/shell/PhoneBar";
-import { isPhone, type Screen } from "../components/shell/screens";
+import { isPhone } from "../components/shell/screens";
 import { Link, useNavigate } from "../lib/link";
 import { apiIn, localeOf, localizePath, translator, useLocale, useT, type Locale } from "../lib/i18n";
 
-export const handle: Screen = { home: "featured", toolbar: true };
 export { pageHeaders as headers } from "../lib/api.server";
 
 const PosterSheet = lazy(() => import("../features/item/PosterSheet"));
@@ -115,46 +114,6 @@ function ReadingProgress() {
     };
   }, []);
   return <div ref={ref} aria-hidden="true" className="fixed inset-x-0 top-0 z-50 h-[2px] origin-left scale-x-0 bg-accent transition-transform duration-150 ease-out" />;
-}
-
-/** An outline link: a plain click scrolls in place (above); modifier clicks keep the browser's behaviour. */
-function jumpTo(e: React.MouseEvent, id: string) {
-  if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
-  if (!document.getElementById(id)) return;
-  e.preventDefault();
-  scrollToAnchor(id);
-}
-
-/**
- * The outline takes what is left of its rail and scrolls within it; with room for fewer than six entries it
- * keeps six (an entry is its 12.5px line at leading-snug plus 8px of padding), and the rail scrolls instead.
- */
-function ArticleOutline({ outline }: { outline: SiteItemDetail["outline"] }) {
-  const t = useT();
-  const [nav, overscroll] = useContainedScroll<HTMLElement>();
-  const containKeys = (e: React.KeyboardEvent<HTMLElement>) => {
-    const nav = e.currentTarget;
-    if (nav.scrollHeight <= nav.clientHeight || e.altKey || e.ctrlKey || e.metaKey) return;
-    const up = ["ArrowUp", "PageUp", "Home"].includes(e.key) || (e.key === " " && e.shiftKey);
-    const down = ["ArrowDown", "PageDown", "End"].includes(e.key) || (e.key === " " && !e.shiftKey);
-    // WebKit can chain keyboard scrolling even with overscroll-behavior: contain.
-    if ((up && nav.scrollTop <= 0) || (down && nav.scrollTop + nav.clientHeight >= nav.scrollHeight - 1)) e.preventDefault();
-  };
-  return (
-    <RailSection title={t("本文目錄", "Contents")} shrink>
-      <nav ref={nav} aria-label={t("本文目錄", "Contents")} tabIndex={overscroll ? 0 : undefined} onKeyDown={containKeys} className={`scrollbar-thin min-h-[calc(6*(12.5px*1.375+8px))] overflow-y-auto ${overscroll}`}>
-        <ol className="space-y-0.5 border-l border-line">
-          {outline.map((o) => (
-            <li key={o.id}>
-              <a href={`#${o.id}`} onClick={(e) => jumpTo(e, o.id)} className={`-ml-px block border-l border-transparent py-1 text-ui-caption-lg leading-snug text-ink-3 transition-colors hover:border-accent hover:text-ink focus-visible:outline-offset-[-2px] ${o.level > 2 ? "pl-5" : "pl-3"}`}>
-                {o.text}
-              </a>
-            </li>
-          ))}
-        </ol>
-      </nav>
-    </RailSection>
-  );
 }
 
 /** WeChat's in-app browser cannot save downloads: there the Markdown is copied instead. */
@@ -237,6 +196,26 @@ function Toast({ text }: { text: string | null }) {
   );
 }
 
+/** Who published it and when: the source's icon and name, as on its card. */
+function SourceRow({ item, byline, at, dated, className = "" }: { item: Pick<FeedItemSummary, "source" | "channel"> & { x: Pick<NonNullable<FeedItemSummary["x"]>, "authorName" | "handle" | "avatarUrl" | "avatarSrcSet"> | null }; byline: string | null; at: string; dated: boolean; className?: string }) {
+  const t = useT();
+  const locale = useLocale();
+  const post = item.channel === "x" ? item.x : null;
+  return (
+    <div className={`flex flex-wrap items-center gap-x-2 gap-y-1 text-ui-label text-ink-4 ${className}`}>
+      <SourceAvatar id={item.source.id} name={post?.authorName ?? item.source.name} avatarUrl={post?.avatarUrl} avatarSrcSet={post?.avatarSrcSet} iconUrl={sourceIcon(item.source.id)} size={28} />
+      <span className="font-semibold text-ink">{post?.authorName ?? item.source.name}</span>
+      {post && <span>@{post.handle} · X</span>}
+      {byline && <span>{byline}</span>}
+      <span>
+        {!dated && t("收錄於 ", "Added ")}
+        <time dateTime={at}>{fullDateTime(at)}</time>
+      </span>
+      <span className="empty:hidden" suppressHydrationWarning>{timeAgo(at, undefined, locale)}</span>
+    </div>
+  );
+}
+
 export default function ItemPage() {
   const data = useLoaderData<typeof clientLoader>() as Loaded | Preview;
   if (data.item) return <ItemView key={`${data.item.id}:${data.item.bodyLanguage}`} item={data.item} followups={data.followups} />;
@@ -260,27 +239,15 @@ function ItemPreview({ preview }: { preview: FeedItemSummary }) {
   // Without a reliable date from the original, the card's time is when it was collected, and says so.
   const shownAt = preview.publishedAt ?? preview.timelineAt;
   return (
-    <div className="mx-auto max-w-[var(--page-max-reading)] pb-8">
+    <div className="mx-auto max-w-[728px] pb-8">
       <PhoneBar back={{ to: preview.selected ? "/" : "/all", label: preview.selected ? t("精選", "Top Picks") : t("全部", "All") }} title={isPost ? preview.x!.authorName : preview.title} />
       <article className="pb-6 pt-3" aria-busy="true">
-        <div className={`flex flex-wrap items-center gap-x-1.5 gap-y-1 text-ui-label text-ink-3 ${isPost ? "" : "mb-3"}`}>
-          <span className="font-semibold text-ink-2">{isX ? preview.x!.authorName : preview.source.name}</span>
-          {isX && <span>· @{preview.x!.handle} · X</span>}
-          <span>·</span>
-          {!preview.publishedAt && <span>{t("收錄於", "Added")}</span>}
-          <time dateTime={shownAt} className="mono">{fullDateTime(shownAt)}</time>
-          {preview.selected && <span className="ml-1">{preview.sameEvent ? <SameEventBadge /> : <SelectedBadge />}</span>}
-          {shownScore(preview.score) !== null && (
-            <span className="ml-1">
-              <ScoreLabel score={preview.score} />
-            </span>
-          )}
-        </div>
-        {isPost ? <h1 className="sr-only">{preview.title}</h1> : <h1 data-page-title="" className="text-ui-title-2 font-bold leading-[1.38] tracking-[-0.01em] text-ink">{preview.title}</h1>}
+        <SourceRow item={preview} byline={null} at={shownAt} dated={!!preview.publishedAt} className={isPost ? "" : "mb-2"} />
+        {isPost ? <h1 className="sr-only">{preview.title}</h1> : <h1 data-page-title="" className="text-ui-title-4 font-bold leading-[1.32] tracking-[-0.01em] text-ink lg:text-ui-display-2 lg:leading-[1.28]">{preview.title}</h1>}
         {preview.summary && (
-          <section className={isPost ? "mt-4" : "mt-7"}>
-            <div className="mb-2 text-ui-caption font-semibold text-accent">{isPost && preview.summary.replace(/\s+/g, " ").trim() === preview.title ? t("原文", "Original") : t("AI 導讀", "AI brief")}</div>
-            <p className="text-ui-heading-sm leading-[1.7] text-ink"><MentionText runs={addressRuns(preview.summary)} /></p>
+          <section className="mt-4">
+            <div className="mb-2 text-ui-caption font-semibold text-ink-4">{isPost && preview.summary.replace(/\s+/g, " ").trim() === preview.title ? t("原文", "Original") : t("AI 導讀", "AI brief")}</div>
+            <p className="text-ui-heading-md leading-[1.68] text-ink"><MentionText runs={addressRuns(preview.summary)} /></p>
           </section>
         )}
         {preview.reason && (
@@ -320,7 +287,7 @@ function ItemGone() {
         <div className="text-ui-heading font-bold text-ink">{gone ? t("找不到這篇內容", "Article not found") : t("暫時無法載入", "Can't load this page")}</div>
         <p className="mt-2 text-ui-label-lg leading-relaxed text-ink-3">{gone ? t("連結可能有誤，或者這篇內容已經下架。", "The link may be wrong, or this article has been taken down.") : t("服務暫時繁忙，請稍後再試。", "The service is busy right now. Please try again later.")}</p>
         {!gone && (
-          <button type="button" onClick={() => void revalidator.revalidate()} className="mt-6 h-11 rounded-full border border-line-strong bg-surface px-5 text-ui-body-sm font-medium text-ink-2 active:bg-bg-sunk">
+          <button type="button" onClick={() => void revalidator.revalidate()} className="btn btn-quiet mt-6">
             {t("重試", "Try again")}
           </button>
         )}
@@ -377,7 +344,6 @@ function ItemView({ item, followups }: Loaded) {
   const byline = isX ? null : bylineOf(item.author, item.source.name);
   // Without a reliable date from the original, the time shown is when it was collected, labelled as such.
   const shownAt = item.publishedAt ?? item.discoveredAt;
-  const timeLabel = item.publishedAt ? t("發布時間", "Published") : t("收錄時間", "Added");
   const summaryOnly = item.readingMode === "summary-only";
   const showOutline = item.outline.length >= 3;
   const originalLabel = isX ? t("在 X 檢視原推", "View on X") : t("開啟原文", "Open original");
@@ -392,9 +358,8 @@ function ItemView({ item, followups }: Loaded) {
     if (window.history.state?.idx > 0) navigate(-1);
     else navigate(item.selected ? "/" : "/all");
   };
-  // In the left rail (a flex column) it keeps its own height and width.
   const backButton = (
-    <button type="button" onClick={back} className="-ml-1.5 inline-flex h-8 shrink-0 items-center gap-1.5 self-start rounded-full px-1.5 text-ui-label text-ink-3 transition-colors hover:text-ink touch:h-11">
+    <button type="button" onClick={back} className="-ml-1.5 inline-flex h-8 shrink-0 items-center gap-1.5 rounded-full px-1.5 text-ui-label text-ink-3 transition-colors hover:text-ink touch:h-11">
       <IconArrowLeft size={16} />{t(" 返回", " Back")}
     </button>
   );
@@ -427,95 +392,15 @@ function ItemView({ item, followups }: Loaded) {
         : { key: "markdown", label: t("匯出 Markdown", "Export as Markdown"), icon: <IconDownload size={20} />, href: `/items/${item.id}/markdown`, download: true }]
       : []),
   ];
-  const originalLink = (className: string) => (
-    <a
-      href={item.links.original}
-      target="_blank"
-      rel="noopener noreferrer"
-      className={`inline-flex h-8 items-center justify-center gap-1.5 rounded-full border border-line-strong bg-surface px-3.5 text-ui-caption-lg font-medium text-ink-2 transition-colors hover:border-ink-4 hover:text-ink ${className}`}
-    >
-      {originalLabel} <IconExternal size={13} />
-    </a>
-  );
-  // Desktop actions head the right rail, one row as tall as 返回 at the head of the left one.
-  const actions = (
-    <div className="flex items-center gap-1">
-      {originalLink("flex-1 touch:h-11")}
-      <StarButton item={item} className="size-8 touch:size-11" />
-      {moreMenu}
-    </div>
-  );
-  const verdict = (item.selected || shownScore(item.score) !== null) && (
-    <div className="flex items-center gap-2">
-      {item.selected && (item.sameEvent ? <SameEventBadge /> : <SelectedBadge />)}
-      <ScoreLabel score={item.score} />
-    </div>
-  );
-
-  // Rails: the piece's facts on the left (wide screens), the editor's notes on the right, the outline
-  // under the facts (or under the notes when only the right rail shows).
-  const facts = (
-    <RailSection title={t("來源", "Source")}>
-      <div className="text-ui-body-sm font-semibold leading-snug text-ink">{isX ? item.x!.authorName : item.source.name}</div>
-      <div className="mt-1 text-ui-caption-lg leading-relaxed text-ink-3">
-        {isX ? `@${item.x!.handle} · X` : byline ?? hostOf(item.links.original)}
-      </div>
-      <div className="mt-3 text-ui-caption text-ink-4">{timeLabel}</div>
-      <time dateTime={shownAt} className="mono mt-0.5 block text-ui-caption-lg text-ink-2">
-        {fullDateTime(shownAt)}
-      </time>
-      <div className="mt-0.5 text-ui-caption text-ink-4 empty:hidden" suppressHydrationWarning>
-        {timeAgo(shownAt, undefined, locale)}
-      </div>
-    </RailSection>
-  );
-  const outline = showOutline && <ArticleOutline outline={item.outline} />;
-  const notes = (
+  const verdict = (
     <>
-      {item.reason && !summaryOnly ? (
-        <RailSection title={reasonLabel}>
-          {verdict && <div className="mb-3">{verdict}</div>}
-          <p className="text-ui-label-lg leading-[1.8] text-ink-2">{item.reason}</p>
-        </RailSection>
-      ) : (
-        verdict && <RailSection title={shownScore(item.score) !== null ? t("AI 評分", "AI score") : undefined}>{verdict}</RailSection>
-      )}
-      {daily && (
-        <RailSection title={t("收錄於", "Featured in")}>
-          <div className="flex flex-wrap gap-1.5">
-            <Link viewTransition to={daily.to} className="chip">
-              {daily.name}
-            </Link>
-          </div>
-        </RailSection>
-      )}
-      {item.topics.length > 0 && (
-        <RailSection title={t("主題", "Topics")}>
-          <div className="flex flex-wrap gap-1.5">
-            {item.topics.map((topic) => (
-              <Link viewTransition key={topic.slug} to={`/topics/${topic.slug}`} className="chip">
-                {topicName(topic.slug, topic.name, locale)}
-              </Link>
-            ))}
-          </div>
-        </RailSection>
-      )}
-      {tags.length > 0 && (
-        <RailSection title={t("標籤", "Tags")}>
-          <div className="flex flex-wrap gap-1.5">
-            {tags.slice(0, 8).map(({ tag, label, to }) => (
-              <Link key={tag} to={to} rel={to.startsWith("/all?") ? "nofollow" : undefined} className="chip">
-                #{label}
-              </Link>
-            ))}
-          </div>
-        </RailSection>
-      )}
+      {item.selected && (item.sameEvent ? <SameEventBadge /> : <SelectedBadge />)}
+      {shownScore(item.score) !== null && <ScoreLabel score={item.score} />}
     </>
   );
 
   return (
-    <div className="mx-auto max-w-[var(--page-max-reading)] pb-8">
+    <div className="mx-auto max-w-[728px] pb-8">
       {item.body && <ReadingProgress />}
 
       {/* Phones: back to where the reader came from, the title once it has scrolled away, more actions. */}
@@ -529,74 +414,38 @@ function ItemView({ item, followups }: Loaded) {
         }
       />
 
-      {/* The text on the page in one column; back and the facts in the left rail, actions and notes in the right. */}
-      <ArticleLayout
-        left={
-          <>
-            {backButton}
-            {facts}
-            {outline}
-          </>
-        }
-        right={
-          <>
-            {actions}
-            {notes}
-            <div className="flex min-h-0 flex-col space-y-8 2xl:hidden">{outline}</div>
-          </>
-        }
-      >
-        {/* Between lg and 2xl the left rail is hidden: 返回 stays at the top while reading, as on the original site.
-            Below side the right rail is hidden too, and its actions and the outline join 返回. */}
-        <div className="sticky top-0 z-20 -mx-2 hidden items-center justify-between gap-3 bg-bg/95 px-2 py-1.5 backdrop-blur lg:flex 2xl:hidden">
-          {backButton}
-          <div className="flex items-center gap-1 side:hidden">
-            {showOutline && (
-              <button type="button" onClick={() => setOutlineOpen(true)} className="inline-flex h-8 items-center gap-1.5 rounded-full px-3 text-ui-caption-lg font-medium text-ink-3 transition-colors hover:bg-bg-sunk hover:text-ink touch:h-11">
-                <IconList size={15} />{t(" 目錄", " Contents")}
-              </button>
-            )}
-            {originalLink("touch:h-11")}
-            <StarButton item={item} className="size-8 touch:size-11" />
-            {moreMenu}
-          </div>
+      {/* Desktop: 返回 and the actions stay at the top while reading. */}
+      <div className="sticky top-0 z-20 -mx-2 hidden items-center justify-between gap-3 bg-bg/95 px-2 py-1.5 backdrop-blur lg:flex">
+        {backButton}
+        <div className="flex items-center gap-1">
+          {showOutline && (
+            <button type="button" onClick={() => setOutlineOpen(true)} className="inline-flex h-8 items-center gap-1.5 rounded-full px-3 text-ui-caption-lg font-medium text-ink-3 transition-colors hover:bg-bg-sunk hover:text-ink touch:h-11">
+              <IconList size={15} />{t(" 目錄", " Contents")}
+            </button>
+          )}
+          <StarButton item={item} className="size-8 touch:size-11" />
+          {moreMenu}
         </div>
+      </div>
         <article className="pb-6 pt-3 lg:pt-2 2xl:pt-1">
-          <div className={`flex flex-wrap items-center gap-x-1.5 gap-y-1 text-ui-label text-ink-3 2xl:hidden ${isPost ? "" : "mb-3"}`}>
-            <span className="font-semibold text-ink-2">{isX ? item.x!.authorName : item.source.name}</span>
-            {isX && <span>· @{item.x!.handle} · X</span>}
-            {byline && <span>· {byline}</span>}
-            <span>·</span>
-            {!item.publishedAt && <span>{t("收錄於", "Added")}</span>}
-            <time dateTime={shownAt} className="mono">{fullDateTime(shownAt)}</time>
-            <span className="empty:hidden" suppressHydrationWarning>{timeAgo(shownAt, undefined, locale) && `· ${timeAgo(shownAt, undefined, locale)}`}</span>
-            {item.selected && (
-              <span className="ml-1 side:hidden">
-                {item.sameEvent ? <SameEventBadge /> : <SelectedBadge />}
-              </span>
-            )}
-            {shownScore(item.score) !== null && (
-              <span className="ml-1 side:hidden">
-                <ScoreLabel score={item.score} />
-              </span>
-            )}
-          </div>
-          {isPost ? <h1 className="sr-only">{item.title}</h1> : <h1 data-page-title="" className="text-ui-title-2 font-bold leading-[1.38] tracking-[-0.01em] text-ink lg:text-ui-title-6 lg:leading-[1.34] xl:text-ui-display-2 xl:leading-[1.3]">{item.title}</h1>}
-          {!isPost && item.originalTitle && <p className="mt-2.5 text-ui-body-sm leading-relaxed text-ink-4">{item.originalTitle}</p>}
+          <SourceRow item={item} byline={byline} at={shownAt} dated={!!item.publishedAt} className={isPost ? "" : "mb-2"} />
+          {isPost ? <h1 className="sr-only">{item.title}</h1> : <h1 data-page-title="" className="text-ui-title-4 font-bold leading-[1.32] tracking-[-0.01em] text-ink lg:text-ui-display-2 lg:leading-[1.28]">{item.title}</h1>}
 
           {item.summary && (!isPost || item.summary.replace(/\s+/g, " ").trim() !== item.title) && (
-            <section className={isPost ? "mt-4" : "mt-7 xl:mt-8"}>
-              <div className="mb-2 text-ui-caption font-semibold text-accent">{summaryOnly ? t("摘要", "Summary") : t("AI 導讀", "AI brief")}</div>
-              <p className="text-ui-heading-sm leading-[1.7] text-ink xl:text-ui-heading xl:leading-[1.7]"><MentionText runs={summaryRuns} /></p>
+            <section className="mt-4">
+              <div className="mb-2 text-ui-caption font-semibold text-ink-4">{summaryOnly ? t("摘要", "Summary") : t("AI 導讀", "AI brief")}</div>
+              <p className="text-ui-heading-md leading-[1.68] text-ink"><MentionText runs={summaryRuns} /></p>
             </section>
           )}
 
           {item.reason && !summaryOnly && (
-            <section className="mt-6 border-t border-line pt-4 side:hidden">
-              <div className="mb-1 text-ui-caption font-semibold text-ink-3">{reasonLabel}</div>
+            <section className="mt-6 border-t border-line pt-4">
+              <div className="mb-1 flex flex-wrap items-center gap-2 text-ui-caption font-semibold text-ink-4">{reasonLabel}{verdict}</div>
               <p className="text-ui-body leading-[1.75] text-ink-2">{item.reason}</p>
             </section>
           )}
+
+          {(!item.reason || summaryOnly) && <div className="mt-5 flex flex-wrap items-center gap-2 empty:hidden">{verdict}</div>}
 
           {item.sameEvent && (
             <p className="mt-5 text-ui-label leading-relaxed text-ink-4">
@@ -643,16 +492,17 @@ function ItemView({ item, followups }: Loaded) {
           {isX && item.x!.media.length > 0 && <MediaGallery media={item.x!.media} postUrl={item.links.original} />}
           {isX && item.x!.quoted?.html && <QuotedPost quoted={item.x!.quoted} original={lang === "original"} />}
 
-          <p className="mt-8 text-ui-label text-ink-4">
-            {t("來源：", "Source: ")}
-            <a href={item.links.original} target="_blank" rel="noopener noreferrer" className="text-ink-3 hover:text-accent">
-              {isX ? item.x!.authorName : item.source.name}
-            </a>
-            <span> · {hostOf(item.links.original)}</span>
-          </p>
+          <a href={item.links.original} target="_blank" rel="noopener noreferrer" className="mt-8 flex items-center gap-3 rounded-card border border-line-soft bg-surface p-4 transition-colors hover:border-line-strong">
+            <span className="min-w-0 flex-1">
+              <span className="block truncate text-ui-caption font-semibold text-ink-3">{hostOf(item.links.original)}</span>
+              {item.originalTitle && item.originalTitle !== item.title && <span className="mt-0.5 line-clamp-2 text-ui-body-lg leading-6 text-ink">{item.originalTitle}</span>}
+              <span className="mt-0.5 block text-ui-label text-accent">{originalLabel}</span>
+            </span>
+            <IconExternal size={17} className="shrink-0 text-ink-4" />
+          </a>
 
           {(daily || item.topics.length > 0 || tags.length > 0) && (
-            <div className="mt-4 flex flex-wrap gap-1.5 side:hidden">
+            <div className="mt-4 flex flex-wrap gap-1.5">
               {daily && (
                 <Link viewTransition to={daily.to} className="chip">
                   {t(<>收錄於 {daily.name}</>, <>Featured in {daily.name}</>)}
@@ -688,7 +538,6 @@ function ItemView({ item, followups }: Loaded) {
             </section>
           )}
         </article>
-      </ArticleLayout>
 
       <ReaderToolbar
         item={item}

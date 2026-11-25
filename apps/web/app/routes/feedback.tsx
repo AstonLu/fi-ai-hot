@@ -18,7 +18,7 @@ import { webModules } from "../site-modules";
 import { Link, useNavigate } from "../lib/link";
 import { L, localeOf, translator, useLocale, useT, type Phrase } from "../lib/i18n";
 
-export const handle: Screen = { tab: "me", name: L("反饋", "Feedback") };
+export const handle: Screen = { name: L("反饋", "Feedback") };
 
 export function headers() {
   return edgeTtl(300);
@@ -73,7 +73,7 @@ const TIPS: Phrase[] = [
   L("你看到了什麼，原本想做什麼", "What you saw, and what you were trying to do"),
   L("有截圖更好，記得先遮蓋敏感資訊", "A screenshot helps; cover anything sensitive first"),
 ];
-const BACK = { to: "/more", label: L("我的", "Me") };
+const BACK = { to: "/more", label: L("更多", "More") };
 
 /**
  * A refusal in the reader's language. The server explains its refusals in Chinese only: an English page says what
@@ -369,7 +369,7 @@ export default function FeedbackPage() {
           <button
             type="submit"
             disabled={!canSend}
-            className="inline-flex h-10 shrink-0 items-center justify-center gap-2 self-start rounded-full bg-accent px-6 text-ui-body-sm font-medium text-accent-contrast transition-[background-color,opacity] hover:bg-accent-ink disabled:bg-line-strong disabled:text-ink-4 sm:self-auto"
+            className="btn btn-brand shrink-0 self-start sm:self-auto"
           >
             {state.kind === "sending" && <RingMark className="size-4" spinning />}
             {t("傳送反饋", "Send feedback")}

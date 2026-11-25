@@ -155,8 +155,8 @@ export function GroupSources({ group, filters, parentId }: { group: GroupInfo; f
   );
 }
 
-/** Phones: the same duplicate reports as the desktop expansion. */
-export function GroupButton({ group, filters, parentId }: { group: GroupInfo; filters?: TimelineFilters; parentId: string }) {
+/** The same duplicate reports in a sheet: on cards (`compact`, a line in the footer), and on phones in the article. */
+export function GroupButton({ group, filters, parentId, compact = false }: { group: GroupInfo; filters?: TimelineFilters; parentId: string; compact?: boolean }) {
   const [open, setOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const t = useT();
@@ -172,10 +172,10 @@ export function GroupButton({ group, filters, parentId }: { group: GroupInfo; fi
         }}
         aria-expanded={open}
         aria-haspopup="dialog"
-        className="relative z-10 mt-2 flex min-h-11 w-full items-center justify-between rounded-tile bg-well px-3 py-2 text-left text-ui-caption-lg text-ink-4 transition-colors active:bg-bg-muted lg:hidden"
+        className={compact ? "relative z-10 max-w-full truncate text-left hover:text-ink hover:underline after:absolute after:-inset-y-2 after:inset-x-0 after:content-[''] touch:after:-inset-y-3" : "relative z-10 mt-2 flex min-h-11 w-full items-center justify-between rounded-tile bg-well px-3 py-2 text-left text-ui-caption-lg text-ink-4 transition-colors active:bg-bg-muted lg:hidden"}
       >
         {labelOf(group, t)}
-        <IconChevronRight size={14} />
+        {!compact && <IconChevronRight size={14} />}
       </button>
       {mounted && <GroupSheet open={open} onClose={() => setOpen(false)} group={group} filters={filters} parentId={parentId} />}
     </>
@@ -198,7 +198,7 @@ function GroupSheet({ open, onClose, group, filters, parentId }: {
   const t = useT();
   const locale = useLocale();
   return (
-    <Sheet open={open} onClose={onClose} title={t("這件事的其他報導", "Other reports on this story")}>
+    <Sheet centered open={open} onClose={onClose} title={t("這件事的其他報導", "Other reports on this story")}>
       <div className="px-5">
         <ul className="divide-y divide-line-soft">
           {others.map((r) => (

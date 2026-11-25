@@ -43,7 +43,7 @@ export function CopyPage({ doc, rendered, eyebrow, footer }: { doc: CopyDocument
   );
   return (
     <>
-    <PhoneBar back={{ to: "/more", label: t("我的", "Me") }} title={doc.title} />
+    <PhoneBar back={{ to: "/more", label: t("更多", "More") }} title={doc.title} />
     <ArticleLayout
       left={info}
       right={

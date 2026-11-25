@@ -6,7 +6,9 @@ import { useLocation } from "react-router";
 import { IconChevronLeft } from "../icons";
 import { historyIndex, previousScreen } from "./screens";
 import { markBack } from "./transitions";
-import { useNavigate } from "../../lib/link";
+import { SITE } from "@aihot/site";
+import { BarsMark } from "@aihot/site/brand/Logo.tsx";
+import { Link, useNavigate } from "../../lib/link";
 import { useT, type Text } from "../../lib/i18n";
 
 const useIsoLayoutEffect = typeof window === "undefined" ? useEffect : useLayoutEffect;
@@ -18,27 +20,27 @@ export interface BackTarget {
   label: Text;
 }
 
-export function PhoneBar({ back, title, leading, center, actions }: {
+export function PhoneBar({ back, title, brand, center, actions }: {
   back?: BackTarget;
   /** The page's name, shown in the bar once the page's heading ([data-page-title]) is under it. */
   title?: ReactNode;
-  leading?: ReactNode;
-  /** Always shown in the middle instead of the title (精選 | 全部). */
+  /** Instead of the mark that leads home. */
+  brand?: ReactNode;
+  /** Always shown in the middle instead of the title (日報 | 週報 | 月報). */
   center?: ReactNode;
   actions?: ReactNode;
 }) {
   const scrolled = useScrolled();
   const titleShown = useHeadingUnderBar(!center && !!title);
-  const wideCenter = !!center && !back && !leading;
   return (
     <header
       data-phone-bar=""
       className={`bleed sticky top-0 z-40 bg-bg/85 backdrop-blur-xl backdrop-saturate-150 transition-shadow duration-200 lg:hidden ${scrolled ? "shadow-[0_1px_0_var(--line-soft)]" : ""}`}
     >
-      <div className={`-mx-2.5 grid h-[var(--bar-h)] items-center ${wideCenter ? "grid-cols-[minmax(0,1fr)_auto]" : "grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]"}`}>
-        {!wideCenter && <div className="flex min-w-0 items-center">{back ? <BackButton {...back} /> : leading}</div>}
+      <div className={`-mx-2.5 grid h-[var(--bar-h)] items-center ${center && !back ? "grid-cols-[auto_minmax(0,1fr)_auto]" : "grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]"}`}>
+        <div className="flex min-w-0 items-center">{back ? <BackButton {...back} /> : (brand ?? <HomeMark />)}</div>
         {/* A title not shown yet takes no width, so the back label is not cut short before it appears. */}
-        <div className={`flex min-w-0 justify-center ${wideCenter ? "" : "max-w-[calc(100vw-184px)]"}`} style={!center && !titleShown ? { maxWidth: 0 } : undefined}>
+        <div className={`flex min-w-0 justify-center ${center && !back ? "" : "max-w-[calc(100vw-184px)]"}`} style={!center && !titleShown ? { maxWidth: 0 } : undefined}>
           {center ?? (
             title && (
               <span
@@ -53,6 +55,16 @@ export function PhoneBar({ back, title, leading, center, actions }: {
         <div className="flex min-w-0 items-center justify-end">{actions}</div>
       </div>
     </header>
+  );
+}
+
+/** A page that does not lead back keeps the brand's mark, the way home. */
+function HomeMark() {
+  const t = useT();
+  return (
+    <Link to="/" aria-label={t(`${SITE.name} 首頁`, `${SITE.name} home`)} className="grid size-11 place-items-center text-brand">
+      <BarsMark className="h-[22px] w-5" />
+    </Link>
   );
 }
 

@@ -1,19 +1,17 @@
-// Site navigation in one place: the desktop sidebar's sections and the phone tab bar's tabs, the engine's
-// and the site's modules'. An English page leads only to pages that have an English edition.
+// Site navigation in one place: what the header names and what its 更多 menu lists, the engine's and the
+// site's modules'. An English page leads only to pages that have an English edition.
 import type { ReactNode } from "react";
-import { NAV, SITE, subjectAfter, withSubject } from "@aihot/site";
+import { NAV, SITE, subjectAfter } from "@aihot/site";
 import { webModules } from "../../site-modules";
 import { L, hasEnglish, type Locale, type Phrase, type Text } from "../../lib/i18n";
 import {
-  IconBolt, IconBookmark, IconDoc, IconFlame, IconGrid, IconHeart, IconHistory, IconList, IconMessage, IconPlug, IconUser,
+  IconBookmark, IconDoc, IconFlame, IconGrid, IconHeart, IconHistory, IconList, IconMessage, IconPlug,
 } from "../icons";
 
 export interface NavItem {
   to: string;
   label: Text;
   icon: (p: { size?: number }) => ReactNode;
-  /** Match the path exactly (the home page). */
-  end?: boolean;
   /** Other pages the entry stands for: they and the pages under them light it too. */
   covers?: string[];
   /** Shows the unread dot while the changelog has news. */
@@ -25,12 +23,9 @@ const SECTIONS: Array<{ key: string; title: Text; items: NavItem[] }> = [
     key: "content",
     title: L("內容", "News"),
     items: [
-      { to: "/", label: L("精選", "Top Picks"), icon: IconBolt, end: true },
       { to: "/all", label: L(subjectAfter("全部", "動態"), `All ${SITE.subject} News`), icon: IconList },
       { to: "/hot", label: L("熱點榜", "Trending"), icon: IconFlame },
-      { to: "/daily", label: L(withSubject("日報"), `${SITE.subject} Daily`), icon: IconDoc, covers: ["/weekly", "/monthly"] },
       { to: "/topics", label: L("主題", "Topics"), icon: IconGrid },
-      { to: "/starred", label: L("收藏", "Saved"), icon: IconBookmark },
     ],
   },
   {
@@ -57,25 +52,36 @@ const chinese = (text: Text) => (typeof text === "string" ? text : text.zh);
 const inLanguage = (to: string, locale: Locale) => locale === "zh" || hasEnglish(to);
 
 const UP = {
-  "/hot": { name: L("熱點榜", "Trending"), back: L("熱點", "Trending"), tab: "hot" },
-  "/topics": { name: L("主題", "Topics"), back: L("全部主題", "All topics"), tab: "me" },
+  "/hot": { name: L("熱點榜", "Trending"), back: L("熱點", "Trending") },
+  "/topics": { name: L("主題", "Topics"), back: L("全部主題", "All topics") },
 } as const;
 
 /**
  * Where pages under a navigation entry lead back up to: the entry, or 精選 in its place while the site hides
- * it. `name` is for breadcrumbs and desktop back links (熱點榜), `back` for the phone bar (熱點), `tab` the
- * phone tab it sits under, `crumbs` its breadcrumb after the site's home.
+ * it. `name` is for breadcrumbs and desktop back links (熱點榜), `back` for the phone bar (熱點), `crumbs` its
+ * breadcrumb after the site's home.
  */
-export function navUp(entry: keyof typeof UP): { to: string; name: Phrase; back: Phrase; tab: TabKey; crumbs: Array<{ name: Phrase; path: string }> } {
-  if (!inNav(entry)) return { to: "/", name: L("精選", "Top Picks"), back: L("精選", "Top Picks"), tab: "featured", crumbs: [] };
+export function navUp(entry: keyof typeof UP): { to: string; name: Phrase; back: Phrase; crumbs: Array<{ name: Phrase; path: string }> } {
+  if (!inNav(entry)) return { to: "/", name: L("精選", "Top Picks"), back: L("精選", "Top Picks"), crumbs: [] };
   return { to: entry, ...UP[entry], crumbs: [{ name: UP[entry].name, path: entry }] };
 }
 
+/** Named in the header itself, with the modules' tabs; the rest sits under 更多. */
+const HEADER: NavItem[] = [
+  { to: "/daily", label: L("日報", "Daily"), icon: IconDoc, covers: ["/weekly", "/monthly"] },
+  { to: "/starred", label: L("收藏", "Saved"), icon: IconBookmark },
+];
+
+export function headerItems(locale: Locale): NavItem[] {
+  const modules = webModules().flatMap((m) => m.tabs ?? []);
+  return [HEADER[0]!, ...modules, HEADER[1]!].filter((i) => inLanguage(i.to, locale));
+}
+
 /**
- * The sidebar: the engine's sections with the modules' between 內容 and 更多; a module naming a section
+ * The 更多 menu: the engine's sections with the modules' between 內容 and 更多; a module naming a section
  * that is already there adds to it. A section takes its title from the first module with an entry in it here.
  */
-export function sidebar(locale: Locale): Array<{ key: string; title: Text; items: NavItem[] }> {
+export function menuSections(locale: Locale): Array<{ key: string; title: Text; items: NavItem[] }> {
   const shown = (items: readonly NavItem[]) => items.filter((i) => inNav(i.to) && inLanguage(i.to, locale));
   const [content, ...rest] = SECTIONS;
   const more = rest.pop()!;
@@ -93,73 +99,7 @@ export function sidebar(locale: Locale): Array<{ key: string; title: Text; items
   return [...sections, { ...more, items: shown(more.items) }];
 }
 
-/** A sidebar entry is lit on its pages and the ones it covers (日報 also covers weekly and monthly reports). */
-export function sidebarIsActive(item: Pick<NavItem, "to" | "end" | "covers">, pathname: string): boolean {
-  if (item.end) return pathname === item.to;
+/** An entry is lit on its pages and the ones it covers (日報 also covers weekly and monthly reports). */
+export function navIsActive(item: Pick<NavItem, "to" | "covers">, pathname: string): boolean {
   return [item.to, ...(item.covers ?? [])].some((to) => pathname === to || pathname.startsWith(`${to}/`));
-}
-
-/**
- * The deepest entry a path belongs to: a page can sit under more than one entry of its section (a module's
- * list and a detail page under it), and only the most specific one is lit.
- */
-export function activeSidebarItem(items: readonly NavItem[], pathname: string): NavItem | null {
-  let lit: NavItem | null = null;
-  for (const item of items) {
-    if (sidebarIsActive(item, pathname) && (!lit || item.to.length > lit.to.length)) lit = item;
-  }
-  return lit;
-}
-
-/**
- * The phone tab bar: 全部 lives beside 精選 as a switch, 熱點 and 日報 are tabs, and "我的" at /more holds
- * 收藏, 外觀, the tools and the site's own pages. Which tab a page sits under is declared by the page
- * itself (components/shell/screens.ts).
- */
-export type TabKey =
-  | "featured"
-  | "hot"
-  | "daily"
-  | "me"
-  // A module's tab.
-  | (string & {});
-
-export interface Tab {
-  key: TabKey;
-  to: string;
-  label: Text;
-  icon: (p: { size?: number }) => ReactNode;
-  /** As NavItem.covers. */
-  covers?: string[];
-  changelog?: boolean;
-}
-
-const ENGINE_TABS: Tab[] = [
-  { key: "featured", to: "/", label: L("精選", "Top Picks"), icon: IconBolt },
-  { key: "hot", to: "/hot", label: L("熱點", "Trending"), icon: IconFlame },
-  { key: "daily", to: "/daily", label: L("日報", "Daily"), icon: IconDoc, covers: ["/weekly", "/monthly"] },
-  { key: "me", to: "/more", label: L("我的", "Me"), icon: IconUser, changelog: true },
-];
-
-/** The tab bar: the engine's, the modules' before 我的. */
-export function tabs(locale: Locale): Tab[] {
-  const modules = webModules().flatMap((m) => m.tabs ?? []).filter((t) => inLanguage(t.to, locale));
-  return [...ENGINE_TABS.slice(0, -1).filter((t) => inNav(t.to)), ...modules, ENGINE_TABS.at(-1)!];
-}
-
-/**
- * The rail that stands in for the sidebar on narrow desktops (unfolded foldables, tablets upright): the
- * tabs, with 全部 after 精選 since desktop pages have no 精選 | 全部 switch.
- */
-export function rail(locale: Locale): Tab[] {
-  const all = tabs(locale);
-  if (!inNav("/all")) return all;
-  const at = all.findIndex((t) => t.key === "featured") + 1;
-  return [...all.slice(0, at), { key: "all", to: "/all", label: L("全部", "All"), icon: IconList }, ...all.slice(at)];
-}
-
-/** A rail entry is lit on its pages; 我的 also on the pages that sit under it on phones. */
-export function railIsActive(tab: Tab, pathname: string, screenTab: TabKey | undefined): boolean {
-  if (tab.key === "me") return pathname === tab.to || screenTab === "me";
-  return sidebarIsActive({ to: tab.to, end: tab.to === "/", covers: tab.covers }, pathname);
 }

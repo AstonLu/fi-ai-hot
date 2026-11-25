@@ -1,11 +1,19 @@
-// 站点的字标和圆环标记：页面用 Wordmark 画站名（size 是高度，单位像素），RingMark 是小标记，转起来就是加载动画。
-// 这里用站名排字；有自己的 Logo 时，把 Wordmark 换成你的 SVG（保持同样的参数）。
+// 站點的字標和圓環標記：頁面用 Wordmark 畫站名（size 是字級，單位畫素），BarsMark 是字標裡的小圖，RingMark 轉起來是載入動畫。
 import { SITE } from "../site.ts";
 
-export function Wordmark({ size = 24, className = "", title = SITE.name }: { size?: number; className?: string; title?: string }) {
+/** Three rising bars. */
+export function BarsMark({ className = "" }: { className?: string }) {
   return (
-    <span className={`inline-flex items-center font-black leading-none tracking-[-0.03em] ${className}`} style={{ fontSize: Math.round(size * 0.92) }} aria-label={title} role="img">
-      <span aria-hidden="true" className="mr-[0.3em] inline-block size-[0.42em] rounded-full bg-accent" />
+    <svg viewBox="0 0 20 22" className={className} fill="currentColor" aria-hidden="true">
+      <path d="M0 13h5v9H0zM7.5 7h5v15h-5zM15 0h5v22h-5z" />
+    </svg>
+  );
+}
+
+export function Wordmark({ size = 29, className = "", title = SITE.name }: { size?: number; className?: string; title?: string }) {
+  return (
+    <span className={`inline-flex items-center gap-[0.21em] whitespace-nowrap leading-none tracking-[-0.02em] text-[var(--wordmark)] ${className}`} style={{ fontSize: size }} aria-label={title} role="img">
+      <BarsMark className="h-[0.76em] w-auto text-brand" />
       <span aria-hidden="true">{SITE.name}</span>
     </span>
   );

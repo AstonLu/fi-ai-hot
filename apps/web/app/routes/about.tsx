@@ -17,7 +17,7 @@ import type { Screen } from "../components/shell/screens";
 import { Link } from "../lib/link";
 import { apiIn, L, localeOf, translator, useLocale, useT, type Text, type Translate } from "../lib/i18n";
 
-export const handle: Screen = { tab: "me", name: L("關於", "About") };
+export const handle: Screen = { name: L("關於", "About") };
 export { pageHeaders as headers } from "../lib/api.server";
 export const { clientLoader, shouldRevalidate } = pageReuse<typeof loader>();
 
@@ -50,7 +50,7 @@ export function meta({ location }: Route.MetaArgs) {
 const EN = ENGLISH?.about ?? null;
 
 const NO_SOURCES: RiverSource[] = [];
-const BACK = { to: "/more", label: L("我的", "Me") };
+const BACK = { to: "/more", label: L("更多", "More") };
 
 /** 3.6 萬 from ten thousand up, digits with separators below; English writes 36K and 1.2M. */
 function figure(n: number, t: Translate): { value: string; unit: string } {
@@ -277,10 +277,10 @@ export default function AboutPage() {
           </p>
         </div>
         <div className="flex flex-wrap gap-3 lg:pb-2">
-          <IntentLink to="/" className={buttonClass("primary", "lg")}>
+          <IntentLink to="/" className={buttonClass("primary")}>
             {t(<>看今天的精選 <IconArrowRight size={15} /></>, <>See today's top picks <IconArrowRight size={15} /></>)}
           </IntentLink>
-          <IntentLink to="/daily" className={buttonClass("secondary", "lg")}>
+          <IntentLink to="/daily" className={buttonClass("secondary")}>
             {t("讀最新日報", `Read the latest ${SITE.subject} Daily`)}
           </IntentLink>
         </div>

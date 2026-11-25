@@ -14,7 +14,7 @@ import { KIND_PATH, archiveGroups, feedLink, kindFromPath } from "../features/re
 import type { Screen } from "../components/shell/screens";
 import { apiIn, L, localeOf, translator, useLocale, useT } from "../lib/i18n";
 
-export const handle: Screen = { tab: "daily", name: L("日報", "Daily") };
+export const handle: Screen = { name: L("日報", "Daily") };
 export { pageHeaders as headers } from "../lib/api.server";
 export const { clientLoader, shouldRevalidate } = pageReuse<typeof loader>();
 

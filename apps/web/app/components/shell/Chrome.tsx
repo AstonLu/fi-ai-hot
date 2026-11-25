@@ -31,7 +31,7 @@ export function NavigationProgress({ active }: { active: boolean }) {
   );
 }
 
-/** Round "back to top" button once the reader has scrolled a screen or so (desktop; on phones the tab bar does it). */
+/** Round "back to top" button once the reader has scrolled a screen or so (desktop). */
 export function BackToTop() {
   const t = useT();
   const [shown, setShown] = useState(false);
@@ -46,7 +46,7 @@ export function BackToTop() {
       type="button"
       aria-label={t("回到頂部", "Back to top")}
       onClick={() => window.scrollTo({ top: 0, behavior: scrollBehavior() })}
-      className={`fixed bottom-[max(24px,env(safe-area-inset-bottom))] right-[max(24px,env(safe-area-inset-right))] z-30 hidden size-11 items-center justify-center rounded-full border border-line bg-surface text-ink-2 shadow-[var(--shadow-soft)] transition-all duration-200 hover:text-ink lg:flex ${
+      className={`fixed bottom-[max(24px,env(safe-area-inset-bottom))] right-[max(24px,env(safe-area-inset-right))] z-30 hidden size-11 items-center justify-center rounded-full border border-line bg-surface text-ink-2 shadow-[var(--shadow-soft)] transition-all duration-200 hover:text-ink active:scale-95 lg:flex ${
         shown ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-2 opacity-0"
       }`}
     >

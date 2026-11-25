@@ -18,12 +18,11 @@ import { Faces } from "../features/hot/Faces";
 import { Delta } from "../features/hot/Delta";
 import { PhoneBar } from "../components/shell/PhoneBar";
 import { Picture } from "../components/ui/Picture";
-import { navUp } from "../components/shell/nav";
 import { scrollBehavior } from "../lib/motion";
 import type { Screen } from "../components/shell/screens";
 import { apiIn, L, localeOf, translator, useLocale, useT, type Locale, type Phrase } from "../lib/i18n";
 
-export const handle: Screen = { tab: navUp("/hot").tab, name: L("熱點", "Trending") };
+export const handle: Screen = { name: L("熱點", "Trending") };
 export { pageHeaders as headers } from "../lib/api.server";
 export const { clientLoader, shouldRevalidate } = pageReuse<typeof loader>();
 

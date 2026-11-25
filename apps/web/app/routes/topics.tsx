@@ -14,11 +14,10 @@ import { IconChevronRight } from "../components/icons";
 import { IntentLink } from "../components/ui/IntentLink";
 import { BrandMark } from "../components/BrandMark";
 import { PhoneBar } from "../components/shell/PhoneBar";
-import { navUp } from "../components/shell/nav";
 import type { Screen } from "../components/shell/screens";
 import { apiIn, L, localeOf, localizePath, translator, useLocale, useT, type Locale } from "../lib/i18n";
 
-export const handle: Screen = { home: navUp("/topics").tab, name: L("主題", "Topics") };
+export const handle: Screen = { name: L("主題", "Topics") };
 export { pageHeaders as headers } from "../lib/api.server";
 export const { clientLoader, shouldRevalidate } = pageReuse<typeof loader>();
 
@@ -73,7 +72,7 @@ export function meta({ loaderData, location }: Route.MetaArgs) {
   });
 }
 
-const BACK = { to: "/more", label: L("我的", "Me") };
+const BACK = { to: "/more", label: L("更多", "More") };
 
 /** Phones: a row per topic in a grouped list; wider screens: a card per topic. */
 function TopicCard({ topic }: { topic: TopicSummary }) {

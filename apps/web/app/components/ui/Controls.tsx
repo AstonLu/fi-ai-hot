@@ -1,18 +1,9 @@
 import type { ReactNode, SelectHTMLAttributes } from "react";
 import { IconCheck, IconChevronDown } from "../icons";
 
-type Variant = "primary" | "secondary";
-const VARIANTS: Record<Variant, string> = {
-  primary: "bg-accent text-accent-contrast hover:bg-accent-ink disabled:opacity-45",
-  secondary: "border border-line-strong bg-surface text-ink-2 hover:border-ink-4 hover:text-ink disabled:opacity-50",
-};
-
-type Size = "md" | "lg";
-const SIZES: Record<Size, string> = { md: "h-11 px-4 text-ui-label-lg lg:h-9", lg: "h-11 px-5 text-ui-body-sm-plus" };
-
-/** The pill button's classes, for links that look like buttons. */
-export function buttonClass(variant: Variant = "secondary", size: Size = "md"): string {
-  return `inline-flex items-center justify-center gap-1.5 rounded-full font-medium transition-[background-color,border-color,color,transform] duration-150 active:scale-[0.98] ${SIZES[size]} ${VARIANTS[variant]}`;
+/** The classes of a button, and of links that look like one. */
+export function buttonClass(variant: "primary" | "secondary" = "secondary"): string {
+  return `btn ${variant === "primary" ? "btn-brand" : "btn-quiet"}`;
 }
 
 /** Native select as a pill, like the site's other controls. */

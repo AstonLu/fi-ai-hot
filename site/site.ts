@@ -74,13 +74,13 @@ export const SITE = {
   contactEmail: null as string | null,
   /** 關於頁底部的一行小字（選填）。 */
   footerNote: "由 AIHOT 開源框架驅動",
-  /** 中國大陸網站的 ICP 備案號（選填），填了就顯示在側欄底部和“我的”頁底部，並連結到工信部備案系統。 */
+  /** 中國大陸網站的 ICP 備案號（選填），填了就顯示在“更多”選單和“更多”頁底部，並連結到工信部備案系統。 */
   icp: null as string | null,
-  /** 中國大陸網站的公安備案資訊（選填），填了顯示在側欄底部和“我的”頁底部。 */
+  /** 中國大陸網站的公安備案資訊（選填），填了顯示在“更多”選單和“更多”頁底部。 */
   psb: null as string | null,
-  /** 原始碼的 GitHub 倉庫地址（選填），填了就在側欄底部和“我的”頁底部顯示“GitHub 開源”。 */
+  /** 原始碼的 GitHub 倉庫地址（選填），填了就在“更多”選單和“更多”頁底部顯示“GitHub 開源”。 */
   github: null as string | null,
-  /** 頁尾的“由 X 驅動”（選填）：填了就在側欄底部和“我的”頁底部顯示，鏈到它的網址。預設鏈回上游 AIHOT，不想要就寫 null。 */
+  /** 頁尾的“由 X 驅動”（選填）：填了就在“更多”選單和“更多”頁底部顯示，鏈到它的網址。預設鏈回上游 AIHOT，不想要就寫 null。 */
   poweredBy: { name: "AIHOT", url: "https://aihot.news" } as { name: string; url: string } | null,
   /** 結構化資料裡的網站運營者（搜尋引擎用）。 */
   organization: {
@@ -125,11 +125,10 @@ export const POLICY = {
   xPostIsFullText: true,
 } as const;
 
-/** 導航（電腦側欄、手機底欄、“我的”頁）。 */
+/** 導航（頁首、“更多”選單、“更多”頁）。 */
 export const NAV = {
   /**
-   * 不放進導航的引擎入口，目前只支援熱點榜（"/hot"）和主題（"/topics"）。頁面照樣能開啟；原來回到它的返回按鈕和連結改回精選，
-   * 寫 "/hot" 時首頁也不放當前熱點。
+   * 不放進導航的引擎入口，目前只支援熱點榜（"/hot"）和主題（"/topics"）。頁面照樣能開啟；原來回到它的返回按鈕和連結改回精選。
    */
   hidden: [] as Array<"/hot" | "/topics">,
 };

@@ -19,7 +19,7 @@ export function ReadingLayout({ children, aside }: { children: ReactNode; aside?
 }
 
 /**
- * Long reads (articles, terms, privacy): no sheet, the text sits on the page in a column of at most
+ * Long reads (terms, privacy): no sheet, the text sits on the page in a column of at most
  * 760px, the width Chinese magazines and news sites use (680–730px at 16–17px, about 42 characters a
  * line). From 2xl a rail on each side (the piece's facts left, notes right) keeps the page filling a
  * 16:9 screen with the column in the middle; from `side` only the right rail shows, beside the centred
@@ -61,17 +61,12 @@ export function useContainedScroll<T extends HTMLElement>(): [RefObject<T | null
   return [ref, scrolls ? "overscroll-y-contain" : ""];
 }
 
-/**
- * A block in an article rail: a hairline, a small grey title (none when the content names itself), then the
- * content; no card. Rails are columns that scroll when too tall for the window: a `shrink` block gives up
- * height first, down to its content's own minimum, and its content scrolls within it.
- */
-export function RailSection({ title, shrink = false, children }: { title?: ReactNode; shrink?: boolean; children: ReactNode }) {
-  const column = shrink ? "flex min-h-0 flex-col" : "";
+/** A block in an article rail: a hairline, a small grey title, then the content; no card. */
+export function RailSection({ title, children }: { title: ReactNode; children: ReactNode }) {
   return (
-    <section className={`border-t border-line pt-3.5 ${column}`}>
-      {title && <h2 className="text-ui-caption font-semibold text-ink-3">{title}</h2>}
-      <div className={`${title ? "mt-2.5" : ""} ${column}`}>{children}</div>
+    <section className="border-t border-line pt-3.5">
+      <h2 className="text-ui-caption font-semibold text-ink-3">{title}</h2>
+      <div className="mt-2.5">{children}</div>
     </section>
   );
 }

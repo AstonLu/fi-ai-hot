@@ -9,7 +9,7 @@
 // Reader work failures fixed before changing enhancement and return-position code:
 // - offscreen code downloads/runs immediately, visible code stays plain, or raw copying changes;
 // - tiny/linked pictures become zoom buttons, or language changes keep old handlers;
-// - a deep return loses its anchor, or folded dates confuse the anchor search.
+// - a deep return loses its anchor.
 import assert from "node:assert/strict";
 import { before, after, test } from "node:test";
 import { chromium, webkit, expect, type Browser } from "@playwright/test";
@@ -91,10 +91,8 @@ test('SSR list and visited query variants return offline without another read',a
     await page.goBack();
     await expect(page.getByRole('link',{name:'效能檢查文章',exact:true})).toBeVisible({timeout:1500});
     await context.setOffline(false);
-    await page.getByRole('button',{name:/^篩選/}).click();
     await page.getByRole('link',{name:'模型',exact:true}).click();
     await expect(page.getByRole('link',{name:'分類 ai-models',exact:true})).toBeVisible();
-    await page.getByRole('button',{name:/^篩選/}).click();
     await page.getByRole('link',{name:'產品',exact:true}).click();
     await expect(page.getByRole('link',{name:'分類 ai-products',exact:true})).toBeVisible();
     await context.setOffline(true);
@@ -115,7 +113,7 @@ test('hover downloads nothing, a press fetches article data once for its click, 
     await link.evaluate(a=>{for(const type of ['touchstart','touchmove'])a.dispatchEvent(new TouchEvent(type,{bubbles:true,cancelable:true,composed:true}));});
     await page.clock.install();
     await link.hover();await page.clock.runFor(300);
-    await page.getByRole('heading',{name:'精選',exact:true}).click();
+    await page.mouse.move(0,0);await page.mouse.down();await page.mouse.up();
     assert.equal(hits.slice(start).filter(x=>x.startsWith('/api/site/items/')).length,0);
     await link.click();await expect(page.getByText('固定正文',{exact:true})).toBeVisible();
     assert.equal(hits.slice(start).filter(x=>x.startsWith('/api/site/items/')).length,1,'the click reuses the prefetch its press started');
@@ -140,7 +138,7 @@ test('SSR all-pages and report kinds return offline with their own content',asyn
     await context.setOffline(false);await visit(page,origin+'/daily');
     await page.getByRole('link',{name:'週報',exact:true}).click();
     await expect(page.locator('#report-start')).toContainText('週報');
-    await context.setOffline(true);await page.getByRole('link',{name:'日報',exact:true}).click();
+    await context.setOffline(true);await page.getByRole('main').getByRole('link',{name:'日報',exact:true}).click();
     await expect(page.locator('#report-start')).toContainText('日報',{timeout:1500});
   }finally{await context.close();}
 });
@@ -282,14 +280,12 @@ test('reader enhancements wait for visible code and update only the picture that
   }finally{await context.close();}
 });
 
-test('deep reading returns to its anchor, including folded dates',async()=>{
+test('deep reading returns to its anchor',async()=>{
   const context=await safari.newContext({viewport:{width:390,height:844}});
   const page=await context.newPage();
   try{
     await visit(page,origin+'/?tag=long-reading');
     await expect(page.locator('[data-card-key]')).toHaveCount(180);
-    await page.getByRole('button',{name:'收起10月4日',exact:true}).click();
-    await expect(page.locator('[data-card-key]')).toHaveCount(120);
     await page.getByRole('link',{name:'長列表文章 160',exact:true}).scrollIntoViewIfNeeded();
     const readingCard = () => page.evaluate(() => {
       const card = document.elementFromPoint(innerWidth / 2, innerHeight / 2)?.closest<HTMLElement>('[data-card-key]');
@@ -300,8 +296,7 @@ test('deep reading returns to its anchor, including folded dates',async()=>{
     await page.getByRole('link',{name:'長列表文章 160',exact:true}).click();
     await expect(page.getByText('固定正文',{exact:true})).toBeVisible();
     await page.goBack();
-    await expect(page.locator('[data-card-key]')).toHaveCount(120);
+    await expect(page.locator('[data-card-key]')).toHaveCount(180);
     await expect.poll(readingCard).toBe(before);
-    await expect(page.getByRole('button',{name:'展開10月4日',exact:true})).toBeVisible();
   }finally{await context.close();}
 });

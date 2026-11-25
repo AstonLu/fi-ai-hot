@@ -1,7 +1,7 @@
-// Failures: an unbroken URL in a report's lead widened the phone layout and pushed the fifth tab off
+// Failures: an unbroken URL in a report's lead widened the phone layout and pushed the bar past the
 // screen; an open "另外 N 家也報導了" took its longest title's width and scrolled a narrow desktop window
 // sideways (2026-10-16). Pages must fit the window at phone, narrow-phone, unfolded-foldable (669 upright,
-// 711 for an Android foldable, which reads the desktop pages beside the rail) and full-sidebar (941) widths.
+// 711 for an Android foldable, which reads the desktop pages) and three-column (941) widths.
 // Narrow desktops read in one column (2026-10-30): what a side column holds there (an article's reason,
 // topics, original and outline; the switch between reports) must stay within reach.
 import assert from "node:assert/strict";

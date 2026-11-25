@@ -20,7 +20,7 @@ import type { Screen } from "../components/shell/screens";
 import { useNavigate } from "../lib/link";
 import { L, localeOf, localizePath, shownIn, translator, useLocale, useT, type Locale, type Text } from "../lib/i18n";
 
-export const handle: Screen = { tab: "me", name: L("Agent 接入", "For Agents") };
+export const handle: Screen = { name: L("Agent 接入", "For Agents") };
 
 export { pageHeaders as headers } from "../lib/api.server";
 
@@ -234,7 +234,7 @@ export default function AgentPage() {
 
   return (
     <>
-    <PhoneBar back={{ to: "/more", label: L("我的", "Me") }} title={t("Agent 接入", "For Agents")} />
+    <PhoneBar back={{ to: "/more", label: L("更多", "More") }} title={t("Agent 接入", "For Agents")} />
     <ReadingLayout aside={aside}>
       <header className="lg:pt-5">
         <Kicker>{t("AGENT 接入", "For Agents")}</Kicker>

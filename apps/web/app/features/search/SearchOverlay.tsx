@@ -1,4 +1,4 @@
-// Phone search: opens over the page from the bars' magnifier with the keyboard
+// Search: opens over the page from the header or a phone bar (or with "/") with the keyboard
 // already up — the field is focused inside the same tap, which iOS requires — and searches 全部動態
 // (/all?q=…). Below the field: this browser's recent searches, topics to browse and what is hot now.
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
@@ -38,6 +38,20 @@ export function openSearch(query = "", trigger?: HTMLElement) {
     field.focus({ preventScroll: true });
   }
   setOpen(true);
+}
+
+/** "/" opens the search, unless the reader is typing. */
+export function useSearchShortcut() {
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      const el = e.target as HTMLElement;
+      if (e.key !== "/" || e.metaKey || e.ctrlKey || e.altKey || open || el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement || el?.isContentEditable) return;
+      e.preventDefault();
+      openSearch();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
 }
 
 const suggestions = new Map<Locale, Promise<SearchSuggestions>>();
@@ -87,14 +101,8 @@ export function SearchOverlay() {
     setHasText(!!input.current?.value);
     setMore(null);
     void loadSuggestions(locale).then(value => { if (active) setMore(value); }).catch(() => {});
-    // At the desktop breakpoint this layer is hidden by CSS; it must stop holding the page still too.
-    const desktop = window.matchMedia("(min-width: 700px)");
-    const onResize = () => { if (desktop.matches) close(); };
-    onResize();
-    desktop.addEventListener("change", onResize);
     return () => {
       active = false;
-      desktop.removeEventListener("change", onResize);
     };
   }, [shown, locale]);
 
@@ -121,7 +129,7 @@ export function SearchOverlay() {
       aria-label={t("搜尋", "Search")}
       tabIndex={-1}
       inert={!shown}
-      className={`fixed inset-0 z-[75] flex flex-col bg-bg pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)] transition-[opacity,transform] duration-200 ease-[var(--ease-out-quart)] lg:hidden ${shown ? "translate-y-0 opacity-100" : "pointer-events-none -translate-y-1 opacity-0"}`}
+      className={`fixed inset-0 z-[75] flex flex-col bg-bg pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)] transition-[opacity,transform] duration-200 ease-[var(--ease-out-quart)] ${shown ? "translate-y-0 opacity-100" : "pointer-events-none -translate-y-1 opacity-0"}`}
     >
       <Form
         method="get"
@@ -135,7 +143,7 @@ export function SearchOverlay() {
           }
           addRecentSearch(q);
         }}
-        className="flex h-14 shrink-0 items-center gap-1 pl-4 pr-1 pt-[env(safe-area-inset-top)]"
+        className="mx-auto flex h-14 w-full max-w-[728px] shrink-0 items-center gap-1 pl-4 pr-1 pt-[env(safe-area-inset-top)] lg:mt-6"
       >
         <label className="relative flex-1">
           <span className="sr-only">{t("搜尋標題和摘要", "Search titles and summaries")}</span>
@@ -174,7 +182,7 @@ export function SearchOverlay() {
       </Form>
 
       {shown && (
-        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 pb-[max(24px,env(safe-area-inset-bottom))]">
+        <div className="mx-auto min-h-0 w-full max-w-[728px] flex-1 overflow-y-auto overscroll-contain px-4 pb-[max(24px,env(safe-area-inset-bottom))]">
           {recent.length > 0 && (
             <section className="pt-3">
               <div className="flex items-center justify-between">

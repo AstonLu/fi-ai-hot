@@ -1,7 +1,6 @@
 // The post an X item quotes, as X shows it under the post: who wrote it, what they said and a way to
 // it. The item's own text and translation often only make sense next to it.
-import type { QuotedPostView, XPostView } from "@aihot/contracts/site";
-import { shortAddresses } from "@aihot/contracts/addresses";
+import type { QuotedPostView } from "@aihot/contracts/site";
 import { IconArrowUpRight } from "../../components/icons";
 import { useT } from "../../lib/i18n";
 
@@ -41,17 +40,5 @@ export function QuotedPost({ quoted, original = false }: { quoted: QuotedPostVie
         </a>
       )}
     </figure>
-  );
-}
-
-/** Feed card: who is quoted and the start of what they said, addresses short (the card itself opens the item). */
-export function QuotedLine({ quoted }: { quoted: Omit<NonNullable<XPostView["quoted"]>, "url"> }) {
-  return (
-    <div className="mt-2.5 rounded-tile border border-line-soft px-3 py-2 text-ui-label leading-[1.6]">
-      <div className="flex flex-wrap items-baseline gap-x-1.5">
-        <Author quoted={quoted} />
-      </div>
-      <p className="mt-0.5 line-clamp-2 text-ink-3">{shortAddresses(quoted.translation ?? quoted.text)}</p>
-    </div>
   );
 }

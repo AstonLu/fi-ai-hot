@@ -99,7 +99,7 @@ export function archiveMark(kind: ReportKind, key: string, locale: Locale): { bi
   return { big: key.slice(5, 7), small: null };
 }
 
-/** The phone's three newest issues, with their labels from the same newest-first archive as the sidebar. */
+/** The phone's three newest issues, with their labels from the same newest-first archive as the archive column. */
 export function recentIssues(kind: ReportKind, groups: ArchiveGroup[], today: string, locale: Locale): Array<{ key: string; label: string }> {
   const t = translator(locale);
   const recent = [];

@@ -28,9 +28,9 @@ export function isReload(): boolean {
 /** Saves the list as it is now, anchored on the first card ([data-card-key]) still below the bar. */
 export function saveSnapshot<T>(historyKey: string, data: T, flush = false) {
   let anchor: ListSnapshot<T>["anchor"] = null;
-  // Cards follow vertical order. A closing date still has clipped children until its animation
-  // ends; exclude them so only the visible list participates in the position search.
-  const cards = document.querySelectorAll<HTMLElement>("[data-card-key]:not(.anim-collapse-out *)");
+  // Cards run down the page nearly in order (a board sets neighbours side by side): the search lands on one
+  // at the top of the screen, and any card there brings the list back to the same place.
+  const cards = document.querySelectorAll<HTMLElement>("[data-card-key]");
   const head = cards[0]?.getBoundingClientRect();
   let start = 0;
   // Near the top one read is enough; deep returns use a logarithmic search.
