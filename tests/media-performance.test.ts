@@ -258,7 +258,7 @@ test("everything an English poster says is English; a Chinese one says what it a
   assert.ok(english.english && english.scan === "Scan to read" && english.score === "Top Pick · AI score 88" && english.footer.startsWith(`${SITE.name} · `));
   assert.doesNotMatch(JSON.stringify(english), /[\u3400-\u9fff]/, "no Chinese anywhere on it");
   const chinese = posterText({ ...base, kicker: "研究", title: "小模型追平大模型", summary: "它用自己写的证明训练。" });
-  assert.deepEqual([chinese.english, chinese.scan, chinese.score, chinese.footer], [false, "长按识别二维码", "精选 · 88 分", `${SITE.name} · ${SITE.tagline}`]);
+  assert.deepEqual([chinese.english, chinese.scan, chinese.score, chinese.footer], [false, "長按掃描 QR Code", "精選 · 88 分", `${SITE.name} · ${SITE.tagline}`]);
 });
 
 test("without added fonts, share images and posters keep their cache keys", { skip: FALLBACK_FONTS.length > 0 }, () => {

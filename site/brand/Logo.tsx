@@ -1,21 +1,24 @@
-// 站點的字標和圓環標記：頁面用 Wordmark 畫站名（size 是字級，單位畫素），BarsMark 是字標裡的小圖，RingMark 轉起來是載入動畫。
+// 站點的標誌：SiteMark 是圖示（銀行屋頂下的文字行），Wordmark 是圖示加站名（size 是字高，單位畫素），RingMark 轉起來是載入動畫。
+// 站名的字形是 Noto Sans SC Bold（SIL OFL 1.1）轉成的路徑，和 wordmark.svg 相同；換站名時兩處一起換。
 import { SITE } from "../site.ts";
 
-/** Three rising bars. */
-export function BarsMark({ className = "" }: { className?: string }) {
+const MARK = "M12 0 24 9H0zM1 11h22v3H1zM1 16h16v3H1zM1 21h10v3H1z";
+
+/** A bank's roof over lines of text. */
+export function SiteMark({ className = "" }: { className?: string }) {
   return (
-    <svg viewBox="0 0 20 22" className={className} fill="currentColor" aria-hidden="true">
-      <path d="M0 13h5v9H0zM7.5 7h5v15h-5zM15 0h5v22h-5z" />
+    <svg viewBox="0 0 24 24" className={className} fill="currentColor" aria-hidden="true">
+      <path d={MARK} />
     </svg>
   );
 }
 
-export function Wordmark({ size = 29, className = "", title = SITE.name }: { size?: number; className?: string; title?: string }) {
+export function Wordmark({ size = 25, className = "", title = SITE.name }: { size?: number; className?: string; title?: string }) {
   return (
-    <span className={`inline-flex items-center gap-[0.21em] whitespace-nowrap leading-none tracking-[-0.02em] text-[var(--wordmark)] ${className}`} style={{ fontSize: size }} aria-label={title} role="img">
-      <BarsMark className="h-[0.76em] w-auto text-brand" />
-      <span aria-hidden="true">{SITE.name}</span>
-    </span>
+    <svg viewBox="0 0 500 96" height={size} width={size * 5.2083} className={`shrink-0 text-ink ${className}`} fill="currentColor" role="img" aria-label={title}>
+      <path className="text-brand" transform="translate(0 4.76) scale(3.566)" d={MARK} />
+      <path d="M152.2 0C142.7 14.9 124.6 25.1 105.6 30.5C108.7 33.5 112.0 38.2 113.7 41.6C118.1 40.0 122.4 38.2 126.6 36.2L126.6 41.1L147.0 41.1L147.0 51.5L115.0 51.5L115.0 62.3L129.6 62.3L121.6 65.7C125.0 70.7 128.4 77.4 130.0 81.9L110.2 81.9L110.2 92.9L197.2 92.9L197.2 81.9L175.6 81.9C178.7 77.6 182.6 71.6 186.2 65.9L176.1 62.3L192.0 62.3L192.0 51.5L159.9 51.5L159.9 41.1L180.1 41.1L180.1 35.2C184.6 37.5 189.2 39.5 193.7 41.0C195.6 38.0 199.3 33.1 202.0 30.6C186.9 26.4 170.6 18 160.8 9.1L163.6 5.1ZM171.0 30.1L137.7 30.1C143.6 26.4 149.0 22.1 153.9 17.2C158.9 21.9 164.8 26.3 171.0 30.1ZM147.0 62.3L147.0 81.9L132.4 81.9L140.6 78.3C139.2 73.9 135.4 67.3 131.8 62.3ZM159.9 62.3L174.5 62.3C172.5 67.6 168.8 74.6 165.8 79.1L172.4 81.9L159.9 81.9ZM259.6 1.7L259.6 95.1L272.3 95.1L272.3 72.5L300.3 72.5L300.3 60.8L272.3 60.8L272.3 49.1L296.2 49.1L296.2 37.7L272.3 37.7L272.3 26.2L298.5 26.2L298.5 14.5L272.3 14.5L272.3 1.7ZM208.1 61.3L208.1 73L236.0 73L236.0 94.9L248.5 94.9L248.5 1.5L236.0 1.5L236.0 14.5L210.4 14.5L210.4 26.2L236.0 26.2L236.0 37.6L211.6 37.6L211.6 49.0L236.0 49.0L236.0 61.3ZM334.5 74.7L372.6 74.7L372.6 81.8L334.5 81.8ZM334.5 65.4L334.5 58.7L372.6 58.7L372.6 65.4ZM322.3 48.7L322.3 95.0L334.5 95.0L334.5 91.8L372.6 91.8L372.6 95.0L385.4 95.0L385.4 48.7ZM363.6 1.2L363.6 11.9L343.2 11.9L343.2 1.2L330.8 1.2L330.8 11.9L314.1 11.9L314.1 22.7L330.8 22.7L330.8 31.6L309.1 31.6L309.1 42.6L398.4 42.6L398.4 31.6L376.1 31.6L376.1 22.7L393.7 22.7L393.7 11.9L376.1 11.9L376.1 1.2ZM343.2 22.7L363.6 22.7L363.6 31.6L343.2 31.6ZM414.8 95.0C417.7 92.7 422.4 90.4 449.2 80.8C448.7 77.9 448.4 72.3 448.6 68.5L427.1 75.7L427.1 42.9L449.8 42.9L449.8 31.0L427.1 31.0L427.1 2.6L414.3 2.6L414.3 75.5C414.3 80.4 411.4 83.4 409.1 85.0C411.1 87.1 413.9 92.1 414.8 95.0ZM454.9 2.1L454.9 74.1C454.9 88.4 458.3 92.7 470.0 92.7C472.2 92.7 480.9 92.7 483.2 92.7C495.0 92.7 497.9 84.8 499.1 64.2C495.8 63.4 490.5 60.9 487.5 58.7C486.8 76.4 486.1 80.9 482.0 80.9C480.3 80.9 473.5 80.9 471.8 80.9C468.1 80.9 467.6 80.0 467.6 74.3L467.6 51.3C478.3 44.0 489.8 35.4 499.4 27.1L489.5 16.2C483.7 22.7 475.7 30.7 467.6 37.3L467.6 2.1Z" />
+    </svg>
   );
 }
 

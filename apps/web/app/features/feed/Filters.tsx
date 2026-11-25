@@ -76,7 +76,7 @@ export function FeedBar() {
           <Link to="/more" className={item}>{t("更多", "More")}</Link>
         </div>
       }
-      brand={<Brand size={25} className="h-11 pl-2.5" />}
+      brand={<Brand size={21} className="h-11 pl-2.5" />}
       actions={<SearchButton className="mr-2.5" />}
     />
   );

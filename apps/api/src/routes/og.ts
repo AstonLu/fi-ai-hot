@@ -150,7 +150,7 @@ function registerIn(app: FastifyInstance, lang: Locale) {
         title: s.title,
         subtitle: s.latest ?? s.digest,
         meta: `${s.sourceCount} ${s.sourceCount === 1 ? "source" : "sources"} · ${s.reportCount} ${s.reportCount === 1 ? "report" : "reports"}`,
-        accent: rank ? "hot" : "teal",
+        accent: rank ? "hot" : "brand",
         lang: "en",
       }
       : {
@@ -158,7 +158,7 @@ function registerIn(app: FastifyInstance, lang: Locale) {
         title: s.title,
         subtitle: s.latest ?? s.digest,
         meta: `${s.sourceCount} 个来源 · ${s.reportCount} 篇报道`,
-        accent: rank ? "hot" : "teal",
+        accent: rank ? "hot" : "brand",
       }, 3600, CONTENT_IMAGE_CACHE);
   });
 }

@@ -7,7 +7,7 @@ import { IconChevronLeft } from "../icons";
 import { historyIndex, previousScreen } from "./screens";
 import { markBack } from "./transitions";
 import { SITE } from "@aihot/site";
-import { BarsMark } from "@aihot/site/brand/Logo.tsx";
+import { SiteMark } from "@aihot/site/brand/Logo.tsx";
 import { Link, useNavigate } from "../../lib/link";
 import { useT, type Text } from "../../lib/i18n";
 
@@ -63,7 +63,7 @@ function HomeMark() {
   const t = useT();
   return (
     <Link to="/" aria-label={t(`${SITE.name} 首頁`, `${SITE.name} home`)} className="grid size-11 place-items-center text-brand">
-      <BarsMark className="h-[22px] w-5" />
+      <SiteMark className="size-[22px]" />
     </Link>
   );
 }

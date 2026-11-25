@@ -10,7 +10,7 @@ import { config, REPO_ROOT } from "../config.ts";
 import { needsEnglish } from "@aihot/contracts/english";
 import { SITE } from "@aihot/site";
 
-export const OG_TEMPLATE_VERSION = "og-2026-09-29.1";
+export const OG_TEMPLATE_VERSION = "og-2026-11-25.2";
 /**
  * How English cards and posters are set (englishText here and in poster.ts): changed with them, so English images
  * already drawn and cached are drawn again. Only English keys carry it; Chinese ones stay as they were.
@@ -27,7 +27,7 @@ export interface OgCard {
   meta?: string | null;
   /** Small emphasised figure on the right (e.g. an item score). */
   badge?: { value: string; label: string } | null;
-  accent?: "teal" | "hot" | "amber";
+  accent?: "brand" | "hot" | "amber";
   /** Set only on an English card, which is set as English (englishText). A Chinese card leaves it out, so its key stays as it was. */
   lang?: "en";
 }
@@ -103,7 +103,7 @@ export function nameMark(size: number, color: string, dot: string): Node {
   ]);
 }
 
-const ACCENTS = { teal: "#2ce2e8", hot: "#ff7a5f", amber: "#e2b454" } as const;
+const ACCENTS = { brand: "#ff5900", hot: "#ff5900", amber: "#e2b454" } as const;
 
 export function clamp(text: string, max: number) {
   const chars = [...text.replace(/\s+/g, " ").trim()];
@@ -229,7 +229,7 @@ function englishText(card: OgCard): CardText {
 }
 
 async function tree(card: OgCard): Promise<Node> {
-  const accent = ACCENTS[card.accent ?? "teal"];
+  const accent = ACCENTS[card.accent ?? "brand"];
   const { kicker, title, titleSize, subtitle, meta, english } = cardText(card);
   // English breaks a word only wider than its line, where wrapLines does; Chinese keeps the styles it had.
   const wrap = english ? { wordBreak: "break-word" } : {};
@@ -242,14 +242,13 @@ async function tree(card: OgCard): Promise<Node> {
       flexDirection: "column",
       padding: "64px 72px",
       fontFamily: "Noto Sans SC",
-      color: "#e6eded",
-      backgroundColor: "#0a1012",
-      backgroundImage: "radial-gradient(circle at 88% 8%, rgba(44,226,232,0.28), rgba(10,16,18,0) 46%), radial-gradient(circle at 0% 100%, rgba(23,107,117,0.35), rgba(10,16,18,0) 50%)",
+      color: "#ededed",
+      backgroundColor: "#171717",
     },
     [
       h("div", { display: "flex", alignItems: "center", justifyContent: "space-between" }, [
-        (await brandMark("wordmark-dark.svg", 40)) ?? nameMark(34, "#e6eded", "#2ce2e8"),
-        h("div", { display: "flex", fontSize: 24, color: "#82939a" }, SITE_HOST),
+        (await brandMark("wordmark-dark.svg", 40)) ?? nameMark(34, "#ededed", "#ff5900"),
+        h("div", { display: "flex", fontSize: 24, color: "#8f8f8f" }, SITE_HOST),
       ]),
       h("div", { display: "flex", marginTop: 56, alignItems: "center" }, [
         h("div", { width: 10, height: 10, borderRadius: 999, backgroundColor: accent, marginRight: 14 }),
@@ -258,16 +257,16 @@ async function tree(card: OgCard): Promise<Node> {
       h("div", { display: "flex", flex: 1, marginTop: 22, gap: 40 }, [
         h("div", { display: "flex", flexDirection: "column", flex: 1 }, [
           h("div", { display: "flex", fontSize: titleSize, fontWeight: 700, lineHeight: 1.25, color: "#ffffff", ...wrap }, title),
-          subtitle !== null ? h("div", { display: "flex", marginTop: 22, fontSize: 28, lineHeight: 1.5, color: "#b1bec0", ...wrap }, subtitle) : null,
+          subtitle !== null ? h("div", { display: "flex", marginTop: 22, fontSize: 28, lineHeight: 1.5, color: "#b8b8b8", ...wrap }, subtitle) : null,
         ].filter(Boolean)),
         card.badge
           ? h("div", { display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", width: 170, height: 170, borderRadius: 999, border: `6px solid ${accent}` }, [
               h("div", { display: "flex", fontSize: 58, fontWeight: 700, color: "#ffffff" }, card.badge.value),
-              h("div", { display: "flex", fontSize: 22, color: "#82939a" }, card.badge.label),
+              h("div", { display: "flex", fontSize: 22, color: "#8f8f8f" }, card.badge.label),
             ])
           : null,
       ].filter(Boolean)),
-      meta !== null ? h("div", { display: "flex", fontSize: 24, color: "#82939a", borderTop: "1px solid rgba(230,237,237,0.12)", paddingTop: 22, ...wrap }, meta) : null,
+      meta !== null ? h("div", { display: "flex", fontSize: 24, color: "#8f8f8f", borderTop: "1px solid rgba(255,255,255,0.12)", paddingTop: 22, ...wrap }, meta) : null,
     ].filter(Boolean),
   );
 }
