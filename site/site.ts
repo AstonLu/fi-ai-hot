@@ -30,7 +30,7 @@ export const SITE = {
    */
   subject: "AI",
   /** 首頁的完整標題（瀏覽器標籤、搜尋結果）。 */
-  homeTitle: "金非昔比：每天讀懂 AI 如何改寫金融",
+  homeTitle: "金非昔比",
   /** 主題目錄頁（/topics）的標題。 */
   topicsTitle: "AI 主題：公司與模型、技術方向、內容形態的最新動態",
   /** 反饋表單輸入框裡的示例。 */
