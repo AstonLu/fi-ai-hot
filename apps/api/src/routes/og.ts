@@ -21,7 +21,7 @@ import { CARDS, REPORTS, SITE, subjectAfter, withSubject } from "@aihot/site";
 const PAGES: Record<Locale, Record<string, OgCard>> = {
   zh: {
     ...CARDS,
-    topics: { kicker: "主题", title: `${TOPICS.length} ${subjectAfter("个长期追踪的", "方向")}`, subtitle: `${TOPIC_GROUPS.map((g) => g.name).join("、")}。` },
+    topics: { kicker: "主題", title: `${TOPICS.length} ${subjectAfter("個長期追蹤的", "方向")}`, subtitle: `${TOPIC_GROUPS.map((g) => g.name).join("、")}。` },
   },
   en: Object.fromEntries(Object.entries({
     ...ENGLISH?.cards,
@@ -49,7 +49,7 @@ function notFound(reply: FastifyReply) {
   return reply.code(404).header("Cache-Control", "public, max-age=300").type("text/plain; charset=utf-8").send("Not found");
 }
 
-const REPORT_NAMES: Record<ReportKind, string> = { daily: withSubject("日报"), weekly: withSubject("周报"), monthly: withSubject("月报") };
+const REPORT_NAMES: Record<ReportKind, string> = { daily: withSubject("日報"), weekly: withSubject("週報"), monthly: withSubject("月報") };
 
 export function registerOg(app: FastifyInstance) {
   for (const lang of READER_LANGUAGES) registerIn(app, lang);
@@ -112,7 +112,7 @@ function registerIn(app: FastifyInstance, lang: Locale) {
       kicker: `${REPORT_NAMES[r.kind]} · ${reportDateLabel(r.kind, r.key)}`,
       title: r.lead?.title ?? r.title,
       subtitle: r.lead?.leadParagraph ?? r.overview,
-      meta: count > 0 ? `${count} ${REPORTS.shareUnit} · 约 ${r.readingMinutes} 分钟读完` : null,
+      meta: count > 0 ? `${count} ${REPORTS.shareUnit} · 約 ${r.readingMinutes} 分鐘讀完` : null,
     }, 3600, CONTENT_IMAGE_CACHE);
   });
 
@@ -129,7 +129,7 @@ function registerIn(app: FastifyInstance, lang: Locale) {
         lang: "en",
       }, 86400);
     }
-    return send(req, reply, { kicker: `主题 · ${group?.name ?? ""}`, title: `${t.name} 最新动态`, subtitle: t.definition }, 86400);
+    return send(req, reply, { kicker: `主題 · ${group?.name ?? ""}`, title: `${t.name} 最新動態`, subtitle: t.definition }, 86400);
   });
 
   app.get(`${og}/stories/:file`, async (req, reply) => {
@@ -154,10 +154,10 @@ function registerIn(app: FastifyInstance, lang: Locale) {
         lang: "en",
       }
       : {
-        kicker: rank ? `热点第 ${rank} 名 · 事件` : "事件",
+        kicker: rank ? `熱點第 ${rank} 名 · 事件` : "事件",
         title: s.title,
         subtitle: s.latest ?? s.digest,
-        meta: `${s.sourceCount} 个来源 · ${s.reportCount} 篇报道`,
+        meta: `${s.sourceCount} 個來源 · ${s.reportCount} 篇報導`,
         accent: rank ? "hot" : "brand",
       }, 3600, CONTENT_IMAGE_CACHE);
   });

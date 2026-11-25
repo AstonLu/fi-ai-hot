@@ -10,7 +10,7 @@ import { config, REPO_ROOT } from "../config.ts";
 import { needsEnglish } from "@aihot/contracts/english";
 import { SITE } from "@aihot/site";
 
-export const OG_TEMPLATE_VERSION = "og-2026-11-25.2";
+export const OG_TEMPLATE_VERSION = "og-2026-11-25.3";
 /**
  * How English cards and posters are set (englishText here and in poster.ts): changed with them, so English images
  * already drawn and cached are drawn again. Only English keys carry it; Chinese ones stay as they were.

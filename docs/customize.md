@@ -94,8 +94,7 @@
 - 分享图的字体（可选，放在 `assets/og-fonts/`）：分享图用 Noto Sans SC 子集（GB2312 + 基本拉丁），繁体、日文汉字、假名、韩文和带变音符的拉丁字母会画不出来。信源有这些文字时，放进 `<名字>-400.ttf` 和 `<名字>-700.ttf`，缺的字依次从这些字体里取（按文件名排序）；换了字体要重启服务，分享图缓存随之换新。不放就和原来一样。
 - `nameplates/`：日报、周报、月报页顶部的报头字（比如“AI日报”）。换了行业词以后重新生成：
   ```bash
-  npm pack @fontsource/noto-sans-sc@5.3.0 && tar xzf fontsource-noto-sans-sc-5.3.0.tgz
-  node scripts/nameplates.ts package
+  node scripts/nameplates.ts
   ```
 - 关于页的二维码：先在 `site.ts` 的 `ABOUT.maker` 写好作者块，并写上 `wechat`、`feishu` 卡片（标题和说明）；再在后台“设置 → 关于页二维码”上传图片，或者把图片放进 `site/brand/contact/`，文件名以 `qr-wechat`、`qr-feishu` 开头，格式是 png、jpg 或 webp。作者块、卡片或图片缺一样，那张二维码就不显示。
 
