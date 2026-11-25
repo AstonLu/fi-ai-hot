@@ -23,14 +23,14 @@ export const EDITION_WHEN = {
 
 export const SITE = {
   /** 站名：導航、頁面標題、分享圖、RSS、MCP、後臺都用它。 */
-  name: "MyHOT",
+  name: "Fin AI",
   /**
    * 行業詞：拼進預設說法裡，比如“AI 日報”“AI 動態”。
    * 改成“法律”“HR”“黃金”之類，頁面上就會變成“法律日報”“法律動態”。
    */
   subject: "AI",
   /** 首頁的完整標題（瀏覽器標籤、搜尋結果）。 */
-  homeTitle: "MyHOT — AI 行業動態 · 每日精選與日報",
+  homeTitle: "Fin AI — 金融業 AI 導入與 AI 動態 · 每日精選與日報",
   /** 主題目錄頁（/topics）的標題。 */
   topicsTitle: "AI 主題：公司與模型、技術方向、內容形態的最新動態",
   /** 反饋表單輸入框裡的示例。 */
@@ -61,10 +61,10 @@ export const SITE = {
   /** 標準圖示（favicon.ico、icon.png、icon-192.png、apple-icon.png、logo.svg）以外也放在網站根目錄的圖示，site/brand/ 裡的檔名（選填）；manifest.webmanifest 或外站引用了它們時用。 */
   rootIcons: [] as string[],
   /**
-   * MCP 工具名的字首（小寫字母、數字、下劃線），工具會叫 myhot_get_latest、myhot_search……
+   * MCP 工具名的字首（小寫字母、數字、下劃線），工具會叫 finai_get_latest、finai_search……
    * 已經有人接入後就不要再改。
    */
-  mcpPrefix: "myhot",
+  mcpPrefix: "finai",
   /**
    * 公開介面（MCP、OpenAPI、llms.txt）的版本號，只升不降。
    * 改了接口裡已有的欄位或含義時升主版本，並在部署說明裡寫清。
@@ -84,12 +84,12 @@ export const SITE = {
   poweredBy: { name: "AIHOT", url: "https://aihot.news" } as { name: string; url: string } | null,
   /** 結構化資料裡的網站運營者（搜尋引擎用）。 */
   organization: {
-    name: "MyHOT",
+    name: "Fin AI",
     /** 創始人（選填）。 */
     founder: null as Founder | null,
   },
   /** 抓取來源時報上的名字和版本（User-Agent 裡用），不要冒用別的站。 */
-  crawlerName: "MyHOTBot/1.0",
+  crawlerName: "FinAIBot/1.0",
 } as const;
 
 /** 使用規則和隱私說明兩頁（正文在 pages/ 裡）。 */

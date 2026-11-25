@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# One-time setup on a fresh Google Cloud e2-micro running Debian 12 or 13: 2 GB of swap, Docker with
+# One-time setup on a fresh Google Cloud e2-small or e2-micro running Debian 12 or 13: 2 GB of swap, Docker with
 # the compose plugin, and a login to ghcr.io so the private image can be pulled.
 # Run as a sudo-capable user:  bash deploy/gce/setup-vm.sh <github-user> <token-with-read:packages>
 set -euo pipefail
