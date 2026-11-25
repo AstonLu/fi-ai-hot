@@ -7,8 +7,8 @@ import { RingMark } from "@aihot/site/brand/Logo.tsx";
 import { useEffect, useState, type ReactNode } from "react";
 import type { Route } from "./+types/root";
 import "./app.css";
-import { Sidebar } from "./components/shell/Sidebar";
-import { TabBar } from "./components/shell/TabBar";
+import { Header } from "./components/shell/Header";
+import { useNoteScreen } from "./components/shell/screens";
 import { PullToRefresh } from "./components/shell/PullToRefresh";
 import { usePageTransition } from "./components/shell/transitions";
 import { SearchOverlay } from "./features/search/SearchOverlay";
@@ -52,8 +52,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <meta charSet="utf-8" />
         {documentRelease && <meta name="aihot-release" content={documentRelease} />}
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-        <meta name="theme-color" media="(prefers-color-scheme: light)" content="#faf9f6" />
-        <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#13191c" />
+        <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff" />
+        <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#161616" />
         <meta name="apple-mobile-web-app-title" content={SITE.name} />
         <script dangerouslySetInnerHTML={{ __html: APPEARANCE_BOOT_SCRIPT }} />
         {webModules().map((m) => m.root?.bootScript && <script key={m.name} dangerouslySetInnerHTML={{ __html: m.root.bootScript }} />)}
@@ -78,31 +78,31 @@ export function meta({ error, location }: Route.MetaArgs) {
   return [{ title: titled(notFound ? t("頁面不存在", "Page not found") : t("暫時無法載入", "Can't load this page")) }, { name: "robots", content: "noindex" }];
 }
 
-/** Sidebar, main column and phone tab bar around a page (or an error). */
+/** The header and the main column around a page (or an error). */
 function SiteShell({ changelogVersion, children }: { changelogVersion: string | null; children: ReactNode }) {
   const navigation = useNavigation();
   const t = useT();
+  useNoteScreen();
   // The phone search and pull-to-refresh are client-side, mounted once the page is interactive.
   const [interactive, setInteractive] = useState(false);
   useEffect(() => setInteractive(true), []);
   return (
     // The desktop shell also opens on large phones held sideways, where the notch takes a side: the whole
     // shell keeps clear of it (the phone shell does so through its gutters).
-    <div className="flex min-h-dvh lg:pl-[env(safe-area-inset-left)] lg:pr-[env(safe-area-inset-right)]">
+    <div className="min-h-dvh lg:pl-[env(safe-area-inset-left)] lg:pr-[env(safe-area-inset-right)]">
       <NavigationProgress active={navigation.state === "loading"} />
       <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:left-3 focus:top-3 focus:z-[70] focus:rounded-control focus:bg-surface focus:px-3 focus:py-2">
         {t("跳到正文", "Skip to content")}
       </a>
-      <Sidebar changelogVersion={changelogVersion} />
-      {/* Phone shell (≤ 699px): each page's top bar (PhoneBar), one centred column, the tab bar below.
-          Desktop: the page fills the main area up to the list width (--page-max-wide), centred beyond it. */}
-      <main id="main" className="min-w-0 flex-1 pb-[calc(72px+env(safe-area-inset-bottom))] lg:px-5 lg:pb-[72px] lg:pt-6 wide:px-7">
+      <Header changelogVersion={changelogVersion} />
+      {/* Phone shell (≤ 699px): each page's top bar (PhoneBar) and one centred column.
+          Desktop: the page fills the window up to --page-max-wide, centred beyond it. */}
+      <main id="main" className="pb-[calc(40px+env(safe-area-inset-bottom))] lg:px-5 lg:pb-[72px] lg:pt-1">
         <div className="mx-auto w-full max-w-[640px] pl-[var(--gutter-l)] pr-[var(--gutter-r)] lg:max-w-[var(--page-max-wide)] lg:px-0">
           {webModules().map((m) => m.root?.Top && <m.root.Top key={m.name} />)}
           {children}
         </div>
       </main>
-      <TabBar changelogVersion={changelogVersion} />
       {interactive && <SearchOverlay />}
       {interactive && <PullToRefresh />}
       <BackToTop />

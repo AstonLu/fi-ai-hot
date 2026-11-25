@@ -71,11 +71,11 @@ function safe<A>(tool: string, run: (args: A) => Promise<ReturnType<typeof ok> |
       return await run(args);
     } catch (error) {
       const en = (args as { lang?: string }).lang === "en";
-      if (error instanceof SearchBusyError) return fail("busy", en ? "Search is busy; try again shortly." : "搜索繁忙，请稍后再试。");
+      if (error instanceof SearchBusyError) return fail("busy", en ? "Search is busy; try again shortly." : "搜尋繁忙，請稍後再試。");
       const log = requestLog.getStore();
       if (log) log.error({ err: error, tool }, "mcp tool failed");
       else console.error(JSON.stringify({ level: "error", msg: "mcp tool failed", tool, err: logError(error) }));
-      return fail("internal_error", en ? `${SITE.name} can't complete this request right now; try again shortly.` : `${SITE.name} 暂时无法完成这个请求，请稍后再试。`);
+      return fail("internal_error", en ? `${SITE.name} can't complete this request right now; try again shortly.` : `${SITE.name} 暫時無法完成這個請求，請稍後再試。`);
     }
   };
 }
@@ -176,8 +176,8 @@ function registerTools(server: McpServer) {
     safe(T.search, async (args) => {
       const lang = langOf(args);
       const q = args.q.trim();
-      if (q.includes("\0")) return fail("invalid_request", lang === "en" ? "The search terms contain an unsupported character." : "搜索词包含不支持的特殊字符。");
-      if ([...q].length < 2) return fail("invalid_request", lang === "en" ? "Search terms need 2 to 200 characters." : "搜索词需要 2 到 200 个字符。");
+      if (q.includes("\0")) return fail("invalid_request", lang === "en" ? "The search terms contain an unsupported character." : "搜尋字詞包含不支援的特殊字元。");
+      if ([...q].length < 2) return fail("invalid_request", lang === "en" ? "Search terms need 2 to 200 characters." : "搜尋字詞需要 2 到 200 個字元。");
       const found = await searchItems(q, args.window, args.category ?? null, args.limit, (query) => recent(`items:${JSON.stringify(query)}`, () => v1Items(query)));
       const res = await both(found.res, english.v1Items("text"), english.v1Items("json"), lang);
       return ok(searchAnswer({ ...found, res: res.text }, { q, window: args.window, category: args.category ?? null }, lang), { schemaVersion: 1, query: res.json.query, items: res.json.items });
@@ -211,7 +211,7 @@ function registerTools(server: McpServer) {
       let found = await resolveStory(args.public_id.trim());
       if (found.kind === "merged") found = await resolveStory(found.target);
       const read = found.kind === "found" ? await v1Story(found.storyId) : null;
-      if (!read) return fail("not_found", lang === "en" ? `No such public story; only use a public_id ${T.hot} returned.` : `没有这个公开事件；只使用 ${T.hot} 返回的 public_id。`);
+      if (!read) return fail("not_found", lang === "en" ? `No such public story; only use a public_id ${T.hot} returned.` : `沒有這個公開事件；只使用 ${T.hot} 回傳的 public_id。`);
       const body = await both(read, english.v1StoryAnswer("text"), english.v1StoryAnswer("json"), lang);
       const story = { ...body.json.story, reports: body.json.story.reports.slice(0, args.report_limit) };
       return ok(storyAnswer(body.text.story, args.report_limit, "mcp", lang), { schemaVersion: 1, story });
@@ -230,7 +230,7 @@ function registerTools(server: McpServer) {
       const en = lang === "en";
       if (args.date && !isValidDate(args.date)) return fail("invalid_request", en ? `${args.date} is not a real date.` : `${args.date} 不是有效日期。`);
       const res = await recent(`daily:${args.date ?? "latest"}`, () => dailyWithNotes(args.date ?? "latest"));
-      if (!res) return fail("not_found", args.date ? (en ? `There is no daily for ${args.date}.` : `没有 ${args.date} 的日报。`) : (en ? "No daily has been published yet." : "还没有发布过日报。"));
+      if (!res) return fail("not_found", args.date ? (en ? `There is no daily for ${args.date}.` : `沒有 ${args.date} 的日報。`) : (en ? "No daily has been published yet." : "還沒有發布過日報。"));
       const body = await both(res.body, english.v1DailyAnswer("text"), english.v1DailyAnswer("json"), lang);
       const notes = await inLanguage(res.notes, english.v1DailyNotes, lang);
       return ok(dailyAnswer(body.text.report, "mcp", notes, res.leadItemId, lang), body.json);
@@ -238,9 +238,9 @@ function registerTools(server: McpServer) {
   );
 
   for (const p of [
-    { kind: "weekly", tool: T.weekly, input: WEEKLY_INPUT, key: (a: { week?: string }) => a.week, name: "周报", form: "有效的 ISO 周（例如 2026-W39）", formEn: "a real ISO week such as 2026-W39",
+    { kind: "weekly", tool: T.weekly, input: WEEKLY_INPUT, key: (a: { week?: string }) => a.week, name: "週報", form: "有效的 ISO 週（例如 2026-W39）", formEn: "a real ISO week such as 2026-W39",
       description: `Get ${SITE.name}'s edited weekly report: the week's most important events chosen from its dailies, grouped by section, with an overview. Use this for what happened this week or in a given ISO week; omit week for the latest.` },
-    { kind: "monthly", tool: T.monthly, input: MONTHLY_INPUT, key: (a: { month?: string }) => a.month, name: "月报", form: "有效的月份（例如 2026-09）", formEn: "a real month such as 2026-09",
+    { kind: "monthly", tool: T.monthly, input: MONTHLY_INPUT, key: (a: { month?: string }) => a.month, name: "月報", form: "有效的月份（例如 2026-09）", formEn: "a real month such as 2026-09",
       description: `Get ${SITE.name}'s edited monthly report: the month's most important events chosen from its dailies, grouped by section, with an overview. Use this for what happened this month or in a given month; omit month for the latest.` },
   ] as const) {
     server.registerTool(
@@ -255,8 +255,8 @@ function registerTools(server: McpServer) {
         const read = await recent(`${p.kind}:${key ?? "latest"}`, () => v1Period(p.kind, key ?? "latest"));
         if (!read) {
           return fail("not_found", key
-            ? (en ? `There is no ${name} for ${key}; don't pass off another issue.` : `没有 ${key} 的${p.name}；不要换一期冒充。`)
-            : (en ? `No ${name} has been published yet.` : `还没有发布过${p.name}。`));
+            ? (en ? `There is no ${name} for ${key}; don't pass off another issue.` : `沒有 ${key} 的${p.name}；不要換一期冒充。`)
+            : (en ? `No ${name} has been published yet.` : `還沒有發布過${p.name}。`));
         }
         const body = await both(read, english.v1PeriodAnswer(p.kind, "text"), english.v1PeriodAnswer(p.kind, "json"), lang);
         return ok(periodAnswer(body.text.report, p.kind, "mcp", lang), body.json);

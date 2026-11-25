@@ -6,7 +6,7 @@ import { ENGLISH, needsEnglish } from "@aihot/contracts/english";
 import { SITE } from "@aihot/site";
 import { brandMark, clamp, ENGLISH_LAYOUT_VERSION, FALLBACK_FONTS, fitLines, h, nameMark, plainEnglish, renderPng, SITE_HOST, wrapLines, type Node } from "./og.ts";
 
-export const POSTER_TEMPLATE_VERSION = "poster-2026-09-29.1";
+export const POSTER_TEMPLATE_VERSION = "poster-2026-11-25.3";
 const WIDTH = 1080;
 const HEIGHT = 1440;
 
@@ -22,13 +22,13 @@ export interface Poster {
   lang?: "en";
 }
 
-const INK = "#0e191b";
-const ACCENT = "#176b75";
+const INK = "#171717";
+const ACCENT = "#c24400";
 
 /** The poster's own words. */
 interface Words { score: (n: number) => string; source: (name: string) => string; scan: string; read: string; tagline: string }
 const WORDS: Record<"zh" | "en", Words> = {
-  zh: { score: (n: number) => `精选 · ${n} 分`, source: (name: string) => `来源：${name}`, scan: "长按识别二维码", read: "阅读全文、中文译文与原文链接", tagline: SITE.tagline },
+  zh: { score: (n: number) => `精選 · ${n} 分`, source: (name: string) => `來源：${name}`, scan: "長按掃描 QR Code", read: "閱讀全文、中文譯文與原文連結", tagline: SITE.tagline },
   en: { score: (n: number) => `Top Pick · AI score ${n}`, source: (name: string) => `Source: ${name}`, scan: "Scan to read", read: "The summary and a link to the original", tagline: ENGLISH?.tagline ?? SITE.tagline },
 };
 
@@ -99,38 +99,37 @@ async function tree(p: Poster): Promise<Node> {
       padding: "84px 88px 72px",
       fontFamily: "Noto Sans SC",
       color: INK,
-      backgroundColor: "#f5f6f5",
-      backgroundImage: "radial-gradient(circle at 100% 0%, rgba(23,107,117,0.16), rgba(245,246,245,0) 52%), radial-gradient(circle at 0% 100%, rgba(44,226,232,0.10), rgba(245,246,245,0) 45%)",
+      backgroundColor: "#f5f5f5",
     },
     [
       h("div", { display: "flex", alignItems: "center", justifyContent: "space-between" }, [
         (await brandMark("wordmark.svg", 50)) ?? nameMark(44, INK, ACCENT),
-        h("div", { display: "flex", fontSize: 26, color: "#66757a" }, date),
+        h("div", { display: "flex", fontSize: 26, color: "#666666" }, date),
       ]),
       h("div", { display: "flex", alignItems: "center", marginTop: 96 }, [
         h("div", { width: 12, height: 12, borderRadius: 999, backgroundColor: ACCENT, marginRight: 16 }),
         h("div", { display: "flex", fontSize: 30, fontWeight: 700, color: ACCENT, letterSpacing: 1, ...wrap }, kicker),
         score !== null
-          ? h("div", { display: "flex", marginLeft: 20, padding: "4px 16px", borderRadius: 999, backgroundColor: "rgba(23,107,117,0.09)", fontSize: 26, color: "#0f5a63" }, score)
+          ? h("div", { display: "flex", marginLeft: 20, padding: "4px 16px", borderRadius: 999, backgroundColor: "#ffeae0", fontSize: 26, color: "#a83b00" }, score)
           : null,
       ].filter(Boolean)),
       h("div", { display: "flex", marginTop: 30, fontSize: titleSize, fontWeight: 700, lineHeight: 1.3, color: INK, ...wrap }, title),
-      summary ? h("div", { display: "flex", marginTop: 36, fontSize: 34, lineHeight: 1.7, color: "#3a484c", ...wrap }, summary) : null,
-      h("div", { display: "flex", marginTop: 36, fontSize: 28, color: "#66757a", ...wrap }, source),
+      summary ? h("div", { display: "flex", marginTop: 36, fontSize: 34, lineHeight: 1.7, color: "#404040", ...wrap }, summary) : null,
+      h("div", { display: "flex", marginTop: 36, fontSize: 28, color: "#666666", ...wrap }, source),
       h("div", { display: "flex", flex: 1 }),
       h(
         "div",
-        { display: "flex", alignItems: "center", padding: "36px 40px", borderRadius: 32, backgroundColor: "#ffffff", boxShadow: "0 1px 2px rgba(14,25,27,0.06), 0 12px 32px rgba(14,25,27,0.07)" },
+        { display: "flex", alignItems: "center", padding: "36px 40px", borderRadius: 32, backgroundColor: "#ffffff", boxShadow: "0 1px 2px rgba(0,0,0,0.06), 0 12px 32px rgba(0,0,0,0.07)" },
         [
           h("img", { width: 200, height: 200 }, undefined, { src: qr, width: 200, height: 200 }),
           h("div", { display: "flex", flexDirection: "column", marginLeft: 44, flex: 1 }, [
             h("div", { display: "flex", fontSize: 36, fontWeight: 700, color: INK }, scan),
-            h("div", { display: "flex", marginTop: 14, fontSize: 28, lineHeight: 1.5, color: "#66757a" }, read),
+            h("div", { display: "flex", marginTop: 14, fontSize: 28, lineHeight: 1.5, color: "#666666" }, read),
             h("div", { display: "flex", marginTop: 22, fontSize: 26, color: ACCENT }, host),
           ]),
         ],
       ),
-      h("div", { display: "flex", justifyContent: "center", marginTop: 40, fontSize: 24, color: "#98a4a7" }, footer),
+      h("div", { display: "flex", justifyContent: "center", marginTop: 40, fontSize: 24, color: "#8f8f8f" }, footer),
     ].filter(Boolean),
   );
 }

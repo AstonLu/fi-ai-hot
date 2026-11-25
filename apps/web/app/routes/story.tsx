@@ -23,13 +23,11 @@ import { Select } from "../components/ui/Controls";
 import { IconArrowLeft, IconCalendar, IconChevronRight, IconClock, IconDoc, IconUsers } from "../components/icons";
 import { PhoneBar } from "../components/shell/PhoneBar";
 import { hotInNav, navUp } from "../components/shell/nav";
-import type { Screen } from "../components/shell/screens";
 import { Link } from "../lib/link";
 import { apiIn, L, localeOf, localizePath, translator, useLocale, useT } from "../lib/i18n";
 
 // Stories are reached from the hot board, as long as the site shows it.
 const UP = navUp("/hot");
-export const handle: Screen = { home: UP.tab };
 export { pageHeaders as headers } from "../lib/api.server";
 export const { clientLoader, shouldRevalidate } = pageReuse<typeof loader>();
 

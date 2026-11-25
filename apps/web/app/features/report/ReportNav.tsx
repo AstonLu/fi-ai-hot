@@ -33,7 +33,7 @@ export function ReportArchive({ kind, groups, current }: { kind: ReportKind; gro
   const t = useT();
   const openId = groups.find((g) => g.entries.some((e) => e.key === current))?.id ?? groups[0]?.id;
   return (
-    <aside className="sticky top-0 hidden h-dvh w-[280px] shrink-0 flex-col border-r border-line bg-[color-mix(in_srgb,var(--sidebar)_50%,var(--surface))] pl-5 pr-3 side:flex dark:bg-[color-mix(in_srgb,var(--sidebar)_50%,var(--bg))]">
+    <aside className="sticky top-0 hidden h-dvh w-[280px] shrink-0 flex-col border-r border-line pr-3 side:flex">
       <div className="pb-4 pt-8">
         <KindSwitch kind={kind} />
       </div>

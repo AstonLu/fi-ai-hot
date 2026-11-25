@@ -8,7 +8,7 @@ import type { ArchiveGroup } from "./format";
 import { useT } from "../../lib/i18n";
 
 /**
- * Report pages sit beside their own archive column (desktop from `side`), flush against the site sidebar.
+ * Report pages sit beside their own archive column (desktop from `side`).
  * Phones get a bar with the kind switch and the issue's outline (本期目錄), the recent issues under it;
  * narrower desktops get the same above the paper; a page below the reports (the archive) gets a bar
  * leading back instead. The paper is centred beside the archive, on a faintly toned paper in the light
@@ -29,7 +29,7 @@ export function ReportLayout({ kind, groups, current, today, outline = [], back,
   const t = useT();
   const [outlineOpen, setOutlineOpen] = useState(false);
   return (
-    <div className="report-shell lg:-mx-5 lg:-mb-[72px] lg:-mt-6 lg:flex lg:min-h-dvh wide:-mx-7">
+    <div className="report-shell lg:-mb-[72px] lg:flex">
       <ReportArchive kind={kind} groups={groups} current={current} />
       <div className="min-w-0 flex-1 pb-6 lg:flex lg:flex-col lg:items-center lg:px-10 lg:pb-16 lg:pt-9">
         {back ? (

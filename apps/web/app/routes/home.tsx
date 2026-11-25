@@ -1,19 +1,19 @@
 import { redirect, useLoaderData } from "react-router";
 import { SITE } from "@aihot/site";
 import type { Route } from "./+types/home";
-import type { TimelineResponse } from "@aihot/contracts/site";
+import type { PoolResponse, TimelineResponse } from "@aihot/contracts/site";
 import { displayTagIn } from "@aihot/contracts/taxonomy";
-import { cachedPage, loadOr404, pagePathname } from "../lib/api.server";
+import { apiGet, cachedPage, loadOr404, pagePathname } from "../lib/api.server";
 import { pageReuse } from "../lib/page-reuse";
 import { filterParams, hasFeedFilters, itemListLd, listPath, pageMeta, readFilters, siteLd } from "../lib/seo";
-import { hotInNav } from "../components/shell/nav";
 import type { Screen } from "../components/shell/screens";
-import { Timeline } from "../features/feed/Timeline";
-import { HotTopics } from "../features/feed/HotTopics";
-import { ActiveFilters, CategoryTabs, FeedBar, SearchField } from "../features/feed/Filters";
+import { Timeline, UnreadToggle } from "../features/feed/Timeline";
+import { Hero } from "../features/feed/Hero";
+import { heroStories } from "../features/feed/hero-stories";
+import { ActiveFilters, CategoryRow, FeedBar } from "../features/feed/Filters";
 import { apiIn, L, localeOf, localizePath, translator, useLocale, useT } from "../lib/i18n";
 
-export const handle: Screen = { tab: "featured", name: L("精選", "Top Picks") };
+export const handle: Screen = { name: L("精選", "Top Picks") };
 export { pageHeaders as headers } from "../lib/api.server";
 export const { clientLoader, shouldRevalidate } = pageReuse<typeof loader>();
 
@@ -25,9 +25,11 @@ export async function loader({ request }: Route.LoaderArgs) {
   if (q && q.trim()) throw redirect(localizePath(`/all${url.search}`, locale));
   const filters = readFilters(url.searchParams);
   const upstream = new Headers();
+  // The banner is drawn from everything tracked, so it has stories when few are selected; the page does without it when that fails.
+  const recent = apiGet<PoolResponse>(apiIn("/pool", locale), { signal: AbortSignal.any([request.signal, AbortSignal.timeout(2_000)]) }).then((r) => heroStories(r.items), () => null);
   const data = await loadOr404<TimelineResponse>(listPath(apiIn("/timeline", locale), filterParams(filters)), { responseHeaders: upstream, signal: request.signal });
   // A minute at most, here and on /all: new selections must not wait longer at the edge or in a browser.
-  return cachedPage(60, { data, filters }, upstream);
+  return cachedPage(60, { data, filters, hero: await recent }, upstream);
 }
 
 export function meta({ loaderData, location }: Route.MetaArgs) {
@@ -43,25 +45,19 @@ export function meta({ loaderData, location }: Route.MetaArgs) {
 }
 
 export default function Home() {
-  const { data, filters } = useLoaderData<typeof loader>();
+  const { data, filters, hero } = useLoaderData<typeof loader>();
   const t = useT();
   const locale = useLocale();
   const shownTag = filters.tag ? displayTagIn(filters.tag, locale) : null;
   return (
-    <div className="pb-6">
-      {/* Phones: the bar (精選 | 全部, filter, search), the filter in use, today's hot topics, the feed. */}
-      <FeedBar base="/" category={filters.category} channel={filters.channel} />
-      <ActiveFilters base="/" category={filters.category} channel={filters.channel} tag={filters.tag} />
-      <h1 className="sr-only lg:not-sr-only lg:text-ui-heading-lg lg:font-semibold lg:leading-[1.3] lg:text-ink">
-        {shownTag ? `#${shownTag}` : t("精選", "Top Picks")}
-      </h1>
-      <div className="mb-5 mt-4 hidden items-center justify-between gap-4 lg:flex">
-        <CategoryTabs base="/" category={filters.category} channel={filters.channel} layoutId="home-cat-desk" className="min-w-0" />
-        <SearchField keep={{ category: filters.category }} />
-      </div>
-
-      {data.hot && hotInNav && <HotTopics entries={data.hot} />}
-
+    <div className="board-shell">
+      <FeedBar />
+      <h1 className="sr-only">{shownTag ? `#${shownTag}` : t("精選", "Top Picks")}</h1>
+      {hero && <Hero stories={hero} />}
+      <CategoryRow base="/" category={filters.category} channel={filters.channel}>
+        <UnreadToggle />
+      </CategoryRow>
+      <ActiveFilters base="/" channel={filters.channel} tag={filters.tag} />
       <Timeline initial={data} filters={data.filters} />
     </div>
   );

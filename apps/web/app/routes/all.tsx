@@ -9,19 +9,19 @@ import { beijingTime } from "@aihot/contracts/time";
 import { cachedPage, loadOr404, pagePathname } from "../lib/api.server";
 import { pageReuse } from "../lib/page-reuse";
 import { feedListPath, filterParams, hasFeedFilters, itemListLd, listPath, pageMeta, readFilters } from "../lib/seo";
-import { ActiveFilters, CategoryTabs, FeedBar, SearchField } from "../features/feed/Filters";
+import { ActiveFilters, CategoryRow, FeedBar } from "../features/feed/Filters";
 import { PillTabs } from "../components/ui/Tabs";
-import { DayList, Pagination } from "../features/feed/DayList";
+import { ItemBoard, Pagination } from "../features/feed/ItemBoard";
 import { EmptyState } from "../components/ui/Page";
 import { IconSearch } from "../components/icons";
 import { PhoneBar } from "../components/shell/PhoneBar";
-import { isPhone, type Screen } from "../components/shell/screens";
+import type { Screen } from "../components/shell/screens";
 import { openSearch } from "../features/search/SearchOverlay";
 import { addRecentSearch } from "../lib/local-state";
 import { Link } from "../lib/link";
 import { apiIn, L, localeOf, localizePath, pagePath, translator, useLocale, useT } from "../lib/i18n";
 
-export const handle: Screen = { tab: "featured", name: L("全部", "All") };
+export const handle: Screen = { name: L("全部", "All") };
 export { pageHeaders as headers } from "../lib/api.server";
 export const { clientLoader, shouldRevalidate } = pageReuse<typeof loader>();
 
@@ -83,8 +83,6 @@ export default function AllPage() {
   const locale = useLocale();
   const f = data.filters;
   const busy = navigation.state === "loading" && !!navigation.location && pagePath(navigation.location.pathname) === "/all";
-  const { channel, category } = filterParams(f);
-  const keep = { channel, category };
   const searchTabHref = (tab: "time" | "relevance") => feedListPath("/all", params, { tab: tab === "relevance" ? tab : null });
   const shownTag = f.tag ? displayTagIn(f.tag, locale) : null;
   const title = f.q ? t(`搜尋“${f.q}”`, `Search: “${f.q}”`) : f.tag ? (shownTag ? `#${shownTag}` : t("標籤篩選", "Tag filter")) : null;
@@ -94,14 +92,14 @@ export default function AllPage() {
   useEffect(() => {
     if (f.q) addRecentSearch(f.q);
   }, [f.q]);
-  // Older phone links (/all?search=1) opened the search field; they open the search now.
+  // Older links (/all?search=1) opened the search field; they open the search now.
   useEffect(() => {
-    if (params.get("search") === "1" && isPhone()) openSearch(f.q ?? "");
+    if (params.get("search") === "1") openSearch(f.q ?? "");
   }, []);
 
   return (
-    <div className="pb-6">
-      {/* Phones: the feed bar, or for a search the query (tap to change it) and back to 全部. */}
+    <div className="board-shell pb-6">
+      {/* Phones: the bar, or for a search the query (tap to change it) and back to 全部. */}
       {f.q ? (
         <PhoneBar
           back={{ to: "/all", label: ALL_BACK }}
@@ -113,16 +111,11 @@ export default function AllPage() {
           }
         />
       ) : (
-        <FeedBar base="/all" category={f.category} channel={f.channel} />
+        <FeedBar />
       )}
-      <ActiveFilters base="/all" category={f.category} channel={f.channel} tag={f.tag} />
-
-      {/* Desktop, as on 精選: the title, then one filter row with the search field aligned on the right. */}
-      <h1 className="sr-only lg:not-sr-only lg:text-ui-heading-lg lg:font-semibold lg:leading-[1.3] lg:text-ink">{title ?? t(ALL_TITLE)}</h1>
-      <div className="mb-5 mt-4 hidden items-center justify-between gap-4 lg:flex">
-        <CategoryTabs base="/all" category={f.category} channel={f.channel} layoutId="all-cat-desk" className="min-w-0" />
-        <SearchField defaultValue={f.q ?? ""} keep={keep} />
-      </div>
+      <h1 data-page-title="" className="pb-3 pt-1 text-ui-title-5 font-bold leading-[1.25] text-ink">{title ?? t(ALL_TITLE)}</h1>
+      <CategoryRow base="/all" category={f.category} channel={f.channel} />
+      <ActiveFilters base="/all" channel={f.channel} tag={f.tag} />
 
       {f.q && (
         <div className="mb-3 mt-1 flex flex-wrap items-center justify-between gap-2 lg:mt-0">
@@ -148,7 +141,7 @@ export default function AllPage() {
 
       <div className={`transition-opacity duration-200 ${busy ? "opacity-50" : ""}`}>
         {data.items.length === 0 ? (
-          <div className="mt-2 lg:card">
+          <div>
             <EmptyState
               title={t("沒有找到相關內容", "Nothing found")}
               action={
@@ -163,7 +156,7 @@ export default function AllPage() {
             </EmptyState>
           </div>
         ) : (
-          <DayList items={data.items} todayCount={f.q ? null : data.todayCount} tagTopics={data.tagTopics} />
+          <ItemBoard items={data.items} />
         )}
       </div>
       <Pagination page={data.page} pageCount={data.pageCount} href={(p) => pageHref(params, p)} />

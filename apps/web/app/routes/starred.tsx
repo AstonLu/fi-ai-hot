@@ -17,7 +17,7 @@ import { webModules } from "../site-modules";
 import { Link } from "../lib/link";
 import { apiIn, L, localeOf, translator, useLocale, useT, type Text, type Translate } from "../lib/i18n";
 
-export const handle: Screen = { tab: "me", name: L("收藏", "Saved") };
+export const handle: Screen = { name: L("收藏", "Saved") };
 
 export function headers() {
   return edgeTtl(300);
@@ -29,7 +29,7 @@ export function meta({ location }: Route.MetaArgs) {
   return pageMeta({ locale, title: t("我的收藏", "Saved"), description: t(`收藏的 ${SITE.name} 內容，適合稍後閱讀和回看。`, `What you've saved on ${SITE.name}, to read later or come back to.`), path: "/starred", noindex: true });
 }
 
-const BACK = { to: "/more", label: L("我的", "Me") };
+const BACK = { to: "/more", label: L("更多", "More") };
 const items = (n: number) => `${n} ${n === 1 ? "item" : "items"}`;
 
 function reportText(r: ImportReport, t: Translate): string {

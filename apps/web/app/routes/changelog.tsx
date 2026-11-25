@@ -13,7 +13,7 @@ import { Inline, dateHeading } from "../features/changelog/text";
 import { PhoneBar } from "../components/shell/PhoneBar";
 import type { Screen } from "../components/shell/screens";
 
-export const handle: Screen = { tab: "me", name: "更新日誌" };
+export const handle: Screen = { name: "更新日誌" };
 export { pageHeaders as headers } from "../lib/api.server";
 export const { clientLoader, shouldRevalidate } = pageReuse<typeof loader>();
 
@@ -36,9 +36,9 @@ export function meta() {
 
 const KIND_DOT: Record<Release["kind"], string> = {
   更新: "bg-accent",
-  优化: "bg-ok",
+  優化: "bg-ok",
   公告: "bg-amber",
-  下线: "bg-ink-4",
+  下線: "bg-ink-4",
 };
 
 const KINDS = Object.keys(KIND_DOT) as Release["kind"][];
@@ -189,7 +189,7 @@ export default function ChangelogPage() {
 
   return (
     <>
-    <PhoneBar back={{ to: "/more", label: "我的" }} title="更新日誌" />
+    <PhoneBar back={{ to: "/more", label: "更多" }} title="更新日誌" />
     <ReadingLayout aside={aside}>
       <header className="pb-6">
         <h1 data-page-title="" className="text-ui-heading-lg font-semibold leading-[1.3] text-ink">更新日誌</h1>

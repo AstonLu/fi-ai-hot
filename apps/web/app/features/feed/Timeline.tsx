@@ -1,19 +1,15 @@
-// The 精選 home's day-grouped feed: a time rail with cards on desktop, rows under grey day bars on phones.
-// Keeps its place across back navigation and loads further pages. There is no "new items" prompt:
-// readers refresh for the latest head — on phones also by tapping the tab again. The paged lists
-// (DayList) share its day header and slot.
+// The 精選 home's feed as one board of cards, newest first. Keeps its place across back navigation and loads
+// further pages. There is no "new items" prompt: readers refresh for the latest head.
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigation } from "react-router";
-import { Collapse } from "../../components/ui/Presence";
 import { ToggleChip } from "../../components/ui/Controls";
 import type { TimelineCard, TimelineFilters, TimelineResponse } from "@aihot/contracts/site";
-import { FeedItem } from "./FeedItem";
-import { IconChevronDown } from "../../components/icons";
 import { SITE } from "@aihot/site";
+import { IconArrowRight } from "../../components/icons";
 import { RingMark } from "@aihot/site/brand/Logo.tsx";
+import { Link } from "../../lib/link";
+import { Board, type BoardEntry } from "./Board";
 import { EmptyState } from "../../components/ui/Page";
-import { beijingDate, beijingTime, monthDay, monthDayEn } from "@aihot/contracts/time";
-import { byBeijingDay, weekdayLong, weekdayShort } from "../../lib/format";
 import { apiIn, useLocale, useT } from "../../lib/i18n";
 import { isHydrated } from "../../lib/hydration";
 import { markRead, setUnreadOnly, useReadSet, useUnreadOnly } from "../../lib/local-state";
@@ -23,111 +19,25 @@ import { isReload, readSnapshot, restoreAnchor, saveSnapshot, useSaveOnLeave } f
 const AUTO_BATCHES = 3;
 
 interface ListState {
-  version: 2;
-  cards: TimelineCard[];
+  version: 3;
+  /** The pages as they were loaded: each is laid out on from the one before. */
+  pages: TimelineCard[][];
   nextCursor: string | null;
-  dayCounts: Record<string, number>;
-  collapsed: string[];
   batches: number;
 }
 
 function fromResponse(r: TimelineResponse): ListState {
-  return { version: 2, cards: r.cards, nextCursor: r.nextCursor, dayCounts: r.dayCounts, collapsed: [], batches: 1 };
+  return { version: 3, pages: [r.cards], nextCursor: r.nextCursor, batches: 1 };
 }
 
-/**
- * Sticky day header under the phone bar: a quiet row on desktop, a grey full-width bar on phones. `aside`
- * ends the row; on phones it sits beside the count unless `asideOnPhone` is false (a control: there the
- * whole bar is the fold button).
- */
-export function DayHeader({ day, today, count, collapsed, onToggle, aside, asideOnPhone = true }: { day: string; today: string; count: number | null; collapsed?: boolean; onToggle?: () => void; aside?: React.ReactNode; asideOnPhone?: boolean }) {
+/** 只看未讀, kept in this browser: at the end of the home page's category row. */
+export function UnreadToggle() {
   const t = useT();
-  const locale = useLocale();
-  const date = t(monthDay(day, today), monthDayEn(day, today));
-  const weekday = weekdayLong(day, locale);
-  const short = weekdayShort(day, locale);
-  const items = (n: number) => t(<><span className="num">{n}</span> 條</>, <><span className="num">{n.toLocaleString("en-US")}</span> {n === 1 ? "item" : "items"}</>);
-  const fold = collapsed ? t(`展開${date}`, `Expand ${date}`) : t(`收起${date}`, `Collapse ${date}`);
-  const phoneRow = (
-    <>
-      <span className="text-ui-body-sm font-bold text-ink">{day === today ? t("今天", "Today") : date}</span>
-      {day === today && <span className="text-ui-caption-lg text-ink-4">{date}</span>}
-      <span className="text-ui-caption-lg text-ink-4">{short}</span>
-      <span className="ml-auto flex items-center gap-1 text-ui-caption-lg text-ink-4">
-        {asideOnPhone && aside}
-        {count !== null && <span>{items(count)}</span>}
-        {onToggle && <IconChevronDown size={15} className={`transition-transform duration-200 ${collapsed ? "-rotate-90" : ""}`} />}
-      </span>
-    </>
-  );
+  const on = useUnreadOnly();
   return (
-    <div className="bleed sticky top-[var(--bar-h)] z-20 bg-daybar lg:mx-0 lg:bg-bg lg:px-0">
-      {/* Phones: a full-width day bar; on the timeline the whole bar folds the day. */}
-      {onToggle ? (
-        <button type="button" onClick={onToggle} aria-expanded={!collapsed} aria-label={fold} className="flex h-11 w-full items-center gap-2 text-left lg:hidden">
-          {phoneRow}
-        </button>
-      ) : (
-        <div className="flex h-9 items-center gap-2 lg:hidden">{phoneRow}</div>
-      )}
-      {/* Desktop: date text shares the page's left edge, regardless of how many digits it has. */}
-      <div className="hidden h-11 items-center gap-3 lg:flex">
-        {onToggle ? (
-          <button type="button" onClick={onToggle} aria-expanded={!collapsed} className="whitespace-nowrap text-left text-ui-heading-sm font-semibold leading-6 text-ink">
-            {date}
-          </button>
-        ) : (
-          <time dateTime={day} className="whitespace-nowrap text-ui-heading-sm font-semibold leading-6 text-ink">{date}</time>
-        )}
-        {onToggle ? (
-          <button
-            type="button"
-            onClick={onToggle}
-            aria-expanded={!collapsed}
-            aria-label={fold}
-            className="grid size-6 place-items-center justify-self-center rounded-full text-ink-4 transition-colors hover:bg-bg-sunk hover:text-ink"
-          >
-            <IconChevronDown size={14} className={`transition-transform duration-200 ${collapsed ? "-rotate-90" : ""}`} />
-          </button>
-        ) : null}
-        <span className="text-ui-label text-ink-4">
-          {weekday}
-          {count !== null && (
-            <>
-              {" · "}
-              {items(count)}
-            </>
-          )}
-        </span>
-        {aside && <span className="ml-auto text-ui-caption text-ink-4">{aside}</span>}
-      </div>
-    </div>
-  );
-}
-
-/**
- * One dated slot: the time, the rail (desktop) and the item. As on the original timeline, the rail is a
- * 1px line from this node's centre to the next one's, so the day reads as one continuous thread.
- */
-export function TimelineSlot({ at, children, fresh = false, delay = 0, dataKey }: { at: string; children: React.ReactNode; fresh?: boolean; delay?: number; dataKey?: string }) {
-  return (
-    <li
-      data-card-key={dataKey}
-      className={`group/slot bleed touch:has-[a:active]:bg-bg-sunk/70 lg:mx-0 lg:px-0 lg:touch:has-[a:active]:bg-transparent ${fresh ? "animate-fade-up" : ""}`}
-      style={fresh ? { animationDelay: `${delay}ms` } : undefined}
-    >
-      {/* Phones: the row without the rail (the item shows its time); a hairline between rows. */}
-      <div className="grid grid-cols-[minmax(0,1fr)] border-b border-line-soft py-3.5 group-last/slot:border-b-0 lg:grid-cols-[64px_22px_minmax(0,1fr)] lg:border-b-0 lg:py-0 lg:pb-3 lg:group-last/slot:pb-0">
-        <time dateTime={at} className="mono hidden text-ink-3 lg:block lg:pt-[17px] lg:text-ui-caption-lg lg:font-semibold lg:leading-6">
-          {beijingTime(at)}
-        </time>
-        <span aria-hidden="true" className="relative hidden lg:block">
-          <span className="absolute -bottom-[41px] left-[10.5px] top-[29px] w-px bg-line-strong group-last/slot:hidden" />
-          <span className="absolute left-[7.5px] top-[25.5px] size-[7px] rounded-full bg-accent shadow-[0_0_0_4px_var(--bg)] transition-transform duration-300 group-hover/slot:scale-[1.15]" />
-        </span>
-        {children}
-      </div>
-    </li>
+    <ToggleChip on={on} onToggle={() => setUnreadOnly(!on)}>
+      {t("只看未讀", "Unread only")}
+    </ToggleChip>
   );
 }
 
@@ -145,7 +55,7 @@ export function Timeline({ initial, filters }: { initial: TimelineResponse; filt
   const [state, setState] = useState<ListState>(() => {
     if (isHydrated()) {
       const snap = readSnapshot<ListState>(historyKey);
-      if (snap?.data.version === 2 && snap.data.cards.length > 0) return snap.data;
+      if (snap?.data.version === 3 && snap.data.pages[0]?.length) return snap.data;
     }
     return fromResponse(initial);
   });
@@ -158,7 +68,7 @@ export function Timeline({ initial, filters }: { initial: TimelineResponse; filt
 
   // Filters (i.e. the loader data) changed. A page still loading for the old filters is cancelled, and a
   // response that arrives anyway is dropped (it belongs to another list and cursor). Back or forward to a
-  // filter already visited restores what that history entry had loaded and folded; a new one starts over.
+  // filter already visited restores what that history entry had loaded; a new one starts over.
   const filterKey = listPath(api, filterParams(filters));
   const lastFilterKey = useRef(filterKey);
   const pageRequest = useRef<AbortController | null>(null);
@@ -171,7 +81,7 @@ export function Timeline({ initial, filters }: { initial: TimelineResponse; filt
       setLoadingMore(false);
       setLoadError(false);
       const snap = readSnapshot<ListState>(historyKey);
-      if (snap?.data.version === 2 && snap.data.cards.length > 0) {
+      if (snap?.data.version === 3 && snap.data.pages[0]?.length) {
         setState(snap.data);
         restoreAnchor(snap.anchor, snap.scrollY);
       } else {
@@ -201,13 +111,13 @@ export function Timeline({ initial, filters }: { initial: TimelineResponse; filt
     if (!isHydrated()) {
       // A full load keeps the server's fresh list when the reader reloaded; after a back/forward
       // that reloaded the document, it restores the saved list and position.
-      if (snap?.data.version === 2 && snap.data.cards.length > 0 && !isReload()) {
+      if (snap?.data.version === 3 && snap.data.pages[0]?.length && !isReload()) {
         setState(snap.data);
         requestAnimationFrame(() => restoreAnchor(snap.anchor, snap.scrollY));
       }
       return;
     }
-    if (snap?.data.version === 2 && snap.data.cards.length > 0) restoreAnchor(snap.anchor, snap.scrollY);
+    if (snap?.data.version === 3 && snap.data.pages[0]?.length) restoreAnchor(snap.anchor, snap.scrollY);
   }, [historyKey]);
 
   // Save the snapshot whenever we leave this history entry.
@@ -240,14 +150,13 @@ export function Timeline({ initial, filters }: { initial: TimelineResponse; filt
       const page = (await res.json()) as TimelineResponse;
       if (!current()) return;
       setState((prev) => {
-        const seen = new Set(prev.cards.map((c) => c.key));
+        const seen = new Set(prev.pages.flat().map((c) => c.key));
         const added = page.cards.filter((c) => !seen.has(c.key));
         setFreshKeys(new Set(added.map((c) => c.key)));
         return {
           ...prev,
-          cards: [...prev.cards, ...added],
+          pages: [...prev.pages, added],
           nextCursor: page.nextCursor,
-          dayCounts: { ...prev.dayCounts, ...page.dayCounts },
           batches: prev.batches + 1,
         };
       });
@@ -273,7 +182,6 @@ export function Timeline({ initial, filters }: { initial: TimelineResponse; filt
     return () => io.disconnect();
   }, [state.nextCursor, state.batches, loadMore]);
 
-  const today = beijingDate(Date.now());
   // 只看未讀 hides cards read in this browser: an ordinary card by its own id, a reading group by any
   // of its selected reports, so a read representative does not hide the unread reports behind it.
   // A group kept that way is not drawn as read; its expansion marks which reports are unread.
@@ -281,12 +189,11 @@ export function Timeline({ initial, filters }: { initial: TimelineResponse; filt
     (card: TimelineCard) => !readSet.has(card.item.id) || (card.group?.memberIds?.some((id) => !readSet.has(id)) ?? false),
     [readSet],
   );
-  const days = useMemo(
-    () => byBeijingDay(unreadOnly ? state.cards.filter(unreadVisible) : state.cards, (c) => c.anchorAt),
-    [state.cards, unreadOnly, unreadVisible],
+  const pages = useMemo<BoardEntry[][]>(
+    () => state.pages.map((page) => (unreadOnly ? page.filter(unreadVisible) : page).map(({ key, anchorAt, item, group }) => ({ key, at: anchorAt, item, group }))),
+    [state.pages, unreadOnly, unreadVisible],
   );
-
-  const visibleCount = useMemo(() => days.reduce((n, d) => n + d.entries.length, 0), [days]);
+  const visibleCount = useMemo(() => pages.reduce((n, page) => n + page.length, 0), [pages]);
   // With the filter on, a page whose cards are all read would show nothing: keep paging until
   // something is visible. It stops at the list's own automatic bound and leaves the rest to the
   // button, so loading keeps a clear edge and a manual way to continue.
@@ -296,22 +203,10 @@ export function Timeline({ initial, filters }: { initial: TimelineResponse; filt
     void loadMore();
   }, [unreadOnly, visibleCount, loadingMore, loadError, state.nextCursor, state.batches, loadMore]);
 
-  const toggleDay = (day: string) =>
-    setState((s) => ({ ...s, collapsed: s.collapsed.includes(day) ? s.collapsed.filter((d) => d !== day) : [...s.collapsed, day] }));
-
-  let order = 0;
-  const unreadToggle = (
-    <ToggleChip on={unreadOnly} onToggle={() => setUnreadOnly(!unreadOnly)}>
-      {t("只看未讀", "Unread only")}
-    </ToggleChip>
-  );
   return (
-    <div className="relative">
-      {/* Desktop puts it on the first date row; phones, and a list the filter left empty, keep its own row. */}
-      <div className={`mb-2 flex justify-end ${days.length ? "lg:hidden" : ""}`}>{unreadToggle}</div>
-
-      {days.length === 0 && !loadingMore && (
-        <div className="lg:card">
+    <div>
+      {visibleCount === 0 && !loadingMore && (
+        <div>
           {unreadOnly ? (
             state.nextCursor ? (
               <EmptyState title={t("這批精選都讀過了", "You've read all of these")}>
@@ -328,29 +223,14 @@ export function Timeline({ initial, filters }: { initial: TimelineResponse; filt
         </div>
       )}
 
-      {days.map(({ day, entries: cards }, dayIndex) => {
-        const collapsed = state.collapsed.includes(day);
-        // The server counts whole days; with the filter on, only the visible cards count.
-        const count = unreadOnly ? cards.length : (state.dayCounts[day] ?? cards.length);
-        return (
-          <section key={day} aria-label={day} className="lg:mb-1">
-            <DayHeader day={day} today={today} count={count} collapsed={collapsed} onToggle={() => toggleDay(day)} aside={dayIndex === 0 ? unreadToggle : undefined} asideOnPhone={false} />
-            <Collapse open={!collapsed}>
-                <ol className="lg:pt-1">
-                  {cards.map((c) => {
-                    const fresh = freshKeys.has(c.key);
-                    const delay = fresh ? Math.min(order++, 10) * 40 : 0;
-                    return (
-                      <TimelineSlot key={c.key} dataKey={c.key} at={c.anchorAt} fresh={fresh} delay={delay}>
-                        <FeedItem item={c.item} group={c.group} filters={filters} read={readSet.has(c.item.id) && !(unreadOnly && unreadVisible(c))} onOpen={markRead} at={c.anchorAt} />
-                      </TimelineSlot>
-                    );
-                  })}
-                </ol>
-            </Collapse>
-          </section>
-        );
-      })}
+      <Board
+        pages={pages}
+        complete={!state.nextCursor}
+        filters={filters}
+        fresh={freshKeys}
+        isRead={({ key, item, group }) => readSet.has(item.id) && !(unreadOnly && unreadVisible({ key, anchorAt: item.timelineAt, item, group }))}
+        onOpen={markRead}
+      />
 
       <div ref={sentinel} aria-hidden="true" />
       <FeedEnd loading={loadingMore} error={loadError} hasMore={!!state.nextCursor} manual={state.batches >= AUTO_BATCHES} empty={visibleCount === 0} onMore={loadMore} />
@@ -358,27 +238,32 @@ export function Timeline({ initial, filters }: { initial: TimelineResponse; filt
   );
 }
 
-/** The foot of a paged list: loading, retry, "載入更多" after a few automatic pages, or the end. */
+/** The foot of a paged list: loading, retry, "載入更多" after a few automatic pages, or at the end the way to everything tracked. */
 function FeedEnd({ loading, error, hasMore, manual, empty, onMore }: { loading: boolean; error: boolean; hasMore: boolean; manual: boolean; empty: boolean; onMore: () => void }) {
   const t = useT();
   return (
-    <div className="flex justify-center py-6">
+    <div className="flex justify-center py-10">
       {loading ? (
         <span className="inline-flex items-center gap-2 text-ui-caption-lg text-ink-4">
           <RingMark className="size-4 text-accent" spinning /> {t("正在載入", "Loading")}
         </span>
       ) : error ? (
-        <button type="button" onClick={onMore} className="h-9 rounded-full border border-hot/30 px-4 text-ui-label text-hot hover:bg-hot-soft">
+        <button type="button" onClick={onMore} className="btn btn-quiet text-hot">
           {t("載入失敗，點此重試", "Couldn't load. Try again")}
         </button>
       ) : hasMore ? (
         manual && (
-          <button type="button" onClick={onMore} className="h-9 rounded-full border border-line-strong bg-surface px-5 text-ui-label font-medium text-ink-2 transition-colors hover:border-ink-4 hover:text-ink">
+          <button type="button" onClick={onMore} className="btn btn-quiet">
             {t("載入更多", "Load more")}
           </button>
         )
       ) : (
-        !empty && <span className="text-ui-caption text-ink-4">{t("已經到底了", "That's everything")}</span>
+        !empty && (
+          <Link to="/all" className="btn btn-quiet">
+            {t("看全部動態", "See all news")}
+            <IconArrowRight size={17} className="btn-arrow" />
+          </Link>
+        )
       )}
     </div>
   );

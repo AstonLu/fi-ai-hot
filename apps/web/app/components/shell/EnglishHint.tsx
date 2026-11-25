@@ -29,7 +29,7 @@ export function EnglishHint() {
     setOpen(false);
   };
   return (
-    // Above the phone's tab bar; at the foot of the window on a desktop. Only the bar itself takes clicks.
+    // At the foot of the window, above an article's toolbar on phones. Only the bar itself takes clicks.
     <div lang="en" className="pointer-events-none fixed inset-x-0 bottom-[calc(62px+env(safe-area-inset-bottom))] z-30 flex justify-center px-4 lg:bottom-[max(24px,env(safe-area-inset-bottom))]">
       <div role="region" aria-label="English edition" className="anim-fade-in pointer-events-auto flex h-11 items-center rounded-full border border-line bg-raised pl-4 pr-1 text-ui-label text-ink-2 shadow-[var(--shadow-pop)]">
         <span>Prefer English?</span>

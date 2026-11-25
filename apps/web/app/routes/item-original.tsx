@@ -5,7 +5,7 @@ import { titleCacheSeconds } from "../lib/seo";
 import { apiIn, localeOf } from "../lib/i18n";
 import { loadFollowups } from "../features/item/followups.server";
 import { pageReuse } from "../lib/page-reuse";
-export { default, handle, headers, meta } from "./item";
+export { default, headers, meta } from "./item";
 
 export const { clientLoader, shouldRevalidate } = pageReuse<typeof loader>();
 export async function loader({ params, request }: Route.LoaderArgs) {

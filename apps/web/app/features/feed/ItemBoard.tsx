@@ -1,42 +1,16 @@
-// A page of reports grouped by Beijing day with the same rail and rows as the home timeline
-// (全部動態, topics, search results).
+// A page of reports as a board (全部動態, topics, search results), and the numbered pages under it.
 import { IntentLink } from "../../components/ui/IntentLink";
 import { useMemo } from "react";
 import type { FeedItemSummary } from "@aihot/contracts/site";
 import { IconChevronRight } from "../../components/icons";
-import { beijingDate } from "@aihot/contracts/time";
-import { byBeijingDay } from "../../lib/format";
 import { markRead, useReadSet } from "../../lib/local-state";
-import { DayHeader, TimelineSlot } from "./Timeline";
-import { FeedItem } from "./FeedItem";
+import { Board } from "./Board";
 import { useT } from "../../lib/i18n";
 
-export function DayList({ items, todayCount = null, headerAside, tagTopics, currentTopicSlug }: {
-  items: FeedItemSummary[];
-  todayCount?: number | null;
-  headerAside?: React.ReactNode;
-  tagTopics?: Record<string, string>;
-  currentTopicSlug?: string;
-}) {
+export function ItemBoard({ items }: { items: FeedItemSummary[] }) {
   const readSet = useReadSet();
-  const today = beijingDate(Date.now());
-  const days = useMemo(() => byBeijingDay(items, (it) => it.timelineAt), [items]);
-  return (
-    <div>
-      {days.map(({ day, entries: list }, i) => (
-        <section key={day} aria-label={day}>
-          <DayHeader day={day} today={today} count={day === today ? todayCount : null} aside={i === 0 ? headerAside : undefined} />
-          <ol className="lg:pt-1">
-            {list.map((it) => (
-              <TimelineSlot key={it.id} at={it.timelineAt}>
-                <FeedItem item={it} read={readSet.has(it.id)} onOpen={markRead} showTags tagTopics={tagTopics} currentTopicSlug={currentTopicSlug} at={it.timelineAt} />
-              </TimelineSlot>
-            ))}
-          </ol>
-        </section>
-      ))}
-    </div>
-  );
+  const pages = useMemo(() => [items.map((item) => ({ key: item.id, at: item.timelineAt, item, group: null }))], [items]);
+  return <Board pages={pages} isRead={({ item }) => readSet.has(item.id)} onOpen={markRead} />;
 }
 
 /**
@@ -51,7 +25,7 @@ export function Pagination({ page, pageCount, href }: { page: number; pageCount:
   return (
     <nav aria-label={t("分頁", "Pages")} className="mt-6 flex flex-wrap items-center justify-center gap-3 lg:gap-1">
       {page > 1 && (
-        <IntentLink to={href(page - 1)} className={`${btn} h-11 border border-line-strong bg-surface px-5 text-ui-body-sm text-ink-2 active:bg-bg-sunk lg:h-9 lg:px-3 lg:text-ui-label lg:text-ink-3 lg:hover:border-ink-4 lg:hover:text-ink`}>
+        <IntentLink to={href(page - 1)} className="btn btn-quiet">
           {t("上一頁", "Previous")}
         </IntentLink>
       )}
@@ -71,7 +45,7 @@ export function Pagination({ page, pageCount, href }: { page: number; pageCount:
         </span>
       ))}
       {page < pageCount && (
-        <IntentLink to={href(page + 1)} className={`${btn} h-11 gap-0.5 border border-line-strong bg-surface px-5 text-ui-body-sm text-ink-2 active:bg-bg-sunk lg:h-9 lg:px-3 lg:text-ui-label lg:text-ink-3 lg:hover:border-ink-4 lg:hover:text-ink`}>
+        <IntentLink to={href(page + 1)} className="btn btn-quiet">
           {t("下一頁", "Next")} <IconChevronRight size={14} />
         </IntentLink>
       )}

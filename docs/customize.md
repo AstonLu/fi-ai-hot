@@ -20,7 +20,7 @@
 - **一起改的名字**：改 `SITE.name` 时顺手把 `SITE.organization.name`（给搜索引擎看的结构化数据）一起改掉；`SITE.crawlerName` 写你自己的抓取标识，别冒用别人的站名。
 - **上线或有人接入后不要再改的标识**：`SITE.mcpPrefix`（MCP 工具名前缀）、`PUBLIC_CATEGORIES`（公开接口与订阅源的类别合并和改名）、`ABOUT.termsAnchor`（外部写死过的锚点）；`SITE.interfaceVersion` 只升不降，改了已有公开字段或含义时升主版本。
 - **出刊时间写整点或半点**：`EDITION_TIMES`（北京时间 `HH:mm`）由每半小时一次的排程检查，日报窗口、缺期告警和各处时间文案都读它。
-- **导航隐藏的范围**：`NAV.hidden` 目前只开放 `"/hot"` 和 `"/topics"`（一并处理侧栏、底栏、“我的”页、返回链接、面包屑，以及隐藏 `"/hot"` 时的首页热点条和事件页名次；直接打开地址仍能访问）。
+- **导航隐藏的范围**：`NAV.hidden` 目前只开放 `"/hot"` 和 `"/topics"`（一并处理页首、“更多”菜单、“更多”页、返回链接、面包屑，以及隐藏 `"/hot"` 时的事件页名次；直接打开地址仍能访问）。
 - **限流说明与实际一致**：前面的反向代理真的按 IP 限流了，再填 `ACCESS.ratePerMinute`。
 
 ## 2. 分类、标签和主题：`industry/taxonomy.ts`、`industry/topics.json`
@@ -94,8 +94,7 @@
 - 分享图的字体（可选，放在 `assets/og-fonts/`）：分享图用 Noto Sans SC 子集（GB2312 + 基本拉丁），繁体、日文汉字、假名、韩文和带变音符的拉丁字母会画不出来。信源有这些文字时，放进 `<名字>-400.ttf` 和 `<名字>-700.ttf`，缺的字依次从这些字体里取（按文件名排序）；换了字体要重启服务，分享图缓存随之换新。不放就和原来一样。
 - `nameplates/`：日报、周报、月报页顶部的报头字（比如“AI日报”）。换了行业词以后重新生成：
   ```bash
-  npm pack @fontsource/noto-sans-sc@5.3.0 && tar xzf fontsource-noto-sans-sc-5.3.0.tgz
-  node scripts/nameplates.ts package
+  node scripts/nameplates.ts
   ```
 - 关于页的二维码：先在 `site.ts` 的 `ABOUT.maker` 写好作者块，并写上 `wechat`、`feishu` 卡片（标题和说明）；再在后台“设置 → 关于页二维码”上传图片，或者把图片放进 `site/brand/contact/`，文件名以 `qr-wechat`、`qr-feishu` 开头，格式是 png、jpg 或 webp。作者块、卡片或图片缺一样，那张二维码就不显示。
 
@@ -107,7 +106,7 @@
 
 - `pages/terms.md`、`pages/privacy.md`：使用规则和隐私说明。**现在是模板**，上线前按你的实际情况改写，必要时请专业人士看一下。
 - `public/`：网站根目录上的四个固定文件，替换占位符后发布：`robots.txt`、`manifest.webmanifest`（装到手机桌面时的名字和图标）、`openapi-v1.json`（公开 API 的说明），以及可选的 `.well-known/security.txt`（安全问题的联系方式）。只发布这四个文件，放进去的其他文件不会出现在网站上；没有的文件访问时是 404。文件里可以写这些占位符：`{{siteName}}`、`{{siteUrl}}`、`{{description}}`、`{{tagline}}`、`{{locale}}`，出刊时间 `{{dailyTime}}`、`{{weeklyTime}}`、`{{monthlyTime}}`，公开接口版本 `{{version}}`，逗号分隔的公开分类 `{{categoryList}}`；JSON 文件里 `enum` 或 `examples` 列表中的 `"{{categories}}"` 会换成公开分类的 key 列表。
-- `changelog.json`：更新日志。自带一条“网站上线”示例，上线前把它的 `date`、`time` 和 `latestVersion` 改成你的上线时间；示例正文里的框架署名（“用 AIHOT 开源框架搭起了这个站”）同样可留可删。新条目写在最前面，把 `latestVersion` 改成它的日期和时间。`kind` 是“更新”“优化”“公告”“下线”之一；要读者一定看到的加 `"urgent": true`（红色，标“重要”）。
+- `changelog.json`：更新日志。自带一条“网站上线”示例，上线前把它的 `date`、`time` 和 `latestVersion` 改成你的上线时间；示例正文里的框架署名（“用 AIHOT 开源框架搭起了这个站”）同样可留可删。新条目写在最前面，把 `latestVersion` 改成它的日期和时间。`kind` 是“更新”“優化”“公告”“下線”之一；要读者一定看到的加 `"urgent": true`（红色，标“重要”）。
 
 ## 8. 模型和部署
 

@@ -2,12 +2,9 @@ import { useEffect, useState } from "react";
 import { useLocation } from "react-router";
 import { RingMark } from "@aihot/site/brand/Logo.tsx";
 import { PhoneBar } from "../components/shell/PhoneBar";
-import type { Screen } from "../components/shell/screens";
 import { titled } from "../lib/seo";
 import { Link } from "../lib/link";
 import { localeOf, pagePath, translator, useT } from "../lib/i18n";
-
-export const handle: Screen = { tab: "featured" };
 
 export function meta({ location }: { location: { pathname: string } }) {
   const t = translator(localeOf(location.pathname));
@@ -35,7 +32,7 @@ export default function SearchBusy() {
   const base = pagePath(pathname).startsWith("/all") ? "/all" : "/";
   const retry = kept.toString() ? `${base}?${kept}` : base;
   const hasSearch = kept.has("q");
-  const button = "inline-flex h-9 items-center rounded-full px-4 text-ui-label-lg";
+  const button = "btn";
   return (
     <>
     <PhoneBar back={{ to: base, label: base === "/all" ? t("全部", "All") : t("精選", "Top Picks") }} />
@@ -53,10 +50,10 @@ export default function SearchBusy() {
           (wait > 0 ? (
             <span aria-disabled="true" className={`${button} num cursor-default bg-bg-sunk font-medium text-ink-4`}>{t(`${wait} 秒後可重試`, `Try again in ${wait}s`)}</span>
           ) : (
-            <Link to={retry} className={`${button} bg-accent font-medium text-accent-contrast hover:bg-accent-ink`}>{t("重試這次搜尋", "Search again")}</Link>
+            <Link to={retry} className={`${button} btn-brand`}>{t("重試這次搜尋", "Search again")}</Link>
           ))}
-        <Link to="/all" className={`${button} ${hasSearch ? "border border-line-strong bg-surface text-ink-2 hover:border-ink-4" : "bg-accent font-medium text-accent-contrast hover:bg-accent-ink"}`}>{t("瀏覽全部動態", `Browse all news`)}</Link>
-        <Link to="/" className={`${button} border border-line-strong bg-surface text-ink-2 hover:border-ink-4`}>{t("回到精選", "Back to Top Picks")}</Link>
+        <Link to="/all" className={`${button} ${hasSearch ? "btn-quiet" : "btn-brand"}`}>{t("瀏覽全部動態", `Browse all news`)}</Link>
+        <Link to="/" className={`${button} btn-quiet`}>{t("回到精選", "Back to Top Picks")}</Link>
       </div>
     </div>
     </>

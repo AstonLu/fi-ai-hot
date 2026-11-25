@@ -58,7 +58,7 @@ export default function AdminLogin() {
               {message}
             </p>
           )}
-          <button type="submit" className={`${buttonClass("primary", "lg")} mt-5 w-full`}>
+          <button type="submit" className={`${buttonClass("primary")} mt-5 w-full`}>
             登入
           </button>
         </form>

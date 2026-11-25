@@ -7,7 +7,7 @@
 // renders them like any import.
 import type { ComponentType, ReactNode } from "react";
 import type { TopicSummary } from "@aihot/contracts/site";
-import type { NavItem, Tab } from "./components/shell/nav";
+import type { NavItem } from "./components/shell/nav";
 import type { Text } from "./lib/i18n";
 
 export type Part<T> = () => Promise<{ default: T }>;
@@ -104,7 +104,7 @@ export interface TopicPagePart {
   news: (data: unknown) => string[];
 }
 
-/** Where the reader's account shows: the 我的 page's first row, the first row of the desktop sidebar's 更多 menu, the 收藏 page's note, the 卡冊. */
+/** Where the reader's account shows: the 我的 page's first row, the first row of the header's 更多 menu, the 收藏 page's note, the 卡冊. */
 export type AccountPlace = "me" | "menu" | "starred" | "album";
 
 export interface WebModule {
@@ -114,10 +114,10 @@ export interface WebModule {
   account?: ComponentType<{ place: AccountPlace }>;
   /** The email of the reader signed in in this browser, or null (read after hydration). */
   signedInEmail?: () => string | null;
-  /** Desktop sidebar: entries in a section between the engine's 內容 and 更多; modules sharing sectionKey (or section title) share it. */
+  /** The 更多 menu: entries in a section between the engine's 內容 and 更多; modules sharing sectionKey (or section title) share it. */
   sidebar?: { sectionKey?: string; section: Text; items: NavItem[] };
-  /** Phone tab bar: tabs before 我的. */
-  tabs?: Tab[];
+  /** The header (desktop): entries between 日報 and 收藏; phones reach them under 更多 (`tools`). */
+  tabs?: NavItem[];
   /** The 我的 page: rows ahead of the engine's tools. */
   tools?: Array<{ to: string; label: Text; icon: ReactNode }>;
   /** Parts of every public page (root.tsx); the admin has its own chrome and gets none of them. */

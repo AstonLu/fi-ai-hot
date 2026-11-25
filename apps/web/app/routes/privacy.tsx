@@ -4,9 +4,6 @@ import { edgeTtl } from "../lib/api.server";
 import { pageMeta } from "../lib/seo";
 import { prepareCopy } from "../lib/site-copy";
 import { CopyPage, LegalFooterLinks } from "../features/copy/CopyPage";
-import type { Screen } from "../components/shell/screens";
-
-export const handle: Screen = { tab: "me" };
 
 const PRIVACY = prepareCopy(copy);
 

@@ -1,12 +1,12 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { useRouteLoaderData } from "react-router";
-import { POLICY, SITE } from "@aihot/site";
+import { POLICY, SITE, subjectAfter } from "@aihot/site";
 import { ENGLISH } from "@aihot/contracts/english";
 import type { Route } from "./+types/more";
 import type { loader as rootLoader } from "../root";
-import { useChangelogDot } from "../components/shell/Sidebar";
+import { useChangelogDot } from "../components/shell/Header";
 import { PhoneBar } from "../components/shell/PhoneBar";
-import { topicsInNav } from "../components/shell/nav";
+import { hotInNav, topicsInNav } from "../components/shell/nav";
 import type { Screen } from "../components/shell/screens";
 import { edgeTtl } from "../lib/api.server";
 import { webModules } from "../site-modules";
@@ -16,11 +16,11 @@ import { FontSelect } from "../components/shell/FontSelect";
 import { ThemeSwitch } from "../components/shell/ThemeSwitch";
 import { LanguageSwitch } from "../components/shell/LanguageSwitch";
 import { Filings } from "../components/shell/Filings";
-import { IconBookmark, IconChevronRight, IconGlobe, IconGrid, IconHeart, IconMessage, IconMoon, IconPlug, IconSparkles } from "../components/icons";
+import { IconBookmark, IconChevronRight, IconFlame, IconGlobe, IconGrid, IconHeart, IconList, IconMessage, IconMoon, IconPlug, IconSparkles } from "../components/icons";
 import { Link } from "../lib/link";
 import { feedPath, hasEnglish, L, localeOf, translator, useLocale, useT, type Locale, type Text } from "../lib/i18n";
 
-export const handle: Screen = { tab: "me", name: L("我的", "Me") };
+export const handle: Screen = { name: L("更多", "More") };
 
 export function headers() {
   return edgeTtl(300);
@@ -29,12 +29,12 @@ export function headers() {
 export function meta({ location }: Route.MetaArgs) {
   const locale = localeOf(location.pathname);
   const t = translator(locale);
-  return pageMeta({ locale, title: t("我的", "Me"), path: "/more", noindex: true });
+  return pageMeta({ locale, title: t("更多", "More"), path: "/more", noindex: true });
 }
 
 /**
- * "我的", the phone's last tab (the address stays /more): this browser's bookmarks and appearance first,
- * then the tools, then the site's own pages.
+ * "更多" on phones (the desktop header's menu): this browser's bookmarks and appearance first, then the
+ * lists and tools, then the site's own pages.
  */
 type Row = { to: string; label: Text; icon: ReactNode; detail?: ReactNode };
 
@@ -47,6 +47,8 @@ const agentWays = () => [...webModules().flatMap((m) => m.agentWays ?? []), "MCP
 /** The modules' tools first, then the engine's. */
 const tools = (): Row[] => [
   ...webModules().flatMap((m) => m.tools ?? []),
+  { to: "/all", label: L(subjectAfter("全部", "動態"), `All ${SITE.subject} News`), icon: <IconList size={20} /> },
+  ...(hotInNav ? [{ to: "/hot", label: L("熱點榜", "Trending"), icon: <IconFlame size={20} /> }] : []),
   ...(topicsInNav ? [{ to: "/topics", label: L("主題", "Topics"), icon: <IconGrid size={20} /> }] : []),
   { to: "/agent", label: L("Agent 接入", "For Agents"), icon: <IconPlug size={20} />, detail: agentWays().slice(0, 3).join(" · ") },
 ];
@@ -91,8 +93,8 @@ export default function MorePage() {
   const Account = webModules().find((m) => m.account)?.account;
   return (
     <div className="mx-auto max-w-[var(--page-max-reading)] pb-8">
-      <PhoneBar title={t("我的", "Me")} />
-      <h1 data-page-title="" className="pb-3 pt-0.5 text-ui-title-5 font-bold leading-[1.25] tracking-[-0.01em] text-ink lg:pb-4 lg:pt-1 lg:text-ui-heading-lg-sm">{t("我的", "Me")}</h1>
+      <PhoneBar title={t("更多", "More")} />
+      <h1 data-page-title="" className="pb-3 pt-0.5 text-ui-title-5 font-bold leading-[1.25] tracking-[-0.01em] text-ink lg:pb-4 lg:pt-1 lg:text-ui-heading-lg-sm">{t("更多", "More")}</h1>
       <div className="wide:grid wide:grid-cols-2 wide:items-start wide:gap-x-4 2xl:grid-cols-3">
         <Group>
           {Account && <Account place="me" />}

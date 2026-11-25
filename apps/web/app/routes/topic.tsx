@@ -8,7 +8,7 @@ import type { TopicPage } from "@aihot/contracts/site";
 import { cachedPage, loadOr404, pagePathname } from "../lib/api.server";
 import { pageReuse } from "../lib/page-reuse";
 import { breadcrumbLd, pageMeta, titled, topicLd } from "../lib/seo";
-import { DayList, Pagination } from "../features/feed/DayList";
+import { ItemBoard, Pagination } from "../features/feed/ItemBoard";
 import { BrandMark } from "../components/BrandMark";
 import { EmptyState } from "../components/ui/Page";
 import { IconArrowLeft } from "../components/icons";
@@ -16,7 +16,6 @@ import { beijingDate } from "@aihot/contracts/time";
 import { monthDay, monthDayTime } from "../lib/format";
 import { PhoneBar } from "../components/shell/PhoneBar";
 import { navUp } from "../components/shell/nav";
-import type { Screen } from "../components/shell/screens";
 import type { TopicPagePart } from "../modules";
 import { loadParts } from "../site-modules";
 import { Link } from "../lib/link";
@@ -24,7 +23,6 @@ import { apiIn, localeOf, localizePath, translator, useLocale, useT, type Locale
 
 // Topics are reached from the topics page, as long as the site shows it.
 const UP = navUp("/topics");
-export const handle: Screen = { home: UP.tab };
 export { pageHeaders as headers } from "../lib/api.server";
 export const { clientLoader, shouldRevalidate } = pageReuse<typeof loader>();
 
@@ -116,7 +114,7 @@ export default function TopicRoute() {
   const first = (page - 1) * pageSize + 1;
   const last = first + items.length - 1;
   return (
-    <div className="pb-6">
+    <div className="board-shell pb-6">
       <PhoneBar back={{ to: UP.to, label: UP.back }} title={name} />
       <Link to={UP.to} className="hidden items-center gap-1.5 py-2 text-ui-label text-ink-3 transition-colors hover:text-accent lg:inline-flex">
         <IconArrowLeft size={14} />{t(<> 返回{t(UP.back)}</>, <> Back to {t(UP.name)}</>)}
@@ -176,14 +174,17 @@ export default function TopicRoute() {
 
       <h2 className="sr-only">{page === 1 ? t(`${topic.name}的精選`, `Top picks on ${name}`) : t(`精選歸檔 · 第 ${page} 頁`, `Top picks archive · Page ${page}`)}</h2>
       {items.length === 0 ? (
-        <div className="lg:card">
+        <div>
           <EmptyState title={t("這個主題暫時還沒有精選內容", "No top picks on this topic yet")} />
         </div>
       ) : (
-        <DayList items={items} tagTopics={data.tagTopics} currentTopicSlug={topic.slug} headerAside={<span className="num whitespace-nowrap">{t(
+        <>
+          <p className="num pb-3 text-ui-caption text-ink-4">{t(
           <>第 {first}–{last} 條<span className="hidden sm:inline"> · 共 {topic.total.toLocaleString("zh-CN")} 條</span></>,
           <>Items {first.toLocaleString("en-US")}–{last.toLocaleString("en-US")}<span className="hidden sm:inline"> of {topic.total.toLocaleString("en-US")}</span></>,
-        )}</span>} />
+        )}</p>
+          <ItemBoard items={items} />
+        </>
       )}
       <Pagination page={page} pageCount={pageCount} href={href} />
     </div>

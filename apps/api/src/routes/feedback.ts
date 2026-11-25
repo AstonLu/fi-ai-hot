@@ -10,15 +10,15 @@ async function readForm(raw: unknown, contentType: string): Promise<FeedbackBody
   try {
     form = await new Response(raw as Buffer<ArrayBuffer>, { headers: { "content-type": contentType } }).formData();
   } catch {
-    throw new FeedbackRejected(400, "invalid_request", "提交的数据不完整，请重新发送。");
+    throw new FeedbackRejected(400, "invalid_request", "提交的資料不完整，請重新送出。");
   }
   const text = (key: string) => {
     const value = form.get(key);
-    if (value !== null && typeof value !== "string") throw new FeedbackRejected(400, "invalid_request", "反馈内容未能正常提交，请重新发送。");
+    if (value !== null && typeof value !== "string") throw new FeedbackRejected(400, "invalid_request", "意見內容未能正常送出，請重新送出。");
     return value;
   };
   const file = form.get("screenshot");
-  if (file !== null && !(file instanceof File)) throw new FeedbackRejected(400, "invalid_request", "截图未能正常上传，请重新选择图片。");
+  if (file !== null && !(file instanceof File)) throw new FeedbackRejected(400, "invalid_request", "截圖未能正常上傳，請重新選擇圖片。");
   return {
     content: text("content") ?? "", email: text("email"), pageUrl: text("pageUrl"),
     screenshot: file ? { mime: file.type, data: Buffer.from(await file.arrayBuffer()) } : null,
@@ -36,7 +36,7 @@ export function registerFeedback(app: FastifyInstance) {
     } catch (error) {
       if (error instanceof FeedbackRejected) return sendProblem(req, reply, { status: error.status, code: error.code, detail: error.message, retryAfter: error.retryAfter });
       req.log.error({ err: error }, "feedback failed");
-      return sendProblem(req, reply, { status: 503, code: "temporarily_unavailable", detail: "暂时无法提交，请稍后再试。", retryAfter: 30 });
+      return sendProblem(req, reply, { status: 503, code: "temporarily_unavailable", detail: "暫時無法提交，請稍後再試。", retryAfter: 30 });
     }
   });
 }
