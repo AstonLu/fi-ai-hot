@@ -40,6 +40,7 @@ export const MODELS: Record<string, ModelSpec> = {
     get extra() { return extraFromEnv(process.env.LLM_EXTRA_JSON); },
     get reasoningTokens() { return reasoningTokensFromEnv(process.env.LLM_REASONING_TOKENS); },
     get jsonMode() { return process.env.LLM_JSON_MODE !== "false"; },
+    get omitTemperature() { return process.env.LLM_OMIT_TEMPERATURE === "true"; },
     get vision() { return process.env.LLM_VISION === "true"; },
   },
   // The pack's named presets, each with its own address and key.
@@ -116,7 +117,8 @@ function isConnectFailure(error: unknown): boolean {
 }
 
 function requestFor<S extends z.ZodType>(opts: ChatJsonOptions<S>, spec: ModelSpec) {
-  const temperature = opts.temperature ?? 0.2;
+  // null: the provider picks its own default (spec.omitTemperature), and the request carries none.
+  const temperature = spec.omitTemperature ? null : opts.temperature ?? 0.2;
   // Never below 512: a smaller cap cut short structured answers down to an empty response (production, 2026-06-19).
   const maxTokens = Math.max(opts.maxTokens ?? 1500, 512) + (spec.reasoningTokens ?? 0);
   const userText = typeof opts.user === "string" ? opts.user : JSON.stringify(opts.user);
@@ -180,7 +182,7 @@ async function chatOnce<S extends z.ZodType>(opts: ChatJsonOptions<S>, circuit =
       // Multimodal parts go through as parts; plain objects are sent as JSON text.
       { role: "user", content: typeof opts.user === "string" || Array.isArray(opts.user) ? opts.user : userText },
     ],
-    temperature,
+    ...(temperature === null ? {} : { temperature }),
     max_tokens: maxTokens,
     ...(spec.jsonMode && opts.json !== false ? { response_format: { type: "json_object" } } : {}),
     ...(spec.extra ?? {}),

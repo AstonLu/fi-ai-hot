@@ -9,6 +9,8 @@ export interface ModelPreset {
   /** Output tokens added to every call's own limit for a reasoning model, which reasons before it answers. */
   reasoningTokens?: number;
   jsonMode: boolean;
+  /** Send no temperature: newer Claude models (Haiku 5.5 and later) reject any value but the default. */
+  omitTemperature?: boolean;
   vision?: boolean;
   /** Capability → primary model for which this preset is an evaluated backup. */
   fallbackFor?: Record<string, string>;
