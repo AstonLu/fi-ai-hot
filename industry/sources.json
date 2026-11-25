@@ -838,6 +838,215 @@
       "site_fulltext": false,
       "syndicate_fulltext": false,
       "enabled": true
+    },
+    {
+      "id": "rss-insureai-wire",
+      "name": "InsureAI Wire",
+      "kind": "rss",
+      "config": {
+        "feedUrl": "https://insureaiwire.com/rss.xml",
+        "denyUrlPrefixes": [
+          "https://insureaiwire.com/newsletter/"
+        ],
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
+      "tier": "T2",
+      "owner_entity_id": null,
+      "participation_mode": "editorial",
+      "interval_minutes": 120,
+      "tags": [
+        "媒體",
+        "保險"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "rss-builders-in-fintech-agentic",
+      "name": "Builders in Fintech · Agentic Payments",
+      "kind": "rss",
+      "config": {
+        "feedUrl": "https://buildersinfintech.ai/topics/agentic-payments/feed.xml",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
+      "tier": "T2",
+      "owner_entity_id": null,
+      "participation_mode": "editorial",
+      "interval_minutes": 120,
+      "tags": [
+        "媒體"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "rss-fintech-news-sg-ai",
+      "name": "Fintech News Singapore · AI",
+      "kind": "rss",
+      "config": {
+        "feedUrl": "https://fintechnews.sg/ai/feed/",
+        "denyCategories": [
+          "Sponsored",
+          "Sponsored Post"
+        ],
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
+      "tier": "T2",
+      "owner_entity_id": null,
+      "participation_mode": "editorial",
+      "interval_minutes": 120,
+      "tags": [
+        "媒體"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "rss-fintech-news-hk-ai",
+      "name": "Fintech News Hong Kong · AI",
+      "kind": "rss",
+      "config": {
+        "feedUrl": "https://fintechnews.hk/ai/feed/",
+        "denyCategories": [
+          "Sponsored",
+          "Sponsored Post"
+        ],
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
+      "tier": "T2",
+      "owner_entity_id": null,
+      "participation_mode": "editorial",
+      "interval_minutes": 120,
+      "tags": [
+        "媒體"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "rss-fintech-news-my-ai",
+      "name": "Fintech News Malaysia · AI",
+      "kind": "rss",
+      "config": {
+        "feedUrl": "https://fintechnews.my/ai/feed/",
+        "denyCategories": [
+          "Sponsored",
+          "Sponsored Post"
+        ],
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
+      "tier": "T2",
+      "owner_entity_id": null,
+      "participation_mode": "editorial",
+      "interval_minutes": 120,
+      "tags": [
+        "媒體"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "rss-aba-banking-journal-ai",
+      "name": "ABA Banking Journal · AI",
+      "kind": "rss",
+      "config": {
+        "feedUrl": "https://bankingjournal.aba.com/tag/artificial-intelligence/feed/",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
+      "tier": "T2",
+      "owner_entity_id": null,
+      "participation_mode": "editorial",
+      "interval_minutes": 120,
+      "tags": [
+        "媒體"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "rss-national-mortgage-news-ai",
+      "name": "National Mortgage News · AI",
+      "kind": "rss",
+      "config": {
+        "feedUrl": "https://www.nationalmortgagenews.com/artificial-intelligence?rss=true",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
+      "tier": "T2",
+      "owner_entity_id": null,
+      "participation_mode": "editorial",
+      "interval_minutes": 120,
+      "tags": [
+        "媒體"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "rss-ai-street",
+      "name": "AI Street",
+      "kind": "rss",
+      "config": {
+        "feedUrl": "https://www.ai-street.co/feed",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
+      "tier": "T2",
+      "owner_entity_id": null,
+      "participation_mode": "editorial",
+      "interval_minutes": 360,
+      "tags": [
+        "電子報"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "rss-insuranceindustry-ai-insights",
+      "name": "InsuranceIndustry.ai · AI Insights",
+      "kind": "rss",
+      "config": {
+        "feedUrl": "https://insuranceindustry.ai/feed/",
+        "allowUrlPrefixes": [
+          "https://insuranceindustry.ai/ai-insights-"
+        ],
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
+      "tier": "T2",
+      "owner_entity_id": null,
+      "participation_mode": "editorial",
+      "interval_minutes": 360,
+      "tags": [
+        "電子報",
+        "保險"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
     }
   ]
 }
