@@ -19,4 +19,4 @@ const text = readFileSync(".env.example", "utf8")
 writeFileSync(".env", text, { mode: 0o600 });
 console.log("已生成 .env。");
 console.log(`管理员密码：${password}（也写在 .env 的 ADMIN_PASSWORD 里）`);
-if (!llmKey) console.log("还差一步：在 .env 里填上 LLM_API_KEY（以及 LLM_BASE_URL、LLM_MODEL，默认是 DeepSeek）。");
+if (!llmKey) console.log("還差一步：在 .env 裡填上 LLM_API_KEY（Google AI Studio 建立的 Gemini 金鑰；LLM_BASE_URL、LLM_MODEL 預設是 Gemini 2.5 Flash-Lite）。");

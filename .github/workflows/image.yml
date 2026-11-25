@@ -1,0 +1,42 @@
+# Builds the app image on GitHub's runners and pushes it to this repository's GitHub container registry
+# (ghcr.io), so the 1 GB Google Cloud VM only pulls a finished image and never builds one.
+# Only GitHub-owned actions, pinned to a full commit SHA; login, build and push use the docker CLI.
+name: Image
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+concurrency:
+  group: image-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  image:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Image name
+        id: name
+        # Registry names must be lower case.
+        run: echo "image=ghcr.io/${GITHUB_REPOSITORY,,}" >> "$GITHUB_OUTPUT"
+      - name: Log in to ghcr.io
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+      - name: Build
+        # The e2-micro VM is x86, so one linux/amd64 image is enough.
+        run: |
+          docker build --platform linux/amd64 \
+            --label org.opencontainers.image.source="https://github.com/${GITHUB_REPOSITORY}" \
+            --label org.opencontainers.image.revision="${GITHUB_SHA}" \
+            -t "${{ steps.name.outputs.image }}:latest" \
+            -t "${{ steps.name.outputs.image }}:${GITHUB_SHA::12}" .
+      - name: Push
+        run: |
+          docker push "${{ steps.name.outputs.image }}:${GITHUB_SHA::12}"
+          docker push "${{ steps.name.outputs.image }}:latest"

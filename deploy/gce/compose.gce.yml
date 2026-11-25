@@ -1,0 +1,41 @@
+# Google Cloud e2-micro (2 vCPU burst, 1 GB RAM): run the image GitHub built instead of building here,
+# and keep every process small enough to fit next to PostgreSQL with 2 GB of swap behind them.
+#   docker compose -f docker-compose.yml -f deploy/gce/compose.gce.yml pull
+#   docker compose -f docker-compose.yml -f deploy/gce/compose.gce.yml --profile https up -d
+# APP_IMAGE comes from .env, e.g. APP_IMAGE=ghcr.io/<owner>/<repo>:latest
+x-gce-app: &gce-app
+  build: !reset null
+  image: ${APP_IMAGE:?set APP_IMAGE in .env to the ghcr.io image GitHub built}
+  pull_policy: always
+
+services:
+  db:
+    # Small buffers and few connections: four Node processes share 1 GB with the database.
+    command: ["postgres", "-c", "shared_buffers=64MB", "-c", "work_mem=4MB", "-c", "maintenance_work_mem=32MB", "-c", "effective_cache_size=256MB", "-c", "max_connections=40"]
+    mem_limit: 256m
+
+  setup:
+    <<: *gce-app
+    environment:
+      NODE_OPTIONS: --max-old-space-size=192
+    mem_limit: 320m
+
+  api:
+    <<: *gce-app
+    environment:
+      NODE_OPTIONS: --max-old-space-size=160
+      DATABASE_POOL_MAX: "5"
+    mem_limit: 256m
+
+  worker:
+    <<: *gce-app
+    environment:
+      NODE_OPTIONS: --max-old-space-size=224
+      DATABASE_POOL_MAX: "5"
+    mem_limit: 320m
+
+  web:
+    <<: *gce-app
+    environment:
+      NODE_OPTIONS: --max-old-space-size=128
+    mem_limit: 192m
