@@ -6,7 +6,7 @@ import { ENGLISH, needsEnglish } from "@aihot/contracts/english";
 import { SITE } from "@aihot/site";
 import { brandMark, clamp, ENGLISH_LAYOUT_VERSION, FALLBACK_FONTS, fitLines, h, nameMark, plainEnglish, renderPng, SITE_HOST, wrapLines, type Node } from "./og.ts";
 
-export const POSTER_TEMPLATE_VERSION = "poster-2026-11-25.2";
+export const POSTER_TEMPLATE_VERSION = "poster-2026-11-25.3";
 const WIDTH = 1080;
 const HEIGHT = 1440;
 
