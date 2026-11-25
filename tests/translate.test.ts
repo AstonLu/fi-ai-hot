@@ -488,7 +488,7 @@ test("a selected X long article is translated as its page shows it: the article,
   assert.match(original.body.original, /The price is twenty dollars/);
   assert.ok(!original.body.original.includes('x.com/i/article'), 'the article stands for its link');
   const md = (await app.inject({method:'GET',url:`/items/${long}/markdown`})).body;
-  assert.match(md, /## 正文 · 中文译文[\s\S]*价格是二十美元[\s\S]*## 正文 · 原文[\s\S]*The price is twenty dollars/);
+  assert.match(md, /## 正文 · 中文譯文[\s\S]*价格是二十美元[\s\S]*## 正文 · 原文[\s\S]*The price is twenty dollars/);
   assert.ok((await app.inject({method:'GET',url:'/feed/full.xml'})).body.includes('价格是二十美元'), 'the full feed carries the complete translation');
 });
 

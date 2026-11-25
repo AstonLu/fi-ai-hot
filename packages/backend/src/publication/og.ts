@@ -47,11 +47,11 @@ export async function loadItemOgCard(id: string, lang: Locale = 'zh'): Promise<O
     };
   }
   return {
-    kicker: item.category ? CATEGORY_LABELS[item.category] : withSubject('动态'),
+    kicker: item.category ? CATEGORY_LABELS[item.category] : withSubject('動態'),
     title: item.title,
     subtitle: item.summary,
     meta: `${item.source.name} · ${beijingDate(item.timelineAt)}`,
-    badge: item.selected && item.score !== null && ITEM_COPY.showScore ? { value: String(Math.round(item.score)), label: '精选评分' } : null,
+    badge: item.selected && item.score !== null && ITEM_COPY.showScore ? { value: String(Math.round(item.score)), label: '精選評分' } : null,
   };
 }
 
@@ -62,7 +62,7 @@ export async function loadItemPoster(id: string, lang: Locale = 'zh'): Promise<P
   const en = lang === 'en';
   return {
     url: `${config.siteUrl}${en ? '/en' : ''}/items/${d.id}`,
-    kicker: d.category ? categoryLabel(d.category, lang) : withSubject(en ? 'News' : '动态'),
+    kicker: d.category ? categoryLabel(d.category, lang) : withSubject(en ? 'News' : '動態'),
     title: d.title,
     summary: d.summary,
     source: d.source.name,

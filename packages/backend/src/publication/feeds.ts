@@ -45,49 +45,49 @@ const when = ENGLISH?.editionWhen ?? { daily: "daily", weekly: "weekly", monthly
 const FEEDS = {
   "selected": {
     path: "/feed.xml", homePath: "/", pollHintMinutes: 30,
-    title: L(`${SITE.name} — 精选`, `${SITE.name} — Top Picks`),
+    title: L(`${SITE.name} — 精選`, `${SITE.name} — Top Picks`),
     description: L(
-      `最新 ${ITEMS_KEPT} 条 ${SITE.name} 精选摘要，附站内阅读与原文链接；想在阅读器里直接看全文，可改订 /feed/full.xml。`,
+      `最新 ${ITEMS_KEPT} 則 ${SITE.name} 精選摘要，附站內閱讀與原文連結；想在閱讀器裡直接看全文，可改訂 /feed/full.xml。`,
       `The latest ${ITEMS_KEPT} ${SITE.name} top picks in English, with links to read them on the site and at the source; for full text in your reader, subscribe to /en/feed/full.xml instead.`,
     ),
   },
   "selected-full": {
     path: "/feed/full.xml", homePath: "/", pollHintMinutes: 30,
-    title: L(`${SITE.name} — 精选全文`, `${SITE.name} — Top Picks, Full Text`),
+    title: L(`${SITE.name} — 精選全文`, `${SITE.name} — Top Picks, Full Text`),
     description: L(
-      `最新 ${ITEMS_KEPT} 条 ${SITE.name} 精选；允许转载的来源会直接附上全文，其余提供摘要与阅读链接。`,
+      `最新 ${ITEMS_KEPT} 則 ${SITE.name} 精選；允許轉載的來源會直接附上全文，其餘提供摘要與閱讀連結。`,
       `The latest ${ITEMS_KEPT} ${SITE.name} top picks in English; sources that allow republishing come with their original full text (not those written in Chinese), the rest with a summary and links.`,
     ),
   },
   "all": {
     path: "/feed/all.xml", homePath: "/all", pollHintMinutes: 30,
-    title: L(`${SITE.name} — ${subjectAfter("全部", "动态")}`, `${SITE.name} — All ${SITE.subject} News`),
+    title: L(`${SITE.name} — ${subjectAfter("全部", "動態")}`, `${SITE.name} — All ${SITE.subject} News`),
     description: L(
-      `${subjectAfter("最近 7 天发布的", "动态")}，按发布时间倒序，已过滤重复和低价值内容。`,
+      `${subjectAfter("最近 7 天發布的", "動態")}，按發布時間倒序，已過濾重複和低價值內容。`,
       `${SITE.subject} news from the last 7 days in English, newest first, with duplicates and low-value items filtered out.`,
     ),
   },
   "daily": {
     path: "/feed/daily.xml", homePath: "/daily", pollHintMinutes: 30,
-    title: L(`${SITE.name} 日报`, `${SITE.name} ${REPORT_NAMES_EN.daily}`),
+    title: L(`${SITE.name} 日報`, `${SITE.name} ${REPORT_NAMES_EN.daily}`),
     description: L(
-      `${SITE.name} ${EDITION_WHEN.daily}（北京时间）发布的精编日报，保留最近 ${ISSUES_KEPT.daily} 期。`,
+      `${SITE.name} ${EDITION_WHEN.daily}（北京時間）發布的精編日報，保留最近 ${ISSUES_KEPT.daily} 期。`,
       `${SITE.name}'s daily briefing, out ${when.daily}; the last ${ISSUES_KEPT.daily} issues.`,
     ),
   },
   "weekly": {
     path: "/feed/weekly.xml", homePath: "/weekly", pollHintMinutes: 180,
-    title: L(`${SITE.name} 周报`, `${SITE.name} ${REPORT_NAMES_EN.weekly}`),
+    title: L(`${SITE.name} 週報`, `${SITE.name} ${REPORT_NAMES_EN.weekly}`),
     description: L(
-      `${SITE.name} ${EDITION_WHEN.weekly}（北京时间）发布的周报：整理自上周日报的${REPORTS.entry.noun}，按栏目归类并附总述，保留最近 ${ISSUES_KEPT.weekly} 期。`,
+      `${SITE.name} ${EDITION_WHEN.weekly}（北京時間）發布的週報：整理自上週日報的${REPORTS.entry.noun}，按欄目歸類並附總述，保留最近 ${ISSUES_KEPT.weekly} 期。`,
       `${SITE.name}'s weekly roundup, out ${when.weekly}: last week's daily stories by section, with an overview; the last ${ISSUES_KEPT.weekly} issues.`,
     ),
   },
   "monthly": {
     path: "/feed/monthly.xml", homePath: "/monthly", pollHintMinutes: 360,
-    title: L(`${SITE.name} 月报`, `${SITE.name} ${REPORT_NAMES_EN.monthly}`),
+    title: L(`${SITE.name} 月報`, `${SITE.name} ${REPORT_NAMES_EN.monthly}`),
     description: L(
-      `${SITE.name} ${EDITION_WHEN.monthly}（北京时间）发布的月报：整理自上月日报的${REPORTS.entry.noun}，按栏目归类并附总述，保留最近 ${ISSUES_KEPT.monthly} 期。`,
+      `${SITE.name} ${EDITION_WHEN.monthly}（北京時間）發布的月報：整理自上月日報的${REPORTS.entry.noun}，按欄目歸類並附總述，保留最近 ${ISSUES_KEPT.monthly} 期。`,
       `${SITE.name}'s monthly review, out ${when.monthly}: last month's daily stories by section, with an overview; the last ${ISSUES_KEPT.monthly} issues.`,
     ),
   },
@@ -169,7 +169,7 @@ function fullContent(r: FeedRow, aihot: string, lang: FeedLanguage): string | nu
       const url = String(media.url ?? "");
       if (!/^https?:\/\//i.test(url)) continue;
       html += media.kind === "video"
-        ? `<p><a href="${escapeXml(url)}">${en ? "Video" : "视频"}</a></p>`
+        ? `<p><a href="${escapeXml(url)}">${en ? "Video" : "影片"}</a></p>`
         : `<p><img src="${escapeXml(url)}" alt="${escapeXml(String(media.alt ?? ""))}"></p>`;
     }
   } else if (r.body_html) {
@@ -180,14 +180,14 @@ function fullContent(r: FeedRow, aihot: string, lang: FeedLanguage): string | nu
   if (en && isChineseText(html.replace(/<[^>]+>/g, " "))) return null;
   const credit = en
     ? `<p>— Collected by ${escapeXml(SITE.name)}; the full page and more ${escapeXml(SITE.subject)} news at <a href="${aihot}">${aihot}</a></p>`
-    : `<p>—— 本文由 ${escapeXml(SITE.name)} 聚合整理，完整版与${escapeXml(subjectAfter("更多", "动态"))}见 <a href="${aihot}">${aihot}</a></p>`;
+    : `<p>—— 本文由 ${escapeXml(SITE.name)} 聚合整理，完整版與${escapeXml(subjectAfter("更多", "動態"))}見 <a href="${aihot}">${aihot}</a></p>`;
   return `${proxyBodyImages(html, true, FEED_IMAGE_SECONDS)}${credit}`;
 }
 
 function itemXml(r: FeedRow, includeContent: boolean, lang: FeedLanguage): string {
   const aihot = siteUrl(inLanguage(`/items/${r.id}`, lang));
   const summary = r.summary ?? "";
-  const description = `<p>${escapeXml(summary)}</p>\n<p>🔗 <a href="${escapeXml(r.url)}">${lang === "en" ? "Read the original" : "阅读原文"}</a></p>\n<p>via ${escapeXml(SITE.name)} · <a href="${aihot}">${aihot}</a></p>`;
+  const description = `<p>${escapeXml(summary)}</p>\n<p>🔗 <a href="${escapeXml(r.url)}">${lang === "en" ? "Read the original" : "閱讀原文"}</a></p>\n<p>via ${escapeXml(SITE.name)} · <a href="${aihot}">${aihot}</a></p>`;
   const publicCategory = toPublicApiCategory(r.category);
   const category = publicCategory ? `\n      <category>${escapeXml(feedCategoryLabelIn(publicCategory, lang))}</category>` : "";
   let content = "";
@@ -256,8 +256,8 @@ export async function itemFeed(kind: ItemFeedKind, category: PublicApiCategoryKe
       : {
         title: includeContent ? `${SITE.name} — ${label}全文` : `${SITE.name} — ${label}`,
         description: includeContent
-          ? `${SITE.name}「${label}」分类精选：允许转载的来源直接附上全文，其余提供摘要与阅读链接。`
-          : `${SITE.name}「${label}」分类精选摘要，方便只订阅自己关心的方向。`,
+          ? `${SITE.name}「${label}」分類精選：允許轉載的來源直接附上全文，其餘提供摘要與閱讀連結。`
+          : `${SITE.name}「${label}」分類精選摘要，方便只訂閱自己關心的方向。`,
         homePath: "/", selfPath, ttl: m.pollHintMinutes,
       };
   }
@@ -265,7 +265,7 @@ export async function itemFeed(kind: ItemFeedKind, category: PublicApiCategoryKe
   return channel(meta, items, lang);
 }
 
-const ISSUE_NAME: Record<ReportKind, string> = { daily: "日报", weekly: "周报", monthly: "月报" };
+const ISSUE_NAME: Record<ReportKind, string> = { daily: "日報", weekly: "週報", monthly: "月報" };
 /** Issues each report feed keeps: a month of dailies, a quarter of weeklies, a year of monthlies. */
 
 /** One issue: its headline, its lead (a weekly's or monthly's overview) and its contents, each entry linking to its page. */

@@ -36,9 +36,9 @@ export function meta() {
 
 const KIND_DOT: Record<Release["kind"], string> = {
   更新: "bg-accent",
-  优化: "bg-ok",
+  優化: "bg-ok",
   公告: "bg-amber",
-  下线: "bg-ink-4",
+  下線: "bg-ink-4",
 };
 
 const KINDS = Object.keys(KIND_DOT) as Release["kind"][];
