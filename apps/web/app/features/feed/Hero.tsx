@@ -58,7 +58,7 @@ export function Hero({ stories }: { stories: HeroStory[] }) {
         <p className="hero-sources">
           <span className="flex" aria-hidden="true">
             {[...new Map(stories.map((s) => [s.source.name, s.source])).values()].slice(0, 4).map((s) => (
-              <span key={s.name} className="hero-face"><SourceAvatar id={s.id} name={s.name} iconUrl={sourceIcon(s.id)} size={30} /></span>
+              <span key={s.name} className="hero-face"><SourceAvatar id={s.id} name={s.name} iconUrl={sourceIcon(s.id)} size={36} /></span>
             ))}
           </span>
           <span>{t(`來自 ${names.length} 個來源`, `From ${names.length} ${names.length === 1 ? "source" : "sources"}`)}</span>
@@ -93,18 +93,16 @@ export function Hero({ stories }: { stories: HeroStory[] }) {
           return (
             // Only the front card is the link readers reach by keyboard; the ones behind turn the stack under a pointer.
             <div key={s.id} className="hero-card" data-place={place} aria-hidden={k !== 0 || undefined} onClick={k ? () => setTurn((v) => v + k) : undefined}>
-              {s.cover ? (
-                <span className="hero-picture"><Picture src={s.cover.fullUrl || s.cover.poster || s.cover.url} alt="" decoding="async" /></span>
-              ) : null}
-              {k === 0 && <span key={turn} className="hero-bar" onAnimationEnd={next} aria-hidden="true" />}
               <span className={`hero-text ${s.cover ? "" : "is-plain"}`}>
                 <span className="hero-source">
-                  <SourceAvatar id={s.source.id} name={s.source.name} iconUrl={sourceIcon(s.source.id)} size={28} />
+                  <SourceAvatar id={s.source.id} name={s.source.name} iconUrl={sourceIcon(s.source.id)} size={24} />
                   <span className="min-w-0 truncate">{s.source.name}</span>
                 </span>
+                {s.cover && <span className="hero-picture"><Picture src={s.cover.fullUrl || s.cover.poster || s.cover.url} alt="" decoding="async" /></span>}
                 <span className="hero-headline">{s.title}</span>
-                {!s.cover && s.summary && <span className="hero-summary">{shortAddresses(s.summary)}</span>}
+                {s.summary && <span className="hero-summary">{shortAddresses(s.summary)}</span>}
               </span>
+              {k === 0 && <span key={turn} className="hero-bar" onAnimationEnd={next} aria-hidden="true" />}
               {k === 0 && <IntentLink viewTransition to={`/items/${s.id}`} tabIndex={-1} aria-label={s.title} className="absolute inset-0" />}
             </div>
           );

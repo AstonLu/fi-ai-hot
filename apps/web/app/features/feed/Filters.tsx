@@ -27,6 +27,29 @@ export function CategoryRow({ base, category, channel = "all", children }: { bas
     const on = row.current?.querySelector<HTMLElement>("[aria-current]");
     if (on && row.current) row.current.scrollTo({ left: on.offsetLeft - 16, behavior: reducedMotion() ? "instant" : "smooth" });
   }, [category]);
+  // The edge the row can scroll to fades out.
+  useEffect(() => {
+    const el = row.current!;
+    const update = () => {
+      el.toggleAttribute("data-back", el.scrollLeft > 1);
+      el.toggleAttribute("data-on", el.scrollLeft < el.scrollWidth - el.clientWidth - 1);
+    };
+    update();
+    const resized = new ResizeObserver(update);
+    resized.observe(el);
+    el.addEventListener("scroll", update, { passive: true });
+    return () => {
+      resized.disconnect();
+      el.removeEventListener("scroll", update);
+    };
+  }, [locale]);
+  const bar = useRef<HTMLDivElement>(null);
+  const [stuck, setStuck] = useState(false);
+  useEffect(() => {
+    const watch = new IntersectionObserver(([entry]) => setStuck(entry!.intersectionRatio < 1 && entry!.boundingClientRect.top < 1), { rootMargin: "-1px 0px 0px 0px", threshold: 1 });
+    watch.observe(bar.current!);
+    return () => watch.disconnect();
+  }, []);
   // One dark pill moves to the choice in use; until it is measured the choice carries the colour itself.
   const [lens, setLens] = useState<{ left: number; width: number } | null>(null);
   useMeasure(() => {
@@ -44,29 +67,33 @@ export function CategoryRow({ base, category, channel = "all", children }: { bas
     ...CATEGORY_KEYS.map((k) => ({ key: k as string, label: categoryLabel(k, locale), on: category === k, to: feedListPath(base, params, { category: k, channel: null }) })),
   ];
   return (
-    <nav ref={row} aria-label={t("類別", "Categories")} className="bleed scrollbar-none relative flex items-center gap-2 overflow-x-auto pb-4 pt-1 lg:mx-0 lg:px-0">
-      {lens && <span aria-hidden="true" className="pill-lens" style={{ width: lens.width, transform: `translateX(${lens.left}px)` }} />}
-      {options.map((o) => (
-        <IntentLink
-          key={o.key}
-          to={o.to}
-          // Filtered feed views are noindex; keep crawler focus on the unfiltered list.
-          rel={o.to.includes("?") ? "nofollow" : undefined}
-          aria-current={o.on ? "page" : undefined}
-          className={`pill ${o.on ? (lens ? "is-on" : "is-on bg-ink") : ""}`}
-        >
-          {o.label}
-        </IntentLink>
-      ))}
-      {children && <div className="ml-auto shrink-0 pl-2">{children}</div>}
-    </nav>
+    <div ref={bar} className="feed-bar" data-stuck={stuck || undefined}>
+      <div className="feed-slot" inert={!stuck}><div><Brand className="h-11 pr-6" /></div></div>
+      <nav ref={row} aria-label={t("類別", "Categories")} className="feed-row bleed scrollbar-none relative flex h-16 min-w-0 flex-1 items-center gap-2 overflow-x-auto lg:mx-0 lg:px-0">
+        {lens && <span aria-hidden="true" className="pill-lens" style={{ width: lens.width, transform: `translateX(${lens.left}px)` }} />}
+        {options.map((o) => (
+          <IntentLink
+            key={o.key}
+            to={o.to}
+            // Filtered feed views are noindex; keep crawler focus on the unfiltered list.
+            rel={o.to.includes("?") ? "nofollow" : undefined}
+            aria-current={o.on ? "page" : undefined}
+            className={`pill ${o.on ? (lens ? "is-on" : "is-on bg-ink") : ""}`}
+          >
+            {o.label}
+          </IntentLink>
+        ))}
+        {children && <div className="ml-auto shrink-0 pl-2">{children}</div>}
+      </nav>
+      <div className="feed-slot" inert={!stuck}><div><SearchButton className="ml-4" /></div></div>
+    </div>
   );
 }
 
 /** The phone bar of 精選 and 全部: the header of the desktop, in one line. */
 export function FeedBar() {
   const t = useT();
-  const item = "flex h-11 items-center px-1.5 text-ui-body font-semibold text-ink active:opacity-50";
+  const item = "flex h-11 items-center px-2 text-ui-body font-semibold text-ink active:opacity-50";
   return (
     <PhoneBar
       center={

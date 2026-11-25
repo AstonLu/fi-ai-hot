@@ -66,7 +66,7 @@ export function MoreMenu({ dot }: { dot: boolean }) {
         aria-expanded={open}
         aria-controls="more-menu"
         onClick={() => setOpen(!open)}
-        className="flex h-11 items-center gap-1 whitespace-nowrap text-ui-body font-semibold text-ink transition-colors hover:text-accent"
+        className="btn btn-text gap-1"
       >
         {t("更多", "More")}
         <IconChevronDown size={15} className={`transition-transform duration-200 ${open ? "rotate-180" : ""}`} />

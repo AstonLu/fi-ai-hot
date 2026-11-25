@@ -149,7 +149,7 @@ function useHeadingUnderBar(enabled: boolean): boolean {
       setUnder(true);
       return;
     }
-    const bar = Number.parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--bar-h")) || 48;
+    const bar = Number.parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--bar-h")) || 56;
     const io = new IntersectionObserver(([entry]) => setUnder(!!entry && !entry.isIntersecting && entry.boundingClientRect.top < bar), {
       rootMargin: `-${bar}px 0px 0px 0px`,
     });
