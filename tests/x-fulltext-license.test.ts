@@ -10,7 +10,7 @@ import { closeDb, sql } from "@aihot/backend/db";
 import { updateSource } from "@aihot/backend/admin/sources";
 import { upsertMaterial, type XPostData } from "@aihot/backend/content/materials";
 import { stopBoss } from "@aihot/backend/jobs/queue";
-import { ITEM_COLUMNS, ITEM_FROM, toFeedItemSummary, type ItemRow } from "@aihot/backend/publication/items";
+import { cardPicture, ITEM_COLUMNS, ITEM_FROM, toFeedItemSummary, type ItemRow } from "@aihot/backend/publication/items";
 import { publishArticle, republishSource } from "@aihot/backend/publication/publish";
 import { POLICY } from "@aihot/site";
 import { buildApp } from "../apps/api/src/app.ts";
@@ -287,3 +287,27 @@ for (const mode of ["hot_signal", "isolated"] as const) {
     }
   });
 }
+
+test("an article's cover follows the source's licence and is withheld with its original", async () => {
+  const cover = { url: "https://example.org/cover.png", width: 1200, height: 630, alt: null };
+  const of = async (id: string) => {
+    const [row] = await sql<ItemRow[]>`SELECT ${ITEM_COLUMNS} ${ITEM_FROM} WHERE p.article_id = ${id}`;
+    return row!;
+  };
+  const licensed = await fixture({ kind: "rss", full: true });
+  const summaryOnly = await fixture({ kind: "rss" });
+  const bare = await fixture({ kind: "rss", full: true });
+  for (const f of [licensed, summaryOnly]) await sql`UPDATE articles SET cover = ${sql.json(cover)} WHERE id = ${f.id}`;
+  // Without a cover, the first picture that is no icon.
+  await sql`UPDATE articles SET media = ${sql.json([
+    { kind: "image", url: "https://example.org/icon.png", width: 32, height: 32 }, { kind: "image", url: "https://example.org/body.png", width: 900, height: 600 },
+  ])} WHERE id = ${bare.id}`;
+  assert.ok(toFeedItemSummary(await of(licensed.id)).cover?.url.includes(encodeURIComponent(cover.url)));
+  assert.ok(toFeedItemSummary(await of(bare.id)).cover?.url.includes("body.png"));
+  const row = await of(summaryOnly.id);
+  assert.equal(cardPicture(row, []), null);
+  assert.ok(cardPicture(row, [summaryOnly.source]));
+  assert.ok(cardPicture(row, "all"));
+  await sql`UPDATE publications SET suppress_original = true WHERE article_id = ${summaryOnly.id}`;
+  assert.equal(cardPicture(await of(summaryOnly.id), "all"), null);
+});

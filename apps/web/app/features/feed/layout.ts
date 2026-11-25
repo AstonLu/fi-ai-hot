@@ -36,9 +36,9 @@ export interface BoardCard {
   areas: Record<2 | 3 | 4, string>;
 }
 
-/** The picture a card may show. Posts bring theirs; ordinary reports have none in the API yet. */
-export function coverOf(item: Pick<FeedItemSummary, "x">): MediaView | null {
-  return item.x?.media.find((m) => m.kind === "image" || m.poster) ?? null;
+/** The picture a card may show: a post's own, an article's cover where the API sends one. */
+export function coverOf(item: Pick<FeedItemSummary, "x" | "cover">): MediaView | null {
+  return item.x?.media.find((m) => m.kind === "image" || m.poster) ?? item.cover ?? null;
 }
 
 /** A post reads as its own words; one that publishes a long X Article has a headline. */
