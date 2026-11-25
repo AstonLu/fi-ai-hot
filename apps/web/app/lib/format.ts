@@ -21,7 +21,7 @@ export function byBeijingDay<T>(list: readonly T[], at: (entry: T) => string): A
   return days;
 }
 
-/** "周六" / "Sat" of a calendar date (YYYY-MM-DD). */
+/** "週六" / "Sat" of a calendar date (YYYY-MM-DD). */
 export function weekdayShort(date: string, locale: Locale = "zh"): string {
   return locale === "en" ? weekdayEn(date).slice(0, 3) : beijingWeekday(date).replace(zh("星期"), zh("周"));
 }
@@ -39,11 +39,11 @@ export function relativeTime(iso: string, now = Date.now(), locale: Locale = "zh
 export function timeAgo(iso: string, now = Date.now(), locale: Locale = "zh"): string | null {
   const t = translator(locale);
   const s = Math.max(0, Math.round((now - Date.parse(iso)) / 1000));
-  if (s < 60) return t("刚刚", "just now");
+  if (s < 60) return t("剛剛", "just now");
   const m = Math.round(s / 60);
-  if (m < 60) return t(`${m} 分钟前`, `${m}m ago`);
+  if (m < 60) return t(`${m} 分鐘前`, `${m}m ago`);
   const h = Math.round(m / 60);
-  if (h < 24) return t(`${h} 小时前`, `${h}h ago`);
+  if (h < 24) return t(`${h} 小時前`, `${h}h ago`);
   const d = Math.round(h / 24);
   return d < 30 ? t(`${d} 天前`, `${d}d ago`) : null;
 }

@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { useT } from "../../lib/i18n";
 
-/** A small spaced label in the accent, led by a short bar: 头条, 今日看点, 关于本站. English spells it in capitals, barely spaced. */
+/** A small spaced label in the accent, led by a short bar: 頭條, 今日看點, 關於本站. English spells it in capitals, barely spaced. */
 export function Kicker({ children, className = "" }: { children: ReactNode; className?: string }) {
   const t = useT();
   return (

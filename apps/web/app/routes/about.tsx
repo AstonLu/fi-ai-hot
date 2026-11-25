@@ -17,7 +17,7 @@ import type { Screen } from "../components/shell/screens";
 import { Link } from "../lib/link";
 import { apiIn, L, localeOf, translator, useLocale, useT, type Text, type Translate } from "../lib/i18n";
 
-export const handle: Screen = { tab: "me", name: L("关于", "About") };
+export const handle: Screen = { tab: "me", name: L("關於", "About") };
 export { pageHeaders as headers } from "../lib/api.server";
 export const { clientLoader, shouldRevalidate } = pageReuse<typeof loader>();
 
@@ -41,7 +41,7 @@ export function meta({ location }: Route.MetaArgs) {
     image: "/og/pages/about.png",
     jsonLd: [
       organizationLd(),
-      breadcrumbLd([{ name: SITE.name, path: "/" }, { name: L(`关于 ${SITE.name}`, `About ${SITE.name}`), path: "/about" }], locale),
+      breadcrumbLd([{ name: SITE.name, path: "/" }, { name: L(`關於 ${SITE.name}`, `About ${SITE.name}`), path: "/about" }], locale),
     ],
   });
 }
@@ -52,10 +52,10 @@ const EN = ENGLISH?.about ?? null;
 const NO_SOURCES: RiverSource[] = [];
 const BACK = { to: "/more", label: L("我的", "Me") };
 
-/** 3.6 万 from ten thousand up, digits with separators below; English writes 36K and 1.2M. */
+/** 3.6 萬 from ten thousand up, digits with separators below; English writes 36K and 1.2M. */
 function figure(n: number, t: Translate): { value: string; unit: string } {
   const en = n >= 999_500 ? `${(n / 1_000_000).toFixed(1).replace(/\.0$/, "")}M` : `${Math.round(n / 1000)}K`;
-  return n >= 10_000 ? t({ value: (n / 10_000).toFixed(1).replace(/\.0$/, ""), unit: "万" }, { value: en, unit: "" }) : { value: n.toLocaleString("en-US"), unit: "" };
+  return n >= 10_000 ? t({ value: (n / 10_000).toFixed(1).replace(/\.0$/, ""), unit: "萬" }, { value: en, unit: "" }) : { value: n.toLocaleString("en-US"), unit: "" };
 }
 
 function Figure({ n, unit }: { n: number; unit: string }) {
@@ -75,9 +75,9 @@ function Figure({ n, unit }: { n: number; unit: string }) {
 const KIND_ORDER: Array<[string, Text]> = [
   ["x_search", "X"],
   ["rss", "RSS"],
-  ["web_list", L("网页", "Web")],
-  ["mp_account", L("公众号", "WeChat")],
-  ["json_list", L("接口", "API")],
+  ["web_list", L("網頁", "Web")],
+  ["mp_account", L("公眾號", "WeChat")],
+  ["json_list", L("介面", "API")],
 ];
 
 /**
@@ -108,31 +108,31 @@ function stagesOf(stats: SiteStats | null, t: Translate): Stage[] {
   return [
     {
       no: "01",
-      title: t("采集", "Collect"),
-      figure: stats && <Figure n={stats.sources} unit={t("个信源", stats.sources === 1 ? "source" : "sources")} />,
+      title: t("採集", "Collect"),
+      figure: stats && <Figure n={stats.sources} unit={t("個來源", stats.sources === 1 ? "source" : "sources")} />,
       text: t(ABOUT.steps.collect, EN?.steps.collect ?? ABOUT.steps.collect),
       note: kinds,
     },
     {
       no: "02",
-      title: t("收录", "Store"),
-      figure: stats && <Figure n={stats.items} unit={t("条动态", stats.items === 1 ? "item" : "items")} />,
+      title: t("收錄", "Store"),
+      figure: stats && <Figure n={stats.items} unit={t("條動態", stats.items === 1 ? "item" : "items")} />,
       text: t(ABOUT.steps.store, EN?.steps.store ?? ABOUT.steps.store),
-      note: stats && t(<>过去 24 小时收进 {stats.day.collected.toLocaleString("en-US")} 条</>, <>{stats.day.collected.toLocaleString("en-US")} collected in the last 24 hours</>),
+      note: stats && t(<>過去 24 小時收進 {stats.day.collected.toLocaleString("en-US")} 條</>, <>{stats.day.collected.toLocaleString("en-US")} collected in the last 24 hours</>),
     },
     {
       no: "03",
-      title: t("精选", "Pick"),
+      title: t("精選", "Pick"),
       figure: stats && <Figure n={stats.selected} unit={t(REPORTS.metricUnits.selectedCount, unitEn(stats.selected, units?.selectedCount, REPORTS.metricUnits.selectedCount))} />,
       text: t(ABOUT.steps.select, EN?.steps.select ?? ABOUT.steps.select),
-      note: stats && t(<>过去 24 小时 {stats.day.selected} 条进了精选</>, <>{stats.day.selected.toLocaleString("en-US")} picked in the last 24 hours</>),
+      note: stats && t(<>過去 24 小時 {stats.day.selected} 條進了精選</>, <>{stats.day.selected.toLocaleString("en-US")} picked in the last 24 hours</>),
     },
     {
       no: "04",
       title: t("成刊", "Publish"),
       figure: stats && <Figure n={stats.dailies} unit={t(REPORTS.metricUnits.reportsCovered, unitEn(stats.dailies, units?.reportsCovered, REPORTS.metricUnits.reportsCovered))} />,
       text: t(ABOUT.steps.publish, EN?.steps.publish ?? ABOUT.steps.publish),
-      note: t("也可以用 RSS、API、MCP 订阅", "Also available via RSS, API and MCP"),
+      note: t("也可以用 RSS、API、MCP 訂閱", "Also available via RSS, API and MCP"),
     },
   ];
 }
@@ -142,14 +142,14 @@ function MakerFace({ src }: { src: string }) {
   const t = useT();
   const [failed, setFailed] = useState(false);
   if (failed) return null;
-  return <img src={src} alt={t(`${ABOUT.maker?.name ?? ""}的头像`, `${EN?.maker?.name ?? ABOUT.maker?.name ?? ""}'s photo`)} width={48} height={48} onError={() => setFailed(true)} className="size-11 shrink-0 rounded-full bg-bg-sunk object-cover ring-1 ring-line xl:size-12" />;
+  return <img src={src} alt={t(`${ABOUT.maker?.name ?? ""}的頭像`, `${EN?.maker?.name ?? ABOUT.maker?.name ?? ""}'s photo`)} width={48} height={48} onError={() => setFailed(true)} className="size-11 shrink-0 rounded-full bg-bg-sunk object-cover ring-1 ring-line xl:size-12" />;
 }
 
 function QrCard({ src, kind, title, note }: { src: string; kind: string; title: string; note: string }) {
   const t = useT();
   return (
     <figure className="card flex items-center gap-5 p-5">
-      <img src={src} alt={t(`${kind}二维码`, `${kind} QR code`)} width={112} height={112} loading="lazy" className="size-[104px] shrink-0 rounded-tile border border-line bg-white object-contain p-1.5 sm:size-[112px]" />
+      <img src={src} alt={t(`${kind}二維碼`, `${kind} QR code`)} width={112} height={112} loading="lazy" className="size-[104px] shrink-0 rounded-tile border border-line bg-white object-contain p-1.5 sm:size-[112px]" />
       <figcaption className="min-w-0">
         <div className="text-ui-caption text-ink-4">{kind}</div>
         <div className="mt-1 text-ui-body-lg font-semibold leading-snug text-ink">{title}</div>
@@ -173,7 +173,7 @@ function Maker({ maker, contact }: { maker: NonNullable<typeof ABOUT.maker>; con
   return (
     <section aria-labelledby="maker" className="mt-20 grid gap-10 xl:mt-28 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:gap-16">
       <div>
-        <Kicker>{t("做这个站的人", "Who's behind this")}</Kicker>
+        <Kicker>{t("做這個站的人", "Who's behind this")}</Kicker>
         <h2 id="maker" className="mt-4 flex items-center gap-3.5 text-ui-title-2 font-black leading-[1.3] tracking-[-0.02em] text-ink xl:gap-4 xl:text-ui-display-1">
           {contact?.makerAvatar && <MakerFace src={contact.makerAvatar} />}
           <span>
@@ -187,15 +187,15 @@ function Maker({ maker, contact }: { maker: NonNullable<typeof ABOUT.maker>; con
           <p className="text-ink-3">
             {t(
               <>
-                它一直在改，改了什么都写在
+                它一直在改，改了什麼都寫在
                 <Link viewTransition to="/changelog" className="text-accent hover:underline">
-                  更新日志
+                  更新日誌
                 </Link>
-                里；有想法、遇到问题，去
+                裡；有想法、遇到問題，去
                 <Link viewTransition to="/feedback" className="text-accent hover:underline">
-                  反馈页
+                  反饋頁
                 </Link>
-                告诉我。
+                告訴我。
               </>,
               // The changelog is written for Chinese readers only: English leaves it out.
               <>
@@ -211,7 +211,7 @@ function Maker({ maker, contact }: { maker: NonNullable<typeof ABOUT.maker>; con
       </div>
       {codes.length > 0 && (
         <div className="grid content-start gap-3">
-          <h3 className="text-ui-body font-semibold text-ink">{t("如果觉得有点用，欢迎加入", "If you find it useful, come join us")}</h3>
+          <h3 className="text-ui-body font-semibold text-ink">{t("如果覺得有點用，歡迎加入", "If you find it useful, come join us")}</h3>
           {codes}
         </div>
       )}
@@ -219,13 +219,13 @@ function Maker({ maker, contact }: { maker: NonNullable<typeof ABOUT.maker>; con
   );
 }
 
-/** The latest 精选 under the river's paper; it moves on each time an item reaches the paper. */
+/** The latest 精選 under the river's paper; it moves on each time an item reaches the paper. */
 function Latest({ item, className = "" }: { item: SiteStats["latest"][number] | undefined; className?: string }) {
   const t = useT();
   if (!item) return null;
   return (
     <IntentLink viewTransition to={`/items/${item.id}`} className={`group block ${className}`}>
-      <span className="text-ui-caption-sm font-semibold tracking-[0.2em] text-accent">{t("最近精选", "Latest top pick")}</span>
+      <span className="text-ui-caption-sm font-semibold tracking-[0.2em] text-accent">{t("最近精選", "Latest top pick")}</span>
       <span key={item.id} className="animate-fade-up mt-1.5 block">
         <span className="line-clamp-2 text-ui-label-lg font-semibold leading-[1.55] text-ink transition-colors group-hover:text-accent">{item.title}</span>
         <span className="mt-1 block truncate text-ui-caption text-ink-4">{item.source}</span>
@@ -255,7 +255,7 @@ export default function AboutPage() {
 
   return (
     <div className="mx-auto max-w-[var(--page-max-reading)] pb-14 lg:pt-3">
-      <PhoneBar back={BACK} title={t(`关于 ${SITE.name}`, `About ${SITE.name}`)} />
+      <PhoneBar back={BACK} title={t(`關於 ${SITE.name}`, `About ${SITE.name}`)} />
       <header className="grid items-end gap-8 pt-4 lg:grid-cols-[minmax(0,1fr)_auto] lg:pt-0">
         <div>
           <Kicker>{t(ABOUT.kicker, EN?.kicker ?? ABOUT.kicker)}</Kicker>
@@ -278,23 +278,23 @@ export default function AboutPage() {
         </div>
         <div className="flex flex-wrap gap-3 lg:pb-2">
           <IntentLink to="/" className={buttonClass("primary", "lg")}>
-            {t(<>看今天的精选 <IconArrowRight size={15} /></>, <>See today's top picks <IconArrowRight size={15} /></>)}
+            {t(<>看今天的精選 <IconArrowRight size={15} /></>, <>See today's top picks <IconArrowRight size={15} /></>)}
           </IntentLink>
           <IntentLink to="/daily" className={buttonClass("secondary", "lg")}>
-            {t("读最新日报", `Read the latest ${SITE.subject} Daily`)}
+            {t("讀最新日報", `Read the latest ${SITE.subject} Daily`)}
           </IntentLink>
         </div>
       </header>
 
       <section aria-labelledby="how" className="mt-10 xl:mt-14">
         <h2 id="how" className="sr-only">
-          {t(`${SITE.name} 怎么工作`, `How ${SITE.name} works`)}
+          {t(`${SITE.name} 怎麼工作`, `How ${SITE.name} works`)}
         </h2>
         <SignalRiver sources={sources} focus={focus} onArrive={onArrive} className="h-[230px] sm:h-[300px] lg:h-[360px] 2xl:h-[420px]">
           <Latest item={latest[at]} className="absolute left-[75%] top-[calc(42%+42px)] hidden w-[25%] px-6 lg:block" />
         </SignalRiver>
         <p className="sr-only">{t(
-          `示意图：每条线是一个信源；线汇成一束束，代表同一件事的多篇报道；经过精选的闸门，只有少数几束通过，${subjectAfter("汇入每天的", "日报")}。`,
+          `示意圖：每條線是一個來源；線匯成一束束，代表同一件事的多篇報導；經過精選的閘門，只有少數幾束通過，${subjectAfter("匯入每天的", "日報")}。`,
           `Diagram: each line is a source. Lines gather into bundles, each grouping the reports on one story. At the top-picks gate, only a few bundles get through and flow into each day's ${SITE.subject} Daily.`,
         )}</p>
         <Latest item={latest[at]} className="mt-2 border-t border-line pt-4 lg:hidden" />
@@ -328,7 +328,7 @@ export default function AboutPage() {
           <>
             {ABOUT.copyright[0]}
             <Link viewTransition to="/feedback" className="text-accent hover:underline">
-              反馈页
+              反饋頁
             </Link>
             {ABOUT.copyright[1]}
           </>,
@@ -339,7 +339,7 @@ export default function AboutPage() {
 
       <footer className="mt-8 flex flex-wrap items-center justify-between gap-3 border-t border-line pt-5 text-ui-caption-lg text-ink-4">
         <span>{t<string | null>(SITE.footerNote, ENGLISH ? ENGLISH.footerNote : SITE.footerNote)}</span>
-        <nav className="flex gap-5" aria-label={t("规则与隐私", "Terms and privacy")}>
+        <nav className="flex gap-5" aria-label={t("規則與隱私", "Terms and privacy")}>
           {/* The terms and the privacy notice have no English edition: English links to the Chinese pages. */}
           {t(
             <Link
@@ -356,7 +356,7 @@ export default function AboutPage() {
           )}
           {t(
             <Link viewTransition to="/privacy" className="transition-colors hover:text-accent">
-              隐私说明
+              隱私說明
             </Link>,
             <a href="/privacy" className="transition-colors hover:text-accent">
               {ENGLISH?.policyLinks.privacy ?? "Privacy"}

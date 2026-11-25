@@ -54,12 +54,12 @@ function enhanceCode(root: HTMLElement, locale: Locale): () => void {
     const head = document.createElement("div");
     head.className = "code-block-head";
     const label = document.createElement("span");
-    label.textContent = t("代码", "Code");
+    label.textContent = t("程式碼", "Code");
     const button = document.createElement("button");
     button.type = "button";
     button.className = "code-block-copy";
-    button.textContent = t("复制", "Copy");
-    button.setAttribute("aria-label", t("复制代码", "Copy code"));
+    button.textContent = t("複製", "Copy");
+    button.setAttribute("aria-label", t("複製程式碼", "Copy code"));
     button.addEventListener("click", async () => {
       let ok = true;
       try {
@@ -68,11 +68,11 @@ function enhanceCode(root: HTMLElement, locale: Locale): () => void {
         ok = false;
       }
       button.dataset.status = ok ? "copied" : "error";
-      button.textContent = ok ? t("已复制", "Copied") : t("请手动复制", "Copy manually");
+      button.textContent = ok ? t("已複製", "Copied") : t("請手動複製", "Copy manually");
       const timer = setTimeout(() => {
         timers.delete(timer);
         button.dataset.status = "";
-        button.textContent = t("复制", "Copy");
+        button.textContent = t("複製", "Copy");
       }, ok ? 1800 : 2400);
       timers.add(timer);
     });
@@ -117,7 +117,7 @@ export function ArticleBody({ html }: { html: string }) {
         img.classList.add("zoomable");
         img.tabIndex = 0;
         img.setAttribute("role", "button");
-        img.setAttribute("aria-label", img.alt ? t(`查看大图：${img.alt}`, `View full size: ${img.alt}`) : t("查看大图", "View full size"));
+        img.setAttribute("aria-label", img.alt ? t(`檢視大圖：${img.alt}`, `View full size: ${img.alt}`) : t("檢視大圖", "View full size"));
       } else if (img.classList.contains("zoomable")) {
         img.classList.remove("zoomable");
         img.removeAttribute("tabindex");

@@ -29,7 +29,7 @@ export function LanguageSwitch({ className = "", compact = false, page }: { clas
     return path ? `${path}${search}${hash}` : "/en";
   };
   return (
-    <nav aria-label={t("语言", "Language")} className={`relative grid ${compact ? "h-7" : "h-[34px]"} grid-cols-2 rounded-full border border-line bg-bg-sunk p-[3px] ${className}`}>
+    <nav aria-label={t("語言", "Language")} className={`relative grid ${compact ? "h-7" : "h-[34px]"} grid-cols-2 rounded-full border border-line bg-bg-sunk p-[3px] ${className}`}>
       <span
         aria-hidden="true"
         className="absolute inset-y-[3px] left-[3px] w-[calc((100%-6px)/2)] rounded-full border border-line bg-surface shadow-[var(--shadow-card)]"

@@ -5,7 +5,7 @@ import { Link } from "../../lib/link";
 import { useLocale, useT } from "../../lib/i18n";
 
 /**
- * "事件后续": the other developments of the event this report belongs to, newest first, with a link to
+ * "事件後續": the other developments of the event this report belongs to, newest first, with a link to
  * the whole event. When all reports belong to a single development yet the event stands in search, still
  * link visibly to the event page so both readers and crawlers reach it without relying on <noscript>.
  */
@@ -17,8 +17,8 @@ export function StoryFollowups({ followups, story, currentId }: { followups: Sto
   return (
     <section className="mt-10 border-t border-line pt-5">
       <div className="flex items-baseline justify-between gap-3">
-        <h2 className="shrink-0 text-ui-body-sm font-semibold text-ink">{t("所属事件", "Part of the story")}</h2>
-        <MoreLink to={`/story/${story.publicId}`}>{t("查看完整事件", "See the full story")}</MoreLink>
+        <h2 className="shrink-0 text-ui-body-sm font-semibold text-ink">{t("所屬事件", "Part of the story")}</h2>
+        <MoreLink to={`/story/${story.publicId}`}>{t("檢視完整事件", "See the full story")}</MoreLink>
       </div>
       <Link viewTransition to={`/story/${story.publicId}`} className="mt-2 block text-ui-body-sm leading-snug text-ink-2 transition-colors hover:text-accent">
         {story.title}
@@ -34,9 +34,9 @@ function Followups({items, more, story}: {items: StoryFollowup[]; more: boolean;
     <section className="mt-10 border-t border-line pt-5">
       <div className="mb-2 flex items-center justify-between">
         <h2 className="text-ui-body-sm font-semibold text-ink">
-          {t("事件后续 ", "Updates on this story ")}<span className="num font-normal text-ink-4">· {items.length}{more ? "+" : ""}</span>
+          {t("事件後續 ", "Updates on this story ")}<span className="num font-normal text-ink-4">· {items.length}{more ? "+" : ""}</span>
         </h2>
-        <MoreLink to={`/story/${story.publicId}`}>{t("查看完整事件", "See the full story")}</MoreLink>
+        <MoreLink to={`/story/${story.publicId}`}>{t("檢視完整事件", "See the full story")}</MoreLink>
       </div>
       <ul className="divide-y divide-line-soft">
         {items.map((d) => (

@@ -25,7 +25,7 @@ export const handle: Screen = { tab: "featured", name: L("全部", "All") };
 export { pageHeaders as headers } from "../lib/api.server";
 export const { clientLoader, shouldRevalidate } = pageReuse<typeof loader>();
 
-const ALL_TITLE = L(subjectAfter("全部", "动态"), `All ${SITE.subject} News`);
+const ALL_TITLE = L(subjectAfter("全部", "動態"), `All ${SITE.subject} News`);
 
 export async function loader({ request }: Route.LoaderArgs) {
   const url = new URL(request.url);
@@ -52,7 +52,7 @@ export function meta({ loaderData, location }: Route.MetaArgs) {
   const page = loaderData?.data.page ?? 1;
   const path = listPath("/all", { ...(f && filterParams(f)), q, tab: q && f?.tab === "relevance" ? "relevance" : null, page: page > 1 ? page : null });
   const filtered = !!q || hasFeedFilters(f);
-  const title = `${q ? t(`搜索：${q}`, `Search: ${q}`) : filtered ? t(ALL_TITLE) : t(SEO_TITLES.all, ENGLISH?.seoTitles.all ?? SEO_TITLES.all)}${page > 1 ? t(` · 第 ${page} 页`, ` · Page ${page}`) : ""}`;
+  const title = `${q ? t(`搜尋：${q}`, `Search: ${q}`) : filtered ? t(ALL_TITLE) : t(SEO_TITLES.all, ENGLISH?.seoTitles.all ?? SEO_TITLES.all)}${page > 1 ? t(` · 第 ${page} 頁`, ` · Page ${page}`) : ""}`;
   // The first page stands in search for the whole list; later pages only shift its reports along, and
   // their links stay followed so every report is still reached.
   const noindex = filtered || page > 1;
@@ -60,7 +60,7 @@ export function meta({ loaderData, location }: Route.MetaArgs) {
     locale,
     title,
     description: t(
-      `${SITE.name} 收录的${subjectAfter("全部", "相关动态")}，可按频道、类别与标签筛选，支持中英文搜索。`,
+      `${SITE.name} 收錄的${subjectAfter("全部", "相關動態")}，可按頻道、類別與標籤篩選，支援中英文搜尋。`,
       `Every ${SITE.subject} story ${SITE.name} tracks, newest first: filter by channel, category and tag, or search in English or Chinese.`,
     ),
     path,
@@ -87,7 +87,7 @@ export default function AllPage() {
   const keep = { channel, category };
   const searchTabHref = (tab: "time" | "relevance") => feedListPath("/all", params, { tab: tab === "relevance" ? tab : null });
   const shownTag = f.tag ? displayTagIn(f.tag, locale) : null;
-  const title = f.q ? t(`搜索“${f.q}”`, `Search: “${f.q}”`) : f.tag ? (shownTag ? `#${shownTag}` : t("标签筛选", "Tag filter")) : null;
+  const title = f.q ? t(`搜尋“${f.q}”`, `Search: “${f.q}”`) : f.tag ? (shownTag ? `#${shownTag}` : t("標籤篩選", "Tag filter")) : null;
   const updated = beijingTime(data.freshness);
   const found = data.total >= 2000 ? t("2000+", "2,000+") : t(String(data.total), data.total.toLocaleString("en-US"));
   // Searches are remembered in this browser for the phone search (listed in the privacy notice).
@@ -117,7 +117,7 @@ export default function AllPage() {
       )}
       <ActiveFilters base="/all" category={f.category} channel={f.channel} tag={f.tag} />
 
-      {/* Desktop, as on 精选: the title, then one filter row with the search field aligned on the right. */}
+      {/* Desktop, as on 精選: the title, then one filter row with the search field aligned on the right. */}
       <h1 className="sr-only lg:not-sr-only lg:text-ui-heading-lg lg:font-semibold lg:leading-[1.3] lg:text-ink">{title ?? t(ALL_TITLE)}</h1>
       <div className="mb-5 mt-4 hidden items-center justify-between gap-4 lg:flex">
         <CategoryTabs base="/all" category={f.category} channel={f.channel} layoutId="all-cat-desk" className="min-w-0" />
@@ -129,17 +129,17 @@ export default function AllPage() {
           <PillTabs
             size="xs"
             layoutId="all-search-sort"
-            label={t("搜索排序", "Sort results")}
+            label={t("搜尋排序", "Sort results")}
             active={f.tab}
             items={(["time", "relevance"] as const).map((tab) => ({
               key: tab,
-              label: tab === "time" ? t("按时间（搜标题和摘要）", "Newest (titles and summaries)") : t("按相关度（含正文）", "Most relevant (with full text)"),
+              label: tab === "time" ? t("按時間（搜標題和摘要）", "Newest (titles and summaries)") : t("按相關度（含正文）", "Most relevant (with full text)"),
               to: searchTabHref(tab),
             }))}
           />
           <span className="text-ui-caption text-ink-4">
             {t(
-              <>找到 <span className="num">{found}</span> 条 · 更新于 <span className="num">{updated}</span></>,
+              <>找到 <span className="num">{found}</span> 條 · 更新於 <span className="num">{updated}</span></>,
               <><span className="num">{found}</span> {data.total === 1 ? "result" : "results"} · updated <span className="num">{updated}</span> GMT+8</>,
             )}
           </span>
@@ -150,16 +150,16 @@ export default function AllPage() {
         {data.items.length === 0 ? (
           <div className="mt-2 lg:card">
             <EmptyState
-              title={t("没有找到相关内容", "Nothing found")}
+              title={t("沒有找到相關內容", "Nothing found")}
               action={
                 f.q && f.tab === "time" ? (
                   <Link to={searchTabHref("relevance")} className="text-ui-label font-medium text-accent hover:underline">
-                    {t("试试“按相关度”，连正文一起搜", "Try “Most relevant” to search the full text too")}
+                    {t("試試“按相關度”，連正文一起搜", "Try “Most relevant” to search the full text too")}
                   </Link>
                 ) : undefined
               }
             >
-              {f.q ? t("换个说法，或者去掉筛选再试。", "Try different keywords, or clear the filters.") : t("这个筛选下暂时没有内容。", "Nothing here with these filters yet.")}
+              {f.q ? t("換個說法，或者去掉篩選再試。", "Try different keywords, or clear the filters.") : t("這個篩選下暫時沒有內容。", "Nothing here with these filters yet.")}
             </EmptyState>
           </div>
         ) : (
@@ -167,7 +167,7 @@ export default function AllPage() {
         )}
       </div>
       <Pagination page={data.page} pageCount={data.pageCount} href={(p) => pageHref(params, p)} />
-      {data.page >= 50 && <p className="mt-4 text-center text-ui-caption text-ink-4">{t("最多提供 50 页，更早的内容请使用搜索或主题页。", "Only the first 50 pages are shown. For older news, use Search or Topics.")}</p>}
+      {data.page >= 50 && <p className="mt-4 text-center text-ui-caption text-ink-4">{t("最多提供 50 頁，更早的內容請使用搜索或主題頁。", "Only the first 50 pages are shown. For older news, use Search or Topics.")}</p>}
     </div>
   );
 }

@@ -8,8 +8,8 @@ type Choice = "dark" | "system" | "light";
 
 const OPTIONS: Array<{ key: Choice; label: Phrase; icon: ReactNode }> = [
   { key: "dark", label: L("深色", "Dark"), icon: <IconMoon size={14} /> },
-  { key: "system", label: L("跟随系统", "System"), icon: <IconMonitor size={14} /> },
-  { key: "light", label: L("浅色", "Light"), icon: <IconSun size={14} /> },
+  { key: "system", label: L("跟隨系統", "System"), icon: <IconMonitor size={14} /> },
+  { key: "light", label: L("淺色", "Light"), icon: <IconSun size={14} /> },
 ];
 
 /** Three-way appearance switch (dark / follow the system / light) with a sliding thumb; `compact` for the 更多 menu. */
@@ -35,7 +35,7 @@ export function ThemeSwitch({ className = "", compact = false }: { className?: s
   };
 
   return (
-    <div role="radiogroup" aria-label={t("外观", "Appearance")} className={`relative grid ${compact ? "h-7" : "h-[34px]"} grid-cols-3 rounded-full border border-line bg-bg-sunk p-[3px] ${className}`}>
+    <div role="radiogroup" aria-label={t("外觀", "Appearance")} className={`relative grid ${compact ? "h-7" : "h-[34px]"} grid-cols-3 rounded-full border border-line bg-bg-sunk p-[3px] ${className}`}>
       <span
         aria-hidden="true"
         className="absolute inset-y-[3px] left-[3px] w-[calc((100%-6px)/3)] rounded-full border border-line bg-surface shadow-[var(--shadow-card)] transition-transform duration-200 ease-[var(--ease-out-quart)]"

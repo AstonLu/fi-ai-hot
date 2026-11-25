@@ -85,7 +85,7 @@ test("a few Han characters in a long English body do not make it Chinese", () =>
 });
 
 test("displayTag maps slash tags to clean labels, hides internal filter tags, and keeps ordinary tags", () => {
-  assert.equal(displayTag("开源/仓库"), "开源");
+  assert.equal(displayTag("開源/倉庫"), "開源");
   assert.equal(displayTag("部署/工程"), "工程部署");
   assert.equal(displayTag("非AI/通用工具"), null);
   assert.equal(displayTag("OpenAI"), "OpenAI");

@@ -19,7 +19,7 @@ export function kindFromPath(pathname: string): ReportKind {
   return "daily";
 }
 
-/** What a kind of report is called: "日报" / "Daily". */
+/** What a kind of report is called: "日報" / "Daily". */
 export const kindName = (kind: ReportKind, locale: Locale): string => (locale === "en" ? REPORT_NAMES_EN : REPORT_NAMES)[kind];
 
 /** The kind's RSS feed, announced in the page head so a reader given the page finds it. */
@@ -47,14 +47,14 @@ const ENTRY = counted(`${measure}${noun}`, ENGLISH?.reports.entry);
 export const entriesUnit = (count: number, locale: Locale): string => translator(locale)(ENTRY(count));
 
 /**
- * "这一天的 4 件 AI 大事" / "The day's 4 top stories", "本周的 12 件 AI 大事" / "The week's 12 top stories",
+ * "這一天的 4 件 AI 大事" / "The day's 4 top stories", "本週的 12 件 AI 大事" / "The week's 12 top stories",
  * "8 月的 20 件 AI 大事" / "August's 20 top stories" (the subject and REPORTS.entry from site/site.ts).
  */
 export function headline(kind: ReportKind, key: string, count: number, locale: Locale): string {
   const t = translator(locale);
   const stories = count === 1 ? entriesUnit(count, locale) : `${count} ${entriesUnit(count, locale)}`;
-  if (kind === "daily") return t(subjectAfter(`这一天的 ${count} ${measure}`, noun), `The day's ${stories}`);
-  if (kind === "weekly") return t(subjectAfter(`本周的 ${count} ${measure}`, noun), `The week's ${stories}`);
+  if (kind === "daily") return t(subjectAfter(`這一天的 ${count} ${measure}`, noun), `The day's ${stories}`);
+  if (kind === "weekly") return t(subjectAfter(`本週的 ${count} ${measure}`, noun), `The week's ${stories}`);
   return t(subjectAfter(`${Number(key.slice(5, 7))} 月的 ${count} ${measure}`, noun), `${monthEn(key)}'s ${stories}`);
 }
 
@@ -131,13 +131,13 @@ export function dateMark(kind: ReportKind, key: string, locale: Locale): { figur
 /** When each kind comes out, for the masthead (the daily's time is the site's, EDITION_WHEN / ENGLISH.editionWhen). */
 export const EDITION: Record<ReportKind, Phrase> = {
   daily: L(`${EDITION_WHEN.daily} 出刊`, `Published ${ENGLISH?.editionWhen.daily ?? EDITION_WHEN.daily}`),
-  weekly: L("每周一出刊", "Published every Monday"),
+  weekly: L("每週一齣刊", "Published every Monday"),
   monthly: L("每月 1 日出刊", "Published on the 1st of each month"),
 };
 
 /**
  * The masthead's figures, in the order a reader wants them, in the site's words (REPORTS, ENGLISH.reports). Releases
- * of the pack's headline launch kind (RELEASE, "个新模型" for AI) count only where the pack has one; zero is left out.
+ * of the pack's headline launch kind (RELEASE, "個新模型" for AI) count only where the pack has one; zero is left out.
  */
 const UNITS = REPORTS.metricUnits;
 const UNITS_EN = ENGLISH?.reports.metricUnits;
@@ -161,7 +161,7 @@ export function metricItems(metrics: Record<string, number>, locale: Locale): Ar
  */
 export function neighbourLabel(kind: ReportKind, key: string, direction: "prev" | "next", now: number = Date.now(), locale: Locale = "zh"): string {
   const t = translator(locale);
-  if (kind === "daily") return t(`${direction === "prev" ? "前一日" : "后一日"} · ${monthDay(key, now)}`, `${direction === "prev" ? "Previous" : "Next"} · ${monthDay(key, now, "en")}`);
+  if (kind === "daily") return t(`${direction === "prev" ? "前一日" : "後一日"} · ${monthDay(key, now)}`, `${direction === "prev" ? "Previous" : "Next"} · ${monthDay(key, now, "en")}`);
   const which = direction === "prev" ? t("上一期", "Previous") : t("下一期", "Next");
   return kind === "weekly" ? t(`${which} · 第 ${Number(key.slice(6))} 周`, `${which} · Week ${Number(key.slice(6))}`) : t(`${which} · ${Number(key.slice(5, 7))} 月`, `${which} · ${monthEn(key)}`);
 }
@@ -189,9 +189,9 @@ export function dateLine(kind: ReportKind, key: string, locale: Locale = "zh"): 
 /** What each kind is, under its nameplate. */
 const MOTTO_EN = ENGLISH?.reports.motto ?? REPORTS.motto;
 export const MOTTO: Record<ReportKind, Phrase> = {
-  daily: L(`${REPORTS.motto} · 每日要闻`, `${MOTTO_EN} · Daily briefing`),
-  weekly: L(`${REPORTS.motto} · 每周综述`, `${MOTTO_EN} · Weekly roundup`),
-  monthly: L(`${REPORTS.motto} · 每月盘点`, `${MOTTO_EN} · Monthly review`),
+  daily: L(`${REPORTS.motto} · 每日要聞`, `${MOTTO_EN} · Daily briefing`),
+  weekly: L(`${REPORTS.motto} · 每週綜述`, `${MOTTO_EN} · Weekly roundup`),
+  monthly: L(`${REPORTS.motto} · 每月盤點`, `${MOTTO_EN} · Monthly review`),
 };
 
 export interface PeriodCell {

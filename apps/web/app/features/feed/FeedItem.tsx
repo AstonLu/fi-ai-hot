@@ -25,7 +25,7 @@ export interface FeedItemProps {
   filters?: TimelineFilters;
   read?: boolean;
   onOpen?: (id: string) => void;
-  /** Show category and tags under the text (全部动态, topics, search). */
+  /** Show category and tags under the text (全部動態, topics, search). */
   showTags?: boolean;
   /** Tags that belong to a topic page: those link to /topics/<slug> instead of a noindex filter. */
   tagTopics?: Record<string, string>;
@@ -88,7 +88,7 @@ export const FeedItem = memo(function FeedItem({ item, group, filters, read = fa
           <IntentLink viewTransition to={`/items/${item.id}`} onClick={open} className="after:absolute after:inset-0 after:content-['']">
             {shortAddresses(item.summary)}
           </IntentLink>
-        </p> : <IntentLink viewTransition to={`/items/${item.id}`} onClick={open} aria-label={t(`查看 ${item.x!.authorName} 的帖子`, `View ${item.x!.authorName}'s post`)} className="absolute inset-0" />
+        </p> : <IntentLink viewTransition to={`/items/${item.id}`} onClick={open} aria-label={t(`檢視 ${item.x!.authorName} 的帖子`, `View ${item.x!.authorName}'s post`)} className="absolute inset-0" />
       ) : (
         <>
           <h3 className={`mt-1.5 line-clamp-2 text-ui-subheading-sm font-[650] leading-[1.5] lg:mt-2 lg:line-clamp-none lg:leading-[1.55] ${readTone(read, "text-ink")}`}>
@@ -120,7 +120,7 @@ export const FeedItem = memo(function FeedItem({ item, group, filters, read = fa
 
       {item.sameEvent && (
         <p className="relative z-10 mt-2 line-clamp-1 text-ui-caption-lg text-ink-4">
-          {t("同一件事，精选收录的是", "Same story in Top Picks: ")}
+          {t("同一件事，精選收錄的是", "Same story in Top Picks: ")}
           <Link viewTransition to={`/items/${item.sameEvent.id}`} className="text-ink-3 transition-colors hover:text-accent">
             {t(`《${item.sameEvent.title}》`, `“${item.sameEvent.title}”`)}
           </Link>

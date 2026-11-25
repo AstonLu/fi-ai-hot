@@ -9,7 +9,7 @@ import { KINDS, KIND_PATH, archiveMark, kindName, recentIssues, reportPath, type
 import { apiIn, localizePath, useLocale, useT } from "../../lib/i18n";
 
 /**
- * 日报 / 周报 / 月报 as the site's pill switch: spread across the archive column, or compact in the phone bar
+ * 日報 / 週報 / 月報 as the site's pill switch: spread across the archive column, or compact in the phone bar
  * (opening at the top). Every place keeps its own layoutId: all of them stay mounted, hidden by width.
  */
 export function KindSwitch({ kind, phone = false, layoutId = phone ? "report-kind-phone" : "report-kind" }: { kind: ReportKind; phone?: boolean; layoutId?: string }) {
@@ -20,7 +20,7 @@ export function KindSwitch({ kind, phone = false, layoutId = phone ? "report-kin
       fill={!phone}
       size={phone ? "sm" : "md"}
       layoutId={layoutId}
-      label={t("切换日报、周报、月报", "Switch between daily, weekly and monthly")}
+      label={t("切換日報、週報、月報", "Switch between daily, weekly and monthly")}
       active={kind}
       items={KINDS.map((k) => ({ key: k, label: kindName(k, locale), to: KIND_PATH[k], resetScroll: phone, prefetchOnPress: true }))}
     />
@@ -38,14 +38,14 @@ export function ReportArchive({ kind, groups, current }: { kind: ReportKind; gro
         <KindSwitch kind={kind} />
       </div>
       <div className={`border-b border-line-strong pb-2 pl-1 text-ui-caption-md font-semibold ${t("tracking-[0.3em]", "uppercase tracking-[0.08em]")} text-ink`}>{t("往期", "Past issues")}</div>
-      <nav aria-label={t(`${REPORT_NAMES[kind]}历史`, `Past ${kindName(kind, locale).toLowerCase()} issues`)} className="scrollbar-thin -mr-3 flex-1 overflow-y-auto pb-6 pr-3">
+      <nav aria-label={t(`${REPORT_NAMES[kind]}歷史`, `Past ${kindName(kind, locale).toLowerCase()} issues`)} className="scrollbar-thin -mr-3 flex-1 overflow-y-auto pb-6 pr-3">
         {groups.map((g) => (
           <ArchiveSection key={g.id} g={g} kind={kind} current={current} initiallyOpen={g.id === openId} />
         ))}
       </nav>
       {kind === "daily" && (
         <IntentLink to="/daily/archive" className="flex h-12 shrink-0 items-center justify-between border-t border-line pl-1 pr-1.5 text-ui-caption-lg font-medium text-ink-2 transition-colors hover:text-accent">
-          {t("日报合订本 ", "Daily archive ")}<IconChevronRight size={14} />
+          {t("日報合訂本 ", "Daily archive ")}<IconChevronRight size={14} />
         </IntentLink>
       )}
     </aside>
@@ -101,7 +101,7 @@ function ArchiveSection({ g, kind, current, initiallyOpen }: {
           );
         })}
       </ul>}
-      {kind === "daily" && !open && <noscript><a href={localizePath("/daily/archive", locale)}>{t("查看完整日报归档", "See the full daily archive")}</a></noscript>}
+      {kind === "daily" && !open && <noscript><a href={localizePath("/daily/archive", locale)}>{t("檢視完整日報歸檔", "See the full daily archive")}</a></noscript>}
     </details>
   );
 }

@@ -49,7 +49,7 @@ export function meta({ loaderData, location }: Route.MetaArgs) {
     locale,
     title: s.title,
     description: (s.digest ?? s.summary ?? s.excerpt?.text)?.slice(0, 150) ?? t(
-      `${s.sourceCount} 个报道来源 ${s.reportCount} 篇报道，完整时间线与最新进展。`,
+      `${s.sourceCount} 個報導來源 ${s.reportCount} 篇報導，完整時間線與最新進展。`,
       `${s.reportCount} ${s.reportCount === 1 ? "report" : "reports"} from ${s.sourceCount} ${s.sourceCount === 1 ? "source" : "sources"}: the full timeline and the latest updates.`,
     ),
     path: `/story/${s.publicId}`,
@@ -66,9 +66,9 @@ export function meta({ loaderData, location }: Route.MetaArgs) {
 }
 
 const STATUS = {
-  active: { label: L("持续更新", "Developing"), tone: "hot" },
-  watching: { label: L("观察中", "Watching"), tone: "amber" },
-  settled: { label: L("历史事件", "Past story"), tone: "neutral" },
+  active: { label: L("持續更新", "Developing"), tone: "hot" },
+  watching: { label: L("觀察中", "Watching"), tone: "amber" },
+  settled: { label: L("歷史事件", "Past story"), tone: "neutral" },
 } as const;
 
 // Section anchors keep the old page's ids so shared links still land in the right place.
@@ -135,7 +135,7 @@ function TimelineRow({ r }: { r: StoryReportView }) {
             </p>
             {(clamped || open) && (
               <button type="button" onClick={() => setOpen(!open)} aria-expanded={open} className="mt-1 text-ui-caption-lg text-note transition-colors hover:text-accent">
-                {open ? t("收起摘要", "Hide summary") : t("展开摘要", "Show summary")}
+                {open ? t("收起摘要", "Hide summary") : t("展開摘要", "Show summary")}
               </button>
             )}
           </>
@@ -191,16 +191,16 @@ export default function StoryPage() {
   const newest = story.latestReport;
   const overview = story.digest
     ? {
-        label: t("AI 综述", "AI summary"),
+        label: t("AI 綜述", "AI summary"),
         text: story.digest,
         note: story.digestUpdatedAt
-          ? t(`AI 根据报道生成 · ${relativeTime(story.digestUpdatedAt)}更新`, `Written by AI from the coverage · updated ${relativeTime(story.digestUpdatedAt, undefined, "en")}`)
-          : t("AI 根据报道生成", "Written by AI from the coverage"),
+          ? t(`AI 根據報導生成 · ${relativeTime(story.digestUpdatedAt)}更新`, `Written by AI from the coverage · updated ${relativeTime(story.digestUpdatedAt, undefined, "en")}`)
+          : t("AI 根據報導生成", "Written by AI from the coverage"),
       }
     : story.summary
       ? { label: t("事件摘要", "Story summary"), text: story.summary, note: null }
       : story.excerpt
-        ? { label: t("报道摘要", "Report excerpt"), text: story.excerpt.text, note: t(`摘自 ${story.excerpt.sourceName}`, `From ${story.excerpt.sourceName}`) }
+        ? { label: t("報導摘要", "Report excerpt"), text: story.excerpt.text, note: t(`摘自 ${story.excerpt.sourceName}`, `From ${story.excerpt.sourceName}`) }
         : null;
   const officialCount = counts.official || story.officialReports.length;
   const [overviewRuns] = useMemo(() => linkMentions([overview?.text], story.mentions), [overview?.text, story.mentions]);
@@ -217,23 +217,23 @@ export default function StoryPage() {
           <IconArrowLeft size={15} /> {t(UP.name)}
         </Link>
         <span className="h-3 w-px bg-line-strong" aria-hidden="true" />
-        <span>{t("事件详情", "Story details")}</span>
+        <span>{t("事件詳情", "Story details")}</span>
       </nav>
 
       <header className="max-w-[960px] pt-3 lg:pt-0">
         <div className="flex items-center gap-2 text-ui-caption text-ink-4">
-          {t("热点事件", "Trending story")}
+          {t("熱點事件", "Trending story")}
           <Badge tone={status.tone}>{t(status.label)}</Badge>
         </div>
         <h1 data-page-title="" className="mt-2.5 text-ui-title-3 font-bold leading-[1.5] tracking-[-0.01em] text-ink lg:mt-3 lg:text-ui-display-2 lg:font-[730]">{story.title}</h1>
         <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-1 text-ui-caption-lg text-ink-3">
           <span className="inline-flex items-center gap-1.5">
             <IconDoc size={15} className="text-ink-4" />
-            <b className="num font-semibold text-ink">{story.reportCount}</b>{t(" 篇报道", story.reportCount === 1 ? " report" : " reports")}
+            <b className="num font-semibold text-ink">{story.reportCount}</b>{t(" 篇報導", story.reportCount === 1 ? " report" : " reports")}
           </span>
           <span className="inline-flex items-center gap-1.5">
             <IconUsers size={15} className="text-ink-4" />
-            <b className="num font-semibold text-ink">{story.sourceCount}</b>{t(" 个报道来源", story.sourceCount === 1 ? " source" : " sources")}
+            <b className="num font-semibold text-ink">{story.sourceCount}</b>{t(" 個報導來源", story.sourceCount === 1 ? " source" : " sources")}
           </span>
           {story.firstReportAt && (
             <span className="inline-flex items-center gap-1.5">
@@ -243,7 +243,7 @@ export default function StoryPage() {
                   <b className="num font-semibold text-ink">
                     <time dateTime={story.firstReportAt}>{monthDay(beijingDate(story.firstReportAt))}</time>
                   </b>
-                  首报
+                  首報
                 </>,
                 <>
                   First reported
@@ -267,13 +267,13 @@ export default function StoryPage() {
         <PillTabs
           size="sm"
           layoutId="story-sections"
-          label={t("事件内容导航", "Story sections")}
+          label={t("事件內容導航", "Story sections")}
           active={reading ?? SECTIONS.overview}
           onSelect={goSection}
           items={[
-            { key: SECTIONS.overview, label: t("事件概览", "Overview") },
-            { key: SECTIONS.reports, label: t("报道时间线", "Coverage timeline"), count: story.reportCount },
-            ...(observed ? [{ key: SECTIONS.heat, label: t("热度走势", "Heat") }] : []),
+            { key: SECTIONS.overview, label: t("事件概覽", "Overview") },
+            { key: SECTIONS.reports, label: t("報導時間線", "Coverage timeline"), count: story.reportCount },
+            ...(observed ? [{ key: SECTIONS.heat, label: t("熱度走勢", "Heat") }] : []),
           ]}
         />
       </div>
@@ -281,7 +281,7 @@ export default function StoryPage() {
       <div className="mt-5 grid grid-cols-[minmax(0,1fr)] items-start gap-4 lg:mt-6 lg:gap-6 side:grid-cols-[minmax(0,1fr)_300px] 2xl:grid-cols-[minmax(0,1fr)_340px]">
         {/* Below side (phones and narrow desktops) the main column dissolves so the rail's cards can sit between its sections. */}
         <div className="contents side:flex side:min-w-0 side:flex-col side:gap-6">
-          <Panel id={SECTIONS.overview} title={t("先了解这件事", "The story so far")} right={overview?.label} className="order-1">
+          <Panel id={SECTIONS.overview} title={t("先了解這件事", "The story so far")} right={overview?.label} className="order-1">
             {overview ? (
               <>
                 <p className="whitespace-pre-line text-ui-body leading-[1.85] text-ink-2"><MentionText runs={overviewRuns} /></p>
@@ -292,12 +292,12 @@ export default function StoryPage() {
                 )}
               </>
             ) : (
-              <p className="text-ui-label-lg text-ink-4">{t("暂时还没有综述，先看下面的报道时间线。", "No summary yet. Start with the coverage timeline below.")}</p>
+              <p className="text-ui-label-lg text-ink-4">{t("暫時還沒有綜述，先看下面的報導時間線。", "No summary yet. Start with the coverage timeline below.")}</p>
             )}
             {story.latest && (
               <div className="-mx-5 mt-5 border-t border-line-soft px-5 pt-4 lg:-mx-6 lg:px-6">
                 <div className="flex items-center gap-2.5 text-ui-caption">
-                  <span className="font-semibold text-ink">{t("最新进展", "Latest update")}</span>
+                  <span className="font-semibold text-ink">{t("最新進展", "Latest update")}</span>
                   {story.latestAt && <span className="num text-ink-4">{monthDayTime(story.latestAt, locale)}</span>}
                 </div>
                 {newest ? (
@@ -313,8 +313,8 @@ export default function StoryPage() {
           </Panel>
 
           {story.developments.length > 1 && (
-            <Panel title={t("事件进展", "Updates")} sub={t(`${story.developments.length} 个进展`, `${story.developments.length} updates`)} className="order-3" right={
-              <Select value={order} onChange={(e) => setOrder(e.target.value as "desc" | "asc")} aria-label={t("事件进展排序", "Sort updates")}>
+            <Panel title={t("事件進展", "Updates")} sub={t(`${story.developments.length} 個進展`, `${story.developments.length} updates`)} className="order-3" right={
+              <Select value={order} onChange={(e) => setOrder(e.target.value as "desc" | "asc")} aria-label={t("事件進展排序", "Sort updates")}>
                 <option value="desc">{t("最新在前", "Newest first")}</option>
                 <option value="asc">{t("最早在前", "Oldest first")}</option>
               </Select>
@@ -324,7 +324,7 @@ export default function StoryPage() {
                   <li key={d.factId} className="relative">
                     <span className={`absolute -left-5 top-[7px] size-[7px] rounded-full ring-4 ring-surface ${d.factId === story.developments[0]?.factId ? "bg-accent" : "bg-line-strong"}`} aria-hidden="true" />
                     <div className="num text-ui-caption text-ink-4">
-                      {monthDayTime(d.firstReportAt, locale)} · {d.reportCount}{t(" 篇报道", d.reportCount === 1 ? " report" : " reports")}
+                      {monthDayTime(d.firstReportAt, locale)} · {d.reportCount}{t(" 篇報導", d.reportCount === 1 ? " report" : " reports")}
                     </div>
                     <Link viewTransition to={`/items/${d.representative.id}`} className="mt-0.5 block text-ui-body font-semibold leading-snug text-ink transition-colors hover:text-accent">
                       {d.title}
@@ -340,11 +340,11 @@ export default function StoryPage() {
 
           <Panel
             id={SECTIONS.reports}
-            title={t("报道时间线", "Coverage timeline")}
-            sub={t("沿着报道，了解事件的不同侧面。", "Follow the coverage to see the story from different sides.")}
+            title={t("報導時間線", "Coverage timeline")}
+            sub={t("沿著報導，瞭解事件的不同側面。", "Follow the coverage to see the story from different sides.")}
             className="order-4"
             right={
-              <Select value={order} onChange={(e) => setOrder(e.target.value as "desc" | "asc")} aria-label={t("报道时间线排序", "Sort coverage timeline")}>
+              <Select value={order} onChange={(e) => setOrder(e.target.value as "desc" | "asc")} aria-label={t("報導時間線排序", "Sort coverage timeline")}>
                 <option value="desc">{t("最新在前", "Newest first")}</option>
                 <option value="asc">{t("最早在前", "Oldest first")}</option>
               </Select>
@@ -353,17 +353,17 @@ export default function StoryPage() {
             <PillTabs
               size="xs"
               layoutId="story-report-filter"
-              label={t("报道筛选", "Filter reports")}
+              label={t("報導篩選", "Filter reports")}
               active={filter}
               onSelect={(k) => setFilter(k as Filter)}
               items={[
-                { key: "all", label: t("全部报道", "All reports"), count: counts.all },
+                { key: "all", label: t("全部報導", "All reports"), count: counts.all },
                 { key: "official", label: t("官方一手", "Official"), count: counts.official },
-                { key: "selected", label: t("精选报道", "Top picks"), count: counts.selected },
+                { key: "selected", label: t("精選報導", "Top picks"), count: counts.selected },
               ]}
             />
             {days.length === 0 ? (
-              <p className="py-10 text-center text-ui-label text-ink-4">{t("这个筛选下没有报道。", "No reports match this filter.")}</p>
+              <p className="py-10 text-center text-ui-label text-ink-4">{t("這個篩選下沒有報導。", "No reports match this filter.")}</p>
             ) : (
               days.map(({ day, entries: rows }) => (
                 <div key={day}>
@@ -378,24 +378,24 @@ export default function StoryPage() {
             )}
             {story.reportCount > story.timeline.length && (
               <p className="pt-3 text-center text-ui-caption text-ink-4">
-                {t(<>显示最近 {story.timeline.length} 篇，共 {story.reportCount} 篇报道。</>, <>Showing the latest {story.timeline.length} of {story.reportCount} reports.</>)}
+                {t(<>顯示最近 {story.timeline.length} 篇，共 {story.reportCount} 篇報導。</>, <>Showing the latest {story.timeline.length} of {story.reportCount} reports.</>)}
               </p>
             )}
           </Panel>
 
           {observed && (
-            <Panel id={SECTIONS.heat} title={t("本事件热度走势", "Heat over time")} className="order-5">
+            <Panel id={SECTIONS.heat} title={t("本事件熱度走勢", "Heat over time")} className="order-5">
               <HeatChart points={story.heat} />
             </Panel>
           )}
 
           {story.related.length > 0 && (
-            <Panel title={t("关联事件", "Related stories")} className="order-6">
+            <Panel title={t("關聯事件", "Related stories")} className="order-6">
               <ul className="-my-1 divide-y divide-line-soft">
                 {story.related.map((r) => (
                   <li key={r.publicId}>
                     <Link viewTransition to={`/story/${r.publicId}`} className="group flex items-baseline gap-3 py-3">
-                      <span className="shrink-0 text-ui-caption text-ink-4">{r.relation === "storyline" ? t("同一故事线", "Same storyline") : t("相关事件", "Related")}</span>
+                      <span className="shrink-0 text-ui-caption text-ink-4">{r.relation === "storyline" ? t("同一故事線", "Same storyline") : t("相關事件", "Related")}</span>
                       <span className="min-w-0 flex-1 text-ui-body-sm-plus font-medium text-ink-2 transition-colors group-hover:text-accent">{r.title}</span>
                       <IconChevronRight size={14} className="shrink-0 self-center text-ink-4" />
                     </Link>
@@ -408,12 +408,12 @@ export default function StoryPage() {
 
         <aside className="order-2 flex min-w-0 flex-col gap-4 lg:gap-5 side:order-none">
           {observed && (
-            <RailCard title={t("为什么热", "Why it's trending")}>
+            <RailCard title={t("為什麼熱", "Why it's trending")}>
               <p className="text-ui-caption-lg leading-[1.75] text-ink-3">
                 {t(
                   <>
-                    过去 48 小时，有 <b className="num font-semibold text-ink">{story.whyHot.participants48h}</b> 个账号或机构报道、讨论了这件事，最近 6 小时新增{" "}
-                    <b className="num font-semibold text-ink">{story.whyHot.newParticipants6h}</b> 个。
+                    過去 48 小時，有 <b className="num font-semibold text-ink">{story.whyHot.participants48h}</b> 個賬號或機構報導、討論了這件事，最近 6 小時新增{" "}
+                    <b className="num font-semibold text-ink">{story.whyHot.newParticipants6h}</b> 個。
                   </>,
                   <>
                     In the last 48 hours, <b className="num font-semibold text-ink">{story.whyHot.participants48h.toLocaleString("en-US")}</b>{" "}
@@ -422,14 +422,14 @@ export default function StoryPage() {
                   </>,
                 )}
               </p>
-              {!story.whyHot.observationComplete && <p className="mt-2 text-ui-caption leading-relaxed text-ink-4">{t("部分来源近期更新不完整，实际讨论范围可能更大。", "Some sources haven't updated fully recently, so the actual discussion may be larger.")}</p>}
+              {!story.whyHot.observationComplete && <p className="mt-2 text-ui-caption leading-relaxed text-ink-4">{t("部分來源近期更新不完整，實際討論範圍可能更大。", "Some sources haven't updated fully recently, so the actual discussion may be larger.")}</p>}
               <p className="mt-2 text-ui-caption text-ink-4">
-                <span className="num">{story.whyHot.recentReports24h}</span>{t(" 篇近期报道", story.whyHot.recentReports24h === 1 ? " recent report" : " recent reports")}
+                <span className="num">{story.whyHot.recentReports24h}</span>{t(" 篇近期報導", story.whyHot.recentReports24h === 1 ? " recent report" : " recent reports")}
                 {story.whyHot.rank && hotInNav && (
                   <>
                     <span className="mx-1">·</span>
                     <Link to="/hot" className="text-accent hover:underline">
-                      {t(<>热点榜第 {story.whyHot.rank} 名</>, <>No. {story.whyHot.rank} on Trending</>)}
+                      {t(<>熱點榜第 {story.whyHot.rank} 名</>, <>No. {story.whyHot.rank} on Trending</>)}
                     </Link>
                   </>
                 )}
@@ -438,7 +438,7 @@ export default function StoryPage() {
           )}
           {story.officialReports.length > 0 && (
             <RailCard title={t("官方一手", "Official")} right={t(`${officialCount} 篇`, `${officialCount} ${officialCount === 1 ? "report" : "reports"}`)}>
-              <p className="text-ui-caption text-ink-4">{t("直接了解当事方的说法", "Straight from those involved")}</p>
+              <p className="text-ui-caption text-ink-4">{t("直接瞭解當事方的說法", "Straight from those involved")}</p>
               <ul className="mt-1 divide-y divide-line-soft">
                 {story.officialReports.slice(0, 5).map((r) => (
                   <li key={r.id} className="py-3">
@@ -452,13 +452,13 @@ export default function StoryPage() {
               </ul>
               {counts.official > 0 && (
                 <button type="button" onClick={showOfficial} className="text-ui-caption text-ink-4 transition-colors hover:text-accent">
-                  {t("在时间线筛选全部官方报道", "Show all official reports in the timeline")}
+                  {t("在時間線篩選全部官方報導", "Show all official reports in the timeline")}
                 </button>
               )}
             </RailCard>
           )}
           {story.topics.length > 0 && (
-            <RailCard title={t("相关主题", "Related topics")}>
+            <RailCard title={t("相關主題", "Related topics")}>
               <div className="flex flex-wrap gap-1.5">
                 {story.topics.map((topic) => (
                   <Link viewTransition key={topic.slug} to={`/topics/${topic.slug}`} className="chip">
@@ -468,11 +468,11 @@ export default function StoryPage() {
               </div>
             </RailCard>
           )}
-          <RailCard title={t("事件记录", "About this story")} className="hidden side:block">
+          <RailCard title={t("事件記錄", "About this story")} className="hidden side:block">
             <dl className="space-y-2 text-ui-caption-lg">
               {story.firstReportAt && (
                 <div className="flex justify-between gap-3">
-                  <dt className="text-ink-4">{t("最早报道", "First reported")}</dt>
+                  <dt className="text-ink-4">{t("最早報導", "First reported")}</dt>
                   <dd className="num text-ink-2">
                     <time dateTime={story.firstReportAt}>{monthDayTime(story.firstReportAt, locale)}</time>
                   </dd>
@@ -487,7 +487,7 @@ export default function StoryPage() {
                 </div>
               )}
             </dl>
-            <p className="mt-3 border-t border-line-soft pt-3 text-ui-caption leading-relaxed text-ink-4">{t("同一事件的报道集中在这里，新的进展会继续补充。", "All the reports on this story are gathered here, and new updates will be added as they come.")}</p>
+            <p className="mt-3 border-t border-line-soft pt-3 text-ui-caption leading-relaxed text-ink-4">{t("同一事件的報導集中在這裡，新的進展會繼續補充。", "All the reports on this story are gathered here, and new updates will be added as they come.")}</p>
           </RailCard>
         </aside>
       </div>

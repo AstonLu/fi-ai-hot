@@ -14,7 +14,7 @@
 //   Discover from showing their picture large (2026-11-08);
 // - the latest daily's search snippet repeats its lead article's, so two pages read alike; its heading never
 //   says what readers search it by; or /daily/ stands as a page of its own (2026-11-08);
-// - 全部动态's later pages and an event page of a single report compete in search with the pages that stand
+// - 全部動態's later pages and an event page of a single report compete in search with the pages that stand
 //   for them, the first page and that report's own page, while their links stop being followed (2026-11-09);
 // - a daily whose lead was withdrawn is headed in search by a report its highlights were only filled with (2026-11-09).
 import assert from "node:assert/strict";
@@ -29,8 +29,8 @@ import { dateLine } from "../apps/web/app/features/report/format.ts";
 import { startWebServer, type WebServer } from "../apps/web/tests/web-server.ts";
 
 const at = "2026-10-04T08:00:00.000Z";
-const item: FeedItemSummary = { id: "metadata-fixture", title: "可核实的测试报道", summary: "报道摘要", reason: null, source: { name: "Fixture" }, publishedAt: at, timelineAt: at, category: "ai-models", tags: [], score: 80, selected: true, channel: "news", x: null };
-const detail: SiteItemDetail = { ...item, x: null, originalTitle: null, links: { original: "https://example.org/report" }, discoveredAt: at, story: null, readingMode: "full", author: null, body: { zh: "<p>可核实的测试正文。</p>", original: null, zhKind: "original", complete: true }, outline: [], relatedStories: [], topics: [], tagTopics: {}, daily: null, indexable: true, googleNoindex: false, markdownAvailable: true, group: null, hasTranslation: false, bodyLanguage: "zh", mentions: [] };
+const item: FeedItemSummary = { id: "metadata-fixture", title: "可核實的測試報導", summary: "報導摘要", reason: null, source: { name: "Fixture" }, publishedAt: at, timelineAt: at, category: "ai-models", tags: [], score: 80, selected: true, channel: "news", x: null };
+const detail: SiteItemDetail = { ...item, x: null, originalTitle: null, links: { original: "https://example.org/report" }, discoveredAt: at, story: null, readingMode: "full", author: null, body: { zh: "<p>可核實的測試正文。</p>", original: null, zhKind: "original", complete: true }, outline: [], relatedStories: [], topics: [], tagTopics: {}, daily: null, indexable: true, googleNoindex: false, markdownAvailable: true, group: null, hasTranslation: false, bodyLanguage: "zh", mentions: [] };
 /** Article pages by id: the fixture, one kept from Google only, one kept from every engine. */
 const details: Record<string, SiteItemDetail> = {
   [item.id]: detail,
@@ -45,18 +45,18 @@ const details: Record<string, SiteItemDetail> = {
     x: { authorName: "Fixture Author", handle: "fixture", avatarUrl: null, quoted: null, media: [], article: false },
   },
 };
-const citation = (available: boolean): ReportCitation => ({ itemId: available ? item.id : "withdrawn", title: available ? item.title : "已撤下的旧头条", summary: item.summary, sourceName: item.source.name, sourceUrl: detail.links.original, sourceIconUrl: null, firstParty: true, publishedAt: at, available });
+const citation = (available: boolean): ReportCitation => ({ itemId: available ? item.id : "withdrawn", title: available ? item.title : "已撤下的舊頭條", summary: item.summary, sourceName: item.source.name, sourceUrl: detail.links.original, sourceIconUrl: null, firstParty: true, publishedAt: at, available });
 /** A daily whose one entry was withdrawn: its highlights are only the reports a thin issue is filled with. */
 const leadless = (): ReportDetail => ({ ...report("daily"), key: "2026-10-05", lead: null, leadItemId: null,
-  sections: [{ label: "模型", summary: null, items: [citation(false)] }], highlights: [{ ...citation(true), itemId: "metadata-pick", title: "同一时段值得一看的报道" }] });
-const report = (kind: ReportKind): ReportDetail => ({ kind, key: kind === "daily" ? "2026-10-04" : kind === "weekly" ? "2026-W40" : "2026-10", issueNumber: 1, title: `${SITE.name} 测试刊物`, generatedAt: at, lead: { title: "本期已验证的重要变化", leadParagraph: "本期的导读与依据。" }, leadItemId: item.id, overview: null, highlights: [citation(true)], sections: [], flashes: [], cover: null, metrics: {}, readingMinutes: 1, prev: null, next: null, mentions: [] });
-const story: StoryDetail = { publicId: "metadata-story", title: "测试事件的最新进展", status: "settled", reportCount: 1, sourceCount: 1, firstReportAt: at, latestAt: at, digest: "当前可核实的事件综述。", digestUpdatedAt: "2026-10-04T09:00:00.000Z", summary: null, excerpt: null, latest: null, latestReport: null, whyHot: { participants48h: 0, newParticipants6h: 0, recentReports24h: 0, observationComplete: true, rank: null }, developments: [], officialReports: [], timeline: [{ id: item.id, title: item.title, summary: item.summary, source: { name: item.source.name, firstParty: true }, publishedAt: at, selected: true }], heat: [], related: [], topics: [], mentions: [] };
+  sections: [{ label: "模型", summary: null, items: [citation(false)] }], highlights: [{ ...citation(true), itemId: "metadata-pick", title: "同一時段值得一看的報導" }] });
+const report = (kind: ReportKind): ReportDetail => ({ kind, key: kind === "daily" ? "2026-10-04" : kind === "weekly" ? "2026-W40" : "2026-10", issueNumber: 1, title: `${SITE.name} 測試刊物`, generatedAt: at, lead: { title: "本期已驗證的重要變化", leadParagraph: "本期的導讀與依據。" }, leadItemId: item.id, overview: null, highlights: [citation(true)], sections: [], flashes: [], cover: null, metrics: {}, readingMinutes: 1, prev: null, next: null, mentions: [] });
+const story: StoryDetail = { publicId: "metadata-story", title: "測試事件的最新進展", status: "settled", reportCount: 1, sourceCount: 1, firstReportAt: at, latestAt: at, digest: "當前可核實的事件綜述。", digestUpdatedAt: "2026-10-04T09:00:00.000Z", summary: null, excerpt: null, latest: null, latestReport: null, whyHot: { participants48h: 0, newParticipants6h: 0, recentReports24h: 0, observationComplete: true, rank: null }, developments: [], officialReports: [], timeline: [{ id: item.id, title: item.title, summary: item.summary, source: { name: item.source.name, firstParty: true }, publishedAt: at, selected: true }], heat: [], related: [], topics: [], mentions: [] };
 /** Multiple reports from the same source still stay noindex. */
 const sameSourceStory: StoryDetail = { ...story, publicId: "metadata-story-same-source", reportCount: 3, sourceCount: 1 };
 /** The same event once a second distinct source joined it. */
 const severalReports: StoryDetail = { ...story, publicId: "metadata-story-several", reportCount: 2, sourceCount: 2 };
 const topicPage = (pageNum: number): TopicPage => ({
-  topic: { slug: "openai", name: "OpenAI", group: "company", groupName: "公司", definition: "OpenAI 最新动态。", brand: null, total: 45, poolTotal: 60, recent: 5, latest: { title: item.title, at }, indexable: true },
+  topic: { slug: "openai", name: "OpenAI", group: "company", groupName: "公司", definition: "OpenAI 最新動態。", brand: null, total: 45, poolTotal: 60, recent: 5, latest: { title: item.title, at }, indexable: true },
   modules: {},
   items: [item],
   tagTopics: {},
@@ -143,11 +143,11 @@ test("ordinary feed pages remain indexable and normalize ignored parameters", as
   }
 });
 
-test("全部动态's later pages leave search to its first page and keep their links followed", async () => {
+test("全部動態's later pages leave search to its first page and keep their links followed", async () => {
   const $ = await page("/all?channel=all&tab=relevance&anchorAt=old&page=2&utm_source=fixture");
   assert.equal($("meta[name=robots]").attr("content"), "noindex, follow");
   assert.equal($("link[rel=canonical]").attr("href"), `${web.origin}/all?page=2`);
-  assert.match($("title").text(), new RegExp(`^${SEO_TITLES.all} · 第 2 页`), "the title still names what the list is");
+  assert.match($("title").text(), new RegExp(`^${SEO_TITLES.all} · 第 2 頁`), "the title still names what the list is");
   assert.ok($("main").text().includes(item.title), "the page itself is unchanged");
 });
 
@@ -172,14 +172,14 @@ test("an event page stands in search once covered by at least two distinct sourc
   assert.equal(several("meta[name=googlebot]").length, 0);
 });
 
-// Chinese readers search issues by the date as they write it ("10月4日 AI 新闻"), not by the key.
-for (const [kind, label, date] of [["daily", "日报", "10月4日"], ["weekly", "周报", "9月28日—10月4日"], ["monthly", "月报", "2026年10月"]] as const) {
+// Chinese readers search issues by the date as they write it ("10月4日 AI 新聞"), not by the key.
+for (const [kind, label, date] of [["daily", "日報", "10月4日"], ["weekly", "週報", "9月28日—10月4日"], ["monthly", "月報", "2026年10月"]] as const) {
   test(`${kind} issue metadata describes its visible lead and the permanent entry names the latest issue's date`, async () => {
     const r = report(kind);
     const $ = await page(`/${kind}/${r.key}`);
     const title = `${withSubject(label)}｜${date}：${r.lead!.title}`;
     // A daily is described by its own headlines; its lead's paragraph is that article's own description.
-    const description = kind === "daily" ? `${date} ${withSubject("新闻")}：${r.lead!.title}；${item.title}。` : `${date} ${withSubject("资讯")}：${r.lead!.leadParagraph}`;
+    const description = kind === "daily" ? `${date} ${withSubject("新聞")}：${r.lead!.title}；${item.title}。` : `${date} ${withSubject("資訊")}：${r.lead!.leadParagraph}`;
     assert.equal($("meta[name=description]").attr("content"), description);
     assert.equal($("title").text(), `${title} · ${SITE.name}`);
     assert.equal($("meta[property='og:title']").attr("content"), title);
@@ -199,7 +199,7 @@ for (const [kind, label, date] of [["daily", "日报", "10月4日"], ["weekly", 
 
 test("a daily without a lead is not headed by a report its highlights were only filled with", async () => {
   const $ = await page(`/daily/${leadless().key}`);
-  const title = `${withSubject("日报")}｜10月5日`;
+  const title = `${withSubject("日報")}｜10月5日`;
   assert.equal($("title").text(), `${title} · ${SITE.name}`);
   assert.equal(structured($).find((entry) => entry["@type"] === "NewsArticle")!.headline, title);
 });
@@ -221,8 +221,8 @@ test("an issue's date reads as Chinese readers write it, across months and years
 test("a report without an edited lead uses only a still-public visible highlight", () => {
   // An issue's highlights are among its entries; the ones a thin daily is filled with never head it (above).
   const r = { ...report("weekly"), lead: null, highlights: [citation(false), citation(true)], sections: [{ label: "模型", summary: null, items: [citation(false), citation(true)] }] };
-  assert.match(reportLd(r, "/weekly/2026-W40", "导读", "zh").headline, new RegExp(item.title));
-  assert.doesNotMatch(reportLd(r, "/weekly/2026-W40", "导读", "zh").headline, /已撤下/);
+  assert.match(reportLd(r, "/weekly/2026-W40", "導讀", "zh").headline, new RegExp(item.title));
+  assert.doesNotMatch(reportLd(r, "/weekly/2026-W40", "導讀", "zh").headline, /已撤下/);
 });
 
 test("the homepage ties the founder to every public profile the site lists", async () => {

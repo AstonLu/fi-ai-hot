@@ -53,7 +53,7 @@ function partsOf(data: TopicPage): Part[] {
 
 /**
  * The search snippet: what the topic covers, after when it last changed and its biggest recent events. People search
- * "{name} 最新动态"; the page showed for that query but was rarely clicked while the snippet was the bare definition.
+ * "{name} 最新動態"; the page showed for that query but was rarely clicked while the snippet was the bare definition.
  */
 function description(data: TopicPage, parts: Part[], locale: Locale): string {
   const { topic } = data;
@@ -68,19 +68,19 @@ function description(data: TopicPage, parts: Part[], locale: Locale): string {
 export function meta({ loaderData, location }: Route.MetaArgs) {
   const locale = localeOf(location.pathname);
   const t = translator(locale);
-  if (!loaderData) return [{ title: titled(t("主题不存在", "Topic not found")) }, { name: "robots", content: "noindex" }];
+  if (!loaderData) return [{ title: titled(t("主題不存在", "Topic not found")) }, { name: "robots", content: "noindex" }];
   const data = loaderData.data;
   const { topic, page } = data;
   const name = topicName(topic.slug, topic.name, locale);
   const parts = partsOf(data);
   const path = page > 1 ? `/topics/${topic.slug}/page/${page}` : `/topics/${topic.slug}`;
-  const text = page > 1 ? t(`${topic.name} 精选归档（第 ${page} 页）。${topic.definition}`, `${name}: top picks archive, page ${page}. ${topicDefinition(topic.slug, topic.definition, locale)}`) : description(data, parts, locale);
+  const text = page > 1 ? t(`${topic.name} 精選歸檔（第 ${page} 頁）。${topic.definition}`, `${name}: top picks archive, page ${page}. ${topicDefinition(topic.slug, topic.definition, locale)}`) : description(data, parts, locale);
   const crumbs = breadcrumbLd([{ name: SITE.name, path: "/" }, ...UP.crumbs, { name, path: `/topics/${topic.slug}` }], locale);
   const updated = topic.latest ? monthDay(beijingDate(topic.latest.at), Date.now(), locale) : null;
   return pageMeta({
     locale,
     title: page > 1
-      ? t(`${topic.name} 精选 · 第 ${page} 页`, `${name} Top Picks · Page ${page}`)
+      ? t(`${topic.name} 精選 · 第 ${page} 頁`, `${name} Top Picks · Page ${page}`)
       : t(SEO_TITLES.topic(topic.name, topic.group, updated), ENGLISH?.seoTitles.topic(name, topic.group, updated) ?? SEO_TITLES.topic(name, topic.group, updated)),
     description: text,
     path,
@@ -94,7 +94,7 @@ export function meta({ loaderData, location }: Route.MetaArgs) {
           topicLd({
             locale,
             path,
-            name: t(`${topic.name} 最新动态`, `${name}: Latest News`),
+            name: t(`${topic.name} 最新動態`, `${name}: Latest News`),
             description: text,
             dateModified: topic.latest?.at ?? null,
             lists: parts.map((p) => ({ name: t(p.name), entries: p.entries(p.data) })),
@@ -130,7 +130,7 @@ export default function TopicRoute() {
               {t(
                 <>
                   {topic.name}{" "}
-                  <span className="whitespace-nowrap font-semibold text-ink-4">最新动态</span>
+                  <span className="whitespace-nowrap font-semibold text-ink-4">最新動態</span>
                 </>,
                 // English titles the page with the topic's name alone ("OpenAI / ChatGPT", "Tutorials").
                 <>{name}</>,
@@ -144,13 +144,13 @@ export default function TopicRoute() {
             </span>
             <span>
               {t(
-                <>近 30 天 <span className="num font-semibold text-ink-2">{topic.recent.toLocaleString("zh-CN")}</span> 条</>,
+                <>近 30 天 <span className="num font-semibold text-ink-2">{topic.recent.toLocaleString("zh-CN")}</span> 條</>,
                 <><span className="num font-semibold text-ink-2">{topic.recent.toLocaleString("en-US")}</span> in the last 30 days</>,
               )}
             </span>
             <span>
               {t(
-                <>共收录 <span className="num font-semibold text-ink-2">{topic.poolTotal.toLocaleString("zh-CN")}</span> 条</>,
+                <>共收錄 <span className="num font-semibold text-ink-2">{topic.poolTotal.toLocaleString("zh-CN")}</span> 條</>,
                 <><span className="num font-semibold text-ink-2">{topic.poolTotal.toLocaleString("en-US")}</span> {topic.poolTotal === 1 ? "item" : "items"} total</>,
               )}
             </span>
@@ -174,14 +174,14 @@ export default function TopicRoute() {
         </div>
       ))}
 
-      <h2 className="sr-only">{page === 1 ? t(`${topic.name}的精选`, `Top picks on ${name}`) : t(`精选归档 · 第 ${page} 页`, `Top picks archive · Page ${page}`)}</h2>
+      <h2 className="sr-only">{page === 1 ? t(`${topic.name}的精選`, `Top picks on ${name}`) : t(`精選歸檔 · 第 ${page} 頁`, `Top picks archive · Page ${page}`)}</h2>
       {items.length === 0 ? (
         <div className="lg:card">
-          <EmptyState title={t("这个主题暂时还没有精选内容", "No top picks on this topic yet")} />
+          <EmptyState title={t("這個主題暫時還沒有精選內容", "No top picks on this topic yet")} />
         </div>
       ) : (
         <DayList items={items} tagTopics={data.tagTopics} currentTopicSlug={topic.slug} headerAside={<span className="num whitespace-nowrap">{t(
-          <>第 {first}–{last} 条<span className="hidden sm:inline"> · 共 {topic.total.toLocaleString("zh-CN")} 条</span></>,
+          <>第 {first}–{last} 條<span className="hidden sm:inline"> · 共 {topic.total.toLocaleString("zh-CN")} 條</span></>,
           <>Items {first.toLocaleString("en-US")}–{last.toLocaleString("en-US")}<span className="hidden sm:inline"> of {topic.total.toLocaleString("en-US")}</span></>,
         )}</span>} />
       )}

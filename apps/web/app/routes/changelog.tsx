@@ -13,7 +13,7 @@ import { Inline, dateHeading } from "../features/changelog/text";
 import { PhoneBar } from "../components/shell/PhoneBar";
 import type { Screen } from "../components/shell/screens";
 
-export const handle: Screen = { tab: "me", name: "更新日志" };
+export const handle: Screen = { tab: "me", name: "更新日誌" };
 export { pageHeaders as headers } from "../lib/api.server";
 export const { clientLoader, shouldRevalidate } = pageReuse<typeof loader>();
 
@@ -26,11 +26,11 @@ export async function loader({ request }: { request: Request }) {
 export function meta() {
   return pageMeta({
     locale: "zh",
-    title: "更新日志",
-    description: `${SITE.name} 的功能更新、优化、公告与下线记录。`,
+    title: "更新日誌",
+    description: `${SITE.name} 的功能更新、最佳化、公告與下線記錄。`,
     path: "/changelog",
     image: "/og/pages/changelog.png",
-    jsonLd: breadcrumbLd([{ name: SITE.name, path: "/" }, { name: "更新日志", path: "/changelog" }], "zh"),
+    jsonLd: breadcrumbLd([{ name: SITE.name, path: "/" }, { name: "更新日誌", path: "/changelog" }], "zh"),
   });
 }
 
@@ -149,7 +149,7 @@ export default function ChangelogPage() {
 
   const aside = (
     <>
-      <AsideCard title="按类型看" className="hidden side:block">
+      <AsideCard title="按型別看" className="hidden side:block">
         <div className="-mx-2 -mb-1">
           {[null, ...KINDS].map((k) => (
             <button
@@ -172,16 +172,16 @@ export default function ChangelogPage() {
             const [y, mo] = month.split("-").map(Number) as [number, number];
             return (
               <a key={month} href={`#d-${m.first}`} className="flex items-center justify-between rounded-control px-2 py-2 text-ui-label-lg text-ink-2 transition-colors hover:bg-bg-sunk hover:text-ink">
-                {y} 年 {mo} 月<span className="num text-ui-caption text-ink-4">{m.count} 条</span>
+                {y} 年 {mo} 月<span className="num text-ui-caption text-ink-4">{m.count} 條</span>
               </a>
             );
           })}
         </nav>
       </AsideCard>
-      <AsideCard title="有想法或遇到问题">
-        <p className="text-ui-label leading-[1.75] text-ink-3">想要的功能、用着不顺的地方，都可以在反馈页告诉我们。</p>
+      <AsideCard title="有想法或遇到問題">
+        <p className="text-ui-label leading-[1.75] text-ink-3">想要的功能、用著不順的地方，都可以在反饋頁告訴我們。</p>
         <IntentLink viewTransition to="/feedback" className="mt-3 inline-flex items-center gap-1 text-ui-label font-medium text-accent hover:underline">
-          去反馈 <IconChevronRight size={14} />
+          去反饋 <IconChevronRight size={14} />
         </IntentLink>
       </AsideCard>
     </>
@@ -189,11 +189,11 @@ export default function ChangelogPage() {
 
   return (
     <>
-    <PhoneBar back={{ to: "/more", label: "我的" }} title="更新日志" />
+    <PhoneBar back={{ to: "/more", label: "我的" }} title="更新日誌" />
     <ReadingLayout aside={aside}>
       <header className="pb-6">
-        <h1 data-page-title="" className="text-ui-heading-lg font-semibold leading-[1.3] text-ink">更新日志</h1>
-        <p className="mt-1.5 text-ui-label text-ink-3">新功能、调整、下线，都写在这里。</p>
+        <h1 data-page-title="" className="text-ui-heading-lg font-semibold leading-[1.3] text-ink">更新日誌</h1>
+        <p className="mt-1.5 text-ui-label text-ink-3">新功能、調整、下線，都寫在這裡。</p>
       </header>
       <div className="space-y-4">
         {[...groups.entries()].map(([date, releases]) => {

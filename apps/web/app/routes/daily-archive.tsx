@@ -27,19 +27,19 @@ export function meta({ loaderData, location }: { loaderData?: { index: ReportInd
   const locale = localeOf(location.pathname);
   const t = translator(locale);
   const daily = REPORT_NAMES_EN.daily;
-  const entries = (loaderData?.index ?? []).map((e: ReportIndexEntry) => ({ path: `/daily/${e.key}`, name: e.title ? `${e.key} · ${e.title}` : t(`${SITE.name} 日报 · ${e.key}`, `${SITE.name} ${daily} · ${e.key}`) }));
+  const entries = (loaderData?.index ?? []).map((e: ReportIndexEntry) => ({ path: `/daily/${e.key}`, name: e.title ? `${e.key} · ${e.title}` : t(`${SITE.name} 日報 · ${e.key}`, `${SITE.name} ${daily} · ${e.key}`) }));
   return pageMeta({
     locale,
-    title: t(`${withSubject("日报")} · 历史存档`, `${withSubject(daily)} · Archive`),
-    description: t(`${SITE.name} 历史日报，按日期归档。`, `Past issues of ${SITE.name}'s ${withSubject(daily)}, archived by date.`),
+    title: t(`${withSubject("日報")} · 歷史存檔`, `${withSubject(daily)} · Archive`),
+    description: t(`${SITE.name} 歷史日報，按日期歸檔。`, `Past issues of ${SITE.name}'s ${withSubject(daily)}, archived by date.`),
     path: "/daily/archive",
     image: "/og/pages/daily.png",
     jsonLd: [
-      archiveLd("/daily/archive", t(`${SITE.name} 日报 · 历史存档`, `${SITE.name} ${daily} · Archive`), entries, locale),
+      archiveLd("/daily/archive", t(`${SITE.name} 日報 · 歷史存檔`, `${SITE.name} ${daily} · Archive`), entries, locale),
       breadcrumbLd([
         { name: SITE.name, path: "/" },
-        { name: t(withSubject("日报"), withSubject(daily)), path: "/daily" },
-        { name: t("历史存档", "Archive"), path: "/daily/archive" },
+        { name: t(withSubject("日報"), withSubject(daily)), path: "/daily" },
+        { name: t("歷史存檔", "Archive"), path: "/daily/archive" },
       ], locale),
     ],
   });
@@ -52,18 +52,18 @@ export default function DailyArchive() {
   const months = archiveGroups("daily", index, locale);
   const issues = index[0]?.issueNumber ?? 0;
   return (
-    <ReportLayout kind="daily" groups={months} current={null} today={today} back={{ to: "/daily", label: L("日报", "Daily") }} title={t("日报合订本", "Daily archive")}>
+    <ReportLayout kind="daily" groups={months} current={null} today={today} back={{ to: "/daily", label: L("日報", "Daily") }} title={t("日報合訂本", "Daily archive")}>
       <div className="@container">
         <header className="pt-5 lg:pt-0">
           <div className="flex items-center justify-between gap-4 text-ui-caption text-ink-4">
-            <span>{t(`${SITE.name} · ${withSubject("日报")}`, `${SITE.name} · ${withSubject(REPORT_NAMES_EN.daily)}`)}</span>
+            <span>{t(`${SITE.name} · ${withSubject("日報")}`, `${SITE.name} · ${withSubject(REPORT_NAMES_EN.daily)}`)}</span>
             <span>
               {t(<>共 <span className="num">{issues}</span> 期</>, <><span className="num">{issues.toLocaleString("en-US")}</span> {issues === 1 ? "issue" : "issues"}</>)}
             </span>
           </div>
           <div className="py-6 @[880px]:py-8">
             <h1 id="report-start" data-page-title="">
-              <span className="sr-only">{t("日报合订本", "Daily archive")}</span>
+              <span className="sr-only">{t("日報合訂本", "Daily archive")}</span>
               <Nameplate which="archive" className="block h-[50px] w-auto @[520px]:h-[70px] @[880px]:h-[98px]" />
             </h1>
           </div>
@@ -79,7 +79,7 @@ export default function DailyArchive() {
                     <span className="mt-1.5 text-ui-micro-8 leading-none text-ink-4">{weekdayShort(e.key, locale)}</span>
                   </span>
                   <span className="min-w-0">
-                    <span className="block text-ui-body font-bold leading-[1.55] text-ink transition-colors group-hover:text-accent">{e.title ?? t(`${withSubject("日报")} ${e.key}`, `${withSubject(REPORT_NAMES_EN.daily)} ${e.key}`)}</span>
+                    <span className="block text-ui-body font-bold leading-[1.55] text-ink transition-colors group-hover:text-accent">{e.title ?? t(`${withSubject("日報")} ${e.key}`, `${withSubject(REPORT_NAMES_EN.daily)} ${e.key}`)}</span>
                     {!!e.count && (
                       <span className="mt-1 block text-ui-caption text-ink-4">
                         <span className="num">{e.count}</span>{` ${entriesUnit(e.count, locale)}`}

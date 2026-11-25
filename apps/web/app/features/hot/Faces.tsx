@@ -5,8 +5,8 @@ import { SourceAvatar } from "../../components/ui/SourceAvatar";
 import { useT } from "../../lib/i18n";
 
 /**
- * Who is talking about a hot story: overlapping faces of the 精选组 sources in the order the server
- * gives (T1, T1.5, T2), then a count for everyone else, 氛围组 included. Hover lists every name; where
+ * Who is talking about a hot story: overlapping faces of the 精選組 sources in the order the server
+ * gives (T1, T1.5, T2), then a count for everyone else, 氛圍組 included. Hover lists every name; where
  * the faces are their own control (not inside a link), a tap or Enter opens the list, so phones and
  * keyboards reach it too.
  */
@@ -74,7 +74,7 @@ function FacesButton({ participants, total, names, children }: { participants: H
         title={names}
         aria-expanded={open}
         aria-controls={id}
-        aria-label={t(`${total} 位参与者，查看名单`, `${total.toLocaleString("en-US")} ${total === 1 ? "participant" : "participants"}, show the list`)}
+        aria-label={t(`${total} 位參與者，檢視名單`, `${total.toLocaleString("en-US")} ${total === 1 ? "participant" : "participants"}, show the list`)}
         onClick={(e) => {
           e.preventDefault();
           e.stopPropagation();
@@ -88,7 +88,7 @@ function FacesButton({ participants, total, names, children }: { participants: H
         {children}
       </button>
       {open && createPortal(
-        <span ref={popup} id={id} role="dialog" aria-label={t("参与讨论的来源", "Sources in the discussion")} style={at} className="fixed z-50 max-h-[240px] w-[240px] overflow-y-auto rounded-control border border-line bg-raised p-3 text-ui-caption-lg leading-relaxed text-ink-2 shadow-[var(--shadow-pop)]">
+        <span ref={popup} id={id} role="dialog" aria-label={t("參與討論的來源", "Sources in the discussion")} style={at} className="fixed z-50 max-h-[240px] w-[240px] overflow-y-auto rounded-control border border-line bg-raised p-3 text-ui-caption-lg leading-relaxed text-ink-2 shadow-[var(--shadow-pop)]">
           <span className="block">{listed.map((p) => p.name).join(t("、", ", "))}</span>
           {more > 0 && <span className="mt-2 block text-ui-caption-md text-ink-4">{t(<>另有 {more} 位未列出</>, <>{more.toLocaleString("en-US")} more not listed</>)}</span>}
         </span>, document.body

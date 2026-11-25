@@ -97,14 +97,14 @@ export function MoreMenu({ anchor }: { anchor: () => HTMLElement | null }) {
                 <div className="my-1 h-px bg-line-soft" />
               </>
             )}
-            <Row label={t("外观", "Appearance")}>
+            <Row label={t("外觀", "Appearance")}>
               <ThemeSwitch compact className="w-24" />
             </Row>
-            <Row label={t("字体", "Font")}>
+            <Row label={t("字型", "Font")}>
               <FontSelect />
             </Row>
             {ENGLISH && (
-              <Row label={t("语言", "Language")}>
+              <Row label={t("語言", "Language")}>
                 <LanguageSwitch compact className="w-[124px]" />
               </Row>
             )}

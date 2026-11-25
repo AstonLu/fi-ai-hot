@@ -18,7 +18,7 @@ import { navUp } from "../components/shell/nav";
 import type { Screen } from "../components/shell/screens";
 import { apiIn, L, localeOf, localizePath, translator, useLocale, useT, type Locale } from "../lib/i18n";
 
-export const handle: Screen = { home: navUp("/topics").tab, name: L("主题", "Topics") };
+export const handle: Screen = { home: navUp("/topics").tab, name: L("主題", "Topics") };
 export { pageHeaders as headers } from "../lib/api.server";
 export const { clientLoader, shouldRevalidate } = pageReuse<typeof loader>();
 
@@ -48,7 +48,7 @@ export function meta({ loaderData, location }: Route.MetaArgs) {
     locale,
     title,
     description: t(
-      `按${by}整理 ${topics.length} 个${withSubject("主题")}${named ? `（含 ${named} 等）` : ""}，集中看各方向最新精选与进展。`,
+      `按${by}整理 ${topics.length} 個${withSubject("主題")}${named ? `（含 ${named} 等）` : ""}，集中看各方向最新精選與進展。`,
       `${topics.length} ${SITE.subject} topics across ${by}${named ? `, including ${named}` : ""}: the latest top picks and developments in each, in one place.`,
     ),
     path: "/topics",
@@ -59,7 +59,7 @@ export function meta({ loaderData, location }: Route.MetaArgs) {
         "@type": "CollectionPage",
         "@id": `${url("/topics")}#collection`,
         url: url("/topics"),
-        name: t(withSubject("主题"), `${SITE.subject} Topics`),
+        name: t(withSubject("主題"), `${SITE.subject} Topics`),
         inLanguage: locale === "en" ? "en" : SITE.locale,
         isPartOf: { "@id": `${url("/")}#website` },
         mainEntity: {
@@ -68,7 +68,7 @@ export function meta({ loaderData, location }: Route.MetaArgs) {
           itemListElement: indexed.map((topic, i) => ({ "@type": "ListItem", position: i + 1, name: topicName(topic.slug, topic.name, locale), url: url(`/topics/${topic.slug}`) })),
         },
       },
-      breadcrumbLd([{ name: SITE.name, path: "/" }, { name: L("主题", "Topics"), path: "/topics" }], locale),
+      breadcrumbLd([{ name: SITE.name, path: "/" }, { name: L("主題", "Topics"), path: "/topics" }], locale),
     ],
   });
 }
@@ -108,14 +108,14 @@ function TopicCard({ topic }: { topic: TopicSummary }) {
             {topic.recent > 0 ? (
               t(
                 <>
-                  近 30 天 <span className="num font-semibold text-ink-3">{topic.recent}</span> 条
+                  近 30 天 <span className="num font-semibold text-ink-3">{topic.recent}</span> 條
                 </>,
                 <>
                   <span className="num font-semibold text-ink-3">{topic.recent.toLocaleString("en-US")}</span> in the last 30 days
                 </>,
               )
             ) : (
-              t("近 30 天暂无新精选", "No new top picks in the last 30 days")
+              t("近 30 天暫無新精選", "No new top picks in the last 30 days")
             )}
           </span>
         </span>
@@ -131,14 +131,14 @@ export default function TopicsPage() {
   const { groups, topics } = useLoaderData<typeof loader>();
   return (
     <div className="pb-10">
-      <PhoneBar back={BACK} title={t("主题", "Topics")} />
+      <PhoneBar back={BACK} title={t("主題", "Topics")} />
       <header className="pb-2 pt-3 lg:pt-1">
-        <h1 data-page-title="" className="text-ui-heading-lg font-semibold leading-[1.3] text-ink">{t(subjectAfter("按主题看"), `Browse ${SITE.subject} by Topic`)}</h1>
+        <h1 data-page-title="" className="text-ui-heading-lg font-semibold leading-[1.3] text-ink">{t(subjectAfter("按主題看"), `Browse ${SITE.subject} by Topic`)}</h1>
         <p className="mt-1.5 text-ui-label leading-relaxed text-ink-3">
           {t(
             <>
               {`按${groups.map((g) => g.name).join("、")}分了 `}
-              <span className="num">{topics.length}</span> 个主题，挑关心的方向看最新动态。
+              <span className="num">{topics.length}</span> 個主題，挑關心的方向看最新動態。
             </>,
             <>
               <span className="num">{topics.length}</span> topics across {namesEn(groups.map((g) => groupIn(g, locale).name))}. Pick the ones you care about to see the latest.

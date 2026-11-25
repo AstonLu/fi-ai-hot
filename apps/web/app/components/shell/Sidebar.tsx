@@ -56,10 +56,10 @@ function Rail({ dot }: { dot: boolean }) {
   const [railRef, railOverscroll] = useContainedScroll<HTMLElement>();
   return (
     <aside ref={railRef} className={`scrollbar-thin sticky top-0 hidden h-dvh w-16 shrink-0 flex-col items-center border-r border-line bg-sidebar px-1.5 pb-[max(14px,env(safe-area-inset-bottom))] pt-5 lg:flex wide:hidden short:overflow-y-auto short:pt-3 ${railOverscroll}`}>
-      <Link to="/" className="mb-3 flex size-11 shrink-0 items-center justify-center text-accent short:mb-1" aria-label={t(`${SITE.name} 首页`, `${SITE.name} home`)}>
+      <Link to="/" className="mb-3 flex size-11 shrink-0 items-center justify-center text-accent short:mb-1" aria-label={t(`${SITE.name} 首頁`, `${SITE.name} home`)}>
         <RingMark className="size-7" />
       </Link>
-      <nav className="flex w-full flex-col gap-1" aria-label={t("主导航", "Main")}>
+      <nav className="flex w-full flex-col gap-1" aria-label={t("主導航", "Main")}>
         {rail(locale).map((tab) => {
           const on = railIsActive(tab, pathname, screenTab ?? home);
           const Icon = tab.icon;
@@ -100,10 +100,10 @@ export function Sidebar({ changelogVersion }: { changelogVersion: string | null 
     <>
       <Rail dot={dot} />
       <aside ref={columnRef} className={`scrollbar-thin sticky top-0 z-30 hidden h-dvh w-[180px] shrink-0 flex-col border-r border-line bg-sidebar px-3 pb-[max(14px,env(safe-area-inset-bottom))] pt-6 wide:flex short:overflow-y-auto ${columnOverscroll}`}>
-        <Link to="/" className="mb-4 flex h-[50px] shrink-0 items-center px-1 text-ink" aria-label={t(`${SITE.name} 首页`, `${SITE.name} home`)}>
+        <Link to="/" className="mb-4 flex h-[50px] shrink-0 items-center px-1 text-ink" aria-label={t(`${SITE.name} 首頁`, `${SITE.name} home`)}>
           <Wordmark size={26} />
         </Link>
-        <nav ref={navRef} className={`scrollbar-thin -mx-1 flex-1 overflow-y-auto px-1 short:flex-none short:overflow-visible ${navOverscroll}`} aria-label={t("主导航", "Main")}>
+        <nav ref={navRef} className={`scrollbar-thin -mx-1 flex-1 overflow-y-auto px-1 short:flex-none short:overflow-visible ${navOverscroll}`} aria-label={t("主導航", "Main")}>
           {sidebar(locale).map((section) => {
             // Only the most specific entry of a section is lit, so a detail page does not light the list above it too.
             const lit = activeSidebarItem(section.items, pathname);
@@ -127,8 +127,8 @@ export function Sidebar({ changelogVersion }: { changelogVersion: string | null 
                 href={SITE.github}
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label={t("GitHub 开源", "Open source on GitHub")}
-                title={t("GitHub 开源", "Open source on GitHub")}
+                aria-label={t("GitHub 開源", "Open source on GitHub")}
+                title={t("GitHub 開源", "Open source on GitHub")}
                 className="flex size-[34px] shrink-0 items-center justify-center rounded-full border border-line text-ink-3 transition-colors hover:bg-bg-sunk hover:text-ink touch:size-11"
               >
                 <IconGithub size={15} />
@@ -140,7 +140,7 @@ export function Sidebar({ changelogVersion }: { changelogVersion: string | null 
           <div className="-mx-1 flex flex-col items-center gap-1.5">
             {SITE.poweredBy && (
               <a href={SITE.poweredBy.url} target="_blank" rel="noopener" className="whitespace-nowrap text-ui-micro-6 leading-[1.3] text-ink-4 hover:text-ink-3">
-                {t(<>由 {SITE.poweredBy.name} 驱动</>, <>Powered by {SITE.poweredBy.name}</>)}
+                {t(<>由 {SITE.poweredBy.name} 驅動</>, <>Powered by {SITE.poweredBy.name}</>)}
               </a>
             )}
             <Filings className="whitespace-nowrap text-ui-micro-6 leading-[1.3] text-ink-4 hover:text-ink-3" badgeSize={10} />

@@ -48,12 +48,12 @@ export function MediaGallery({ media, postUrl }: { media: MediaView[]; postUrl: 
           );
           const imageIndex = m.kind === "video" ? -1 : images.indexOf(m);
           return m.kind === "video" ? (
-            <a key={`${m.url}#${i}`} href={postUrl} target="_blank" rel="noopener noreferrer" aria-label={t("打开原推播放视频", "Play the video on X")} className={tile}>
+            <a key={`${m.url}#${i}`} href={postUrl} target="_blank" rel="noopener noreferrer" aria-label={t("開啟原推播放影片", "Play the video on X")} className={tile}>
               {img}
               <PlayMark />
             </a>
           ) : (
-            <button key={`${m.url}#${i}`} type="button" onClick={() => setOpen(imageIndex)} aria-label={m.alt ? t(`查看大图：${m.alt}`, `View full size: ${m.alt}`) : t("查看大图", "View full size")} className={`${tile} cursor-zoom-in`}>
+            <button key={`${m.url}#${i}`} type="button" onClick={() => setOpen(imageIndex)} aria-label={m.alt ? t(`檢視大圖：${m.alt}`, `View full size: ${m.alt}`) : t("檢視大圖", "View full size")} className={`${tile} cursor-zoom-in`}>
               {img}
             </button>
           );

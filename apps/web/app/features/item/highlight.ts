@@ -28,5 +28,5 @@ export function highlightCode(source: string, locale: Locale): { html: string; l
   if (!result.language || result.relevance < 4) return null;
   const clear = result.relevance >= 6 && result.relevance - (result.secondBest?.relevance ?? 0) >= 2;
   const t = translator(locale);
-  return { html: result.value, label: clear ? (LABELS[result.language] ?? t("代码", "Code")) : t("代码", "Code") };
+  return { html: result.value, label: clear ? (LABELS[result.language] ?? t("程式碼", "Code")) : t("程式碼", "Code") };
 }

@@ -1,5 +1,5 @@
 // Phone search: opens over the page from the bars' magnifier with the keyboard
-// already up — the field is focused inside the same tap, which iOS requires — and searches 全部动态
+// already up — the field is focused inside the same tap, which iOS requires — and searches 全部動態
 // (/all?q=…). Below the field: this browser's recent searches, topics to browse and what is hot now.
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { Form, useLocation, useNavigation } from "react-router";
@@ -118,7 +118,7 @@ export function SearchOverlay() {
       ref={panel}
       role="dialog"
       aria-modal="true"
-      aria-label={t("搜索", "Search")}
+      aria-label={t("搜尋", "Search")}
       tabIndex={-1}
       inert={!shown}
       className={`fixed inset-0 z-[75] flex flex-col bg-bg pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)] transition-[opacity,transform] duration-200 ease-[var(--ease-out-quart)] lg:hidden ${shown ? "translate-y-0 opacity-100" : "pointer-events-none -translate-y-1 opacity-0"}`}
@@ -138,7 +138,7 @@ export function SearchOverlay() {
         className="flex h-14 shrink-0 items-center gap-1 pl-4 pr-1 pt-[env(safe-area-inset-top)]"
       >
         <label className="relative flex-1">
-          <span className="sr-only">{t("搜索标题和摘要", "Search titles and summaries")}</span>
+          <span className="sr-only">{t("搜尋標題和摘要", "Search titles and summaries")}</span>
           <IconSearch size={18} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-4" />
           <input
             ref={input}
@@ -146,7 +146,7 @@ export function SearchOverlay() {
             type="search"
             onInput={(e) => setHasText(!!e.currentTarget.value)}
             tabIndex={shown ? 0 : -1}
-            placeholder={t("搜索标题、摘要…", "Search titles, summaries…")}
+            placeholder={t("搜尋標題、摘要…", "Search titles, summaries…")}
             maxLength={200}
             autoComplete="off"
             enterKeyHint="search"
@@ -178,7 +178,7 @@ export function SearchOverlay() {
           {recent.length > 0 && (
             <section className="pt-3">
               <div className="flex items-center justify-between">
-                <h2 className="text-ui-label font-semibold text-ink-3">{t("最近搜索", "Recent searches")}</h2>
+                <h2 className="text-ui-label font-semibold text-ink-3">{t("最近搜尋", "Recent searches")}</h2>
                 <button type="button" onClick={clearRecentSearches} className="-mr-2 h-11 px-2 text-ui-label text-ink-4">
                   {t("清除", "Clear")}
                 </button>
@@ -195,7 +195,7 @@ export function SearchOverlay() {
 
           {companies.length > 0 && (
             <section className="pt-6">
-              <h2 className="text-ui-label font-semibold text-ink-3">{t("按主题找", "Browse by topic")}</h2>
+              <h2 className="text-ui-label font-semibold text-ink-3">{t("按主題找", "Browse by topic")}</h2>
               <div className="mt-2.5 flex flex-wrap gap-2">
                 {companies.map((topic) => (
                   <Link viewTransition key={topic.slug} to={`/topics/${topic.slug}`} className={`${chip} bg-well text-ink-2 ring-1 ring-inset ring-line-soft active:bg-bg-muted`}>
@@ -204,7 +204,7 @@ export function SearchOverlay() {
                 ))}
                 {topicsInNav && (
                   <Link viewTransition to="/topics" className={`${chip} gap-0.5 font-medium text-accent`}>
-                    {t(`全部 ${more!.topics.length} 个主题`, `All ${more!.topics.length} topics`)}
+                    {t(`全部 ${more!.topics.length} 個主題`, `All ${more!.topics.length} topics`)}
                   </Link>
                 )}
               </div>
@@ -213,7 +213,7 @@ export function SearchOverlay() {
 
           {(more?.hot.length ?? 0) > 0 && (
             <section className="pt-6">
-              <h2 className="text-ui-label font-semibold text-ink-3">{t("正在热议", "Trending now")}</h2>
+              <h2 className="text-ui-label font-semibold text-ink-3">{t("正在熱議", "Trending now")}</h2>
               <ol className="mt-1 divide-y divide-line-soft">
                 {more!.hot.map((h, i) => (
                   <li key={h.to}>

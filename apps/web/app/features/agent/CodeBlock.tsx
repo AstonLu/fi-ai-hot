@@ -6,7 +6,7 @@ import { IconCheck, IconCopy } from "../../components/icons";
 export function CopyButton({ text, label, className = "" }: { text: string; label?: string; className?: string }) {
   const t = useT();
   const [copied, setCopied] = useState(false);
-  const idle = label ?? t("复制", "Copy");
+  const idle = label ?? t("複製", "Copy");
   return (
     <button
       type="button"
@@ -16,12 +16,12 @@ export function CopyButton({ text, label, className = "" }: { text: string; labe
         setTimeout(() => setCopied(false), 1500);
       }}
       className={`inline-flex h-7 items-center gap-1 rounded-mark border border-line bg-surface px-2 text-ui-caption transition-colors ${copied ? "text-ok" : "text-ink-3 hover:border-line-strong hover:text-ink"} ${className}`}
-      aria-label={copied ? t("已复制", "Copied") : idle}
+      aria-label={copied ? t("已複製", "Copied") : idle}
     >
       <span key={copied ? "ok" : "copy"} className={copied ? "anim-swap-in" : ""}>
         {copied ? <IconCheck size={14} /> : <IconCopy size={14} />}
       </span>
-      {copied ? t("已复制", "Copied") : idle}
+      {copied ? t("已複製", "Copied") : idle}
     </button>
   );
 }

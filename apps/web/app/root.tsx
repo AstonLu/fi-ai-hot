@@ -59,7 +59,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         {webModules().map((m) => m.root?.bootScript && <script key={m.name} dangerouslySetInnerHTML={{ __html: m.root.bootScript }} />)}
         <Meta />
         <Links />
-        <link rel="alternate" type="application/rss+xml" title={t(`${SITE.name} — 精选`, `${SITE.name} — Top Picks`)} href={feedPath("/feed.xml", locale)} />
+        <link rel="alternate" type="application/rss+xml" title={t(`${SITE.name} — 精選`, `${SITE.name} — Top Picks`)} href={feedPath("/feed.xml", locale)} />
       </head>
       <body>
         {children}
@@ -75,7 +75,7 @@ export function meta({ error, location }: Route.MetaArgs) {
   if (!error) return [];
   const t = translator(localeOf(location.pathname));
   const notFound = isRouteErrorResponse(error) && error.status === 404;
-  return [{ title: titled(notFound ? t("页面不存在", "Page not found") : t("暂时无法加载", "Can't load this page")) }, { name: "robots", content: "noindex" }];
+  return [{ title: titled(notFound ? t("頁面不存在", "Page not found") : t("暫時無法載入", "Can't load this page")) }, { name: "robots", content: "noindex" }];
 }
 
 /** Sidebar, main column and phone tab bar around a page (or an error). */
@@ -149,21 +149,21 @@ export function ErrorBoundary() {
       <div className="max-w-sm text-center">
         <RingMark className="mx-auto mb-5 size-10 text-accent" />
         <div className="mono text-ui-caption text-ink-4">{status}</div>
-        <h1 className="mt-1.5 text-ui-heading font-bold text-ink">{notFound ? t("找不到这个页面", "Page not found") : t("暂时无法加载", "Can't load this page")}</h1>
+        <h1 className="mt-1.5 text-ui-heading font-bold text-ink">{notFound ? t("找不到這個頁面", "Page not found") : t("暫時無法載入", "Can't load this page")}</h1>
         <p className="mt-2 text-ui-label-lg leading-relaxed text-ink-3">
           {notFound
-            ? t("链接可能有误，或者这条内容已经下架。", "The link may be wrong, or this page has been taken down.")
-            : t("页面暂时无法显示，请重新加载后再试。", "Something went wrong while loading this page. Reload and try again.")}
+            ? t("連結可能有誤，或者這條內容已經下架。", "The link may be wrong, or this page has been taken down.")
+            : t("頁面暫時無法顯示，請重新載入後再試。", "Something went wrong while loading this page. Reload and try again.")}
         </p>
         <div className="mt-6 flex flex-wrap justify-center gap-2.5">
           {!notFound && <Link reloadDocument to={pathname + search + hash} className={buttonClass("primary")}>
-            {t("重新加载", "Reload")}
+            {t("重新載入", "Reload")}
           </Link>}
           <Link reloadDocument to="/" className={buttonClass(notFound ? "primary" : "secondary")}>
-            {t("回到精选", "Back to Top Picks")}
+            {t("回到精選", "Back to Top Picks")}
           </Link>
           <Link reloadDocument to="/all" className={buttonClass("secondary")}>
-            {t("浏览全部动态", "Browse all news")}
+            {t("瀏覽全部動態", "Browse all news")}
           </Link>
         </div>
       </div>

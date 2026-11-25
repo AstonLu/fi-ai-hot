@@ -20,7 +20,7 @@ export function OutlineSheet({ open, onClose, outline, title }: { open: boolean;
   const [current, go] = useCurrentSection(outline.map((o) => o.id), open);
   let n = 0;
   return (
-    <Sheet open={open} onClose={onClose} title={title ?? t("目录", "Contents")}>
+    <Sheet open={open} onClose={onClose} title={title ?? t("目錄", "Contents")}>
       <ol className="px-3">
         {outline.map((o) => {
           const top = o.level <= 2;
@@ -41,7 +41,7 @@ export function OutlineSheet({ open, onClose, outline, title }: { open: boolean;
               >
                 {top && <span className={`mono w-5 shrink-0 text-ui-label ${on ? "font-bold" : "text-ink-4"}`}>{mark}</span>}
                 <span className={`min-w-0 flex-1 leading-[1.45] ${top ? "text-ui-body-plus" : "text-ui-body-sm"} ${on ? "font-semibold" : top ? "text-ink-2" : "text-ink-3"}`}>{o.text}</span>
-                {on ? <span className="shrink-0 text-ui-caption-md font-semibold">{t("正在读", "Now reading")}</span> : o.note && <span className="num shrink-0 text-ui-caption text-ink-4">{o.note}</span>}
+                {on ? <span className="shrink-0 text-ui-caption-md font-semibold">{t("正在讀", "Now reading")}</span> : o.note && <span className="num shrink-0 text-ui-caption text-ink-4">{o.note}</span>}
               </a>
             </li>
           );

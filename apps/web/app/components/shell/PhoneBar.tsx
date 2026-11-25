@@ -23,7 +23,7 @@ export function PhoneBar({ back, title, leading, center, actions }: {
   /** The page's name, shown in the bar once the page's heading ([data-page-title]) is under it. */
   title?: ReactNode;
   leading?: ReactNode;
-  /** Always shown in the middle instead of the title (精选 | 全部). */
+  /** Always shown in the middle instead of the title (精選 | 全部). */
   center?: ReactNode;
   actions?: ReactNode;
 }) {
@@ -56,7 +56,7 @@ export function PhoneBar({ back, title, leading, center, actions }: {
   );
 }
 
-/** "‹ 精选": back through the reader's history, or to the page's parent when it was opened directly. */
+/** "‹ 精選": back through the reader's history, or to the page's parent when it was opened directly. */
 function BackButton({ to, label }: BackTarget) {
   const navigate = useNavigate();
   const { key } = useLocation();

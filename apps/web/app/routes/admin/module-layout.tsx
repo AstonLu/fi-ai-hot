@@ -19,14 +19,14 @@ export async function loader({ request }: { request: Request }) {
 
 export const headers = () => ({ ...GRAY_HEADERS, "X-Robots-Tag": "noindex, nofollow" });
 
-export const meta = () => [{ title: `${SITE.name} 后台` }, { name: "robots", content: "noindex, nofollow" }];
+export const meta = () => [{ title: `${SITE.name} 後臺` }, { name: "robots", content: "noindex, nofollow" }];
 
 export default function ModuleAdminLayout({ loaderData }: { loaderData: { name: string } }) {
   const navigation = useNavigation();
   const brand = (
     <span className="flex items-center gap-2">
       <RingMark className="size-6 text-accent" />
-      <span className="text-ui-body font-semibold tracking-tight text-ink">{`${SITE.name} 后台`}</span>
+      <span className="text-ui-body font-semibold tracking-tight text-ink">{`${SITE.name} 後臺`}</span>
     </span>
   );
   const back = `回到 ${SITE.name}`;

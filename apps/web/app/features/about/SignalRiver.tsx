@@ -1,8 +1,8 @@
 // The about page's river. Every line is one of the site's real sources (hover names it). Lines run in
-// from the left, gather into bundles (many reports of one story), meet the 精选 gate that lets a few
+// from the left, gather into bundles (many reports of one story), meet the 精選 gate that lets a few
 // bundles through, and the ones that pass turn teal and run into a small newspaper: the day's report.
 // Pulses carry items along the lines; most stop at the gate, and each that reaches the paper calls
-// onArrive (the page brings up the next latest 精选). The four stages line up with the columns under
+// onArrive (the page brings up the next latest 精選). The four stages line up with the columns under
 // the canvas, and `focus` lights one of them. On first sight the river flows in from the left once.
 // Theme-aware, paused off screen; reduced motion draws it still. The canvas only illustrates: what it
 // says is also written in the page.
@@ -19,19 +19,19 @@ export interface RiverSource {
   heatOnly: boolean;
 }
 
-/** Stage boundaries as fractions of the width: 采集 | 归并 | 精选 | 成刊. */
+/** Stage boundaries as fractions of the width: 採集 | 歸併 | 精選 | 成刊. */
 export const STAGES = [0, 0.25, 0.5, 0.75, 1] as const;
 
 const STEP = 3;
 /** A source's kind as the hover names it. */
 function kindName(kind: string | undefined, t: Translate): string {
   switch (kind) {
-    case "x_search": return t("X 账号", "X account");
+    case "x_search": return t("X 賬號", "X account");
     case "rss": return "RSS";
-    case "web_list": return t("网页", "Web page");
-    case "mp_account": return t("公众号", "WeChat account");
-    case "json_list": return t("接口", "API");
-    default: return t("信源", "Source");
+    case "web_list": return t("網頁", "Web page");
+    case "mp_account": return t("公眾號", "WeChat account");
+    case "json_list": return t("介面", "API");
+    default: return t("來源", "Source");
   }
 }
 const FLASH_MS = 900;
@@ -84,7 +84,7 @@ function layout(w: number, h: number, sources: RiverSource[]): Layout {
   const x2 = w * STAGES[2];
   const gate = w * 0.625;
   const xo = w * 0.8;
-  // The paper sits a little above the middle; the page sets the latest 精选 under it (42% + 42px).
+  // The paper sits a little above the middle; the page sets the latest 精選 under it (42% + 42px).
   const out = h * 0.42;
   const pw = Math.max(26, Math.min(46, w * 0.042));
   const ph = pw * 1.32;
@@ -487,7 +487,7 @@ export function SignalRiver({
       const p = L.paper;
       if (x >= p.x - 8 && x <= p.x + p.w + 8 && y >= p.y - 8 && y <= p.y + p.h + 8) {
         hover = { s: null, bundle: null, paper: true };
-        place(x, y, t(withSubject("日报"), `${SITE.subject} Daily`), t(EDITION.daily));
+        place(x, y, t(withSubject("日報"), `${SITE.subject} Daily`), t(EDITION.daily));
         redraw();
         return;
       }
@@ -511,12 +511,12 @@ export function SignalRiver({
       if (x < L.x2) {
         hover = { s: best, bundle: null, paper: false };
         const kind = kindName(s.source?.kind, t);
-        place(x, y, s.source ? s.source.name : t("一个信源", "A source"), s.source?.heatOnly ? t(`${kind} · 只计入热度`, `${kind} · counts toward heat only`) : kind);
+        place(x, y, s.source ? s.source.name : t("一個來源", "A source"), s.source?.heatOnly ? t(`${kind} · 只計入熱度`, `${kind} · counts toward heat only`) : kind);
       } else {
         hover = { s: null, bundle: s.bundle, paper: false };
-        if (x < L.gate) place(x, y, t("同一件事", "One story"), t(`${b.n} 个来源的报道合成一条`, `Reports from ${b.n} ${b.n === 1 ? "source" : "sources"}, grouped into one`));
-        else if (b.kept) place(x, y, t("进了精选", "Made Top Picks"), t("有信息量，分数也够", "Substantive and scores high enough"));
-        else place(x, y, t("没进精选", "Didn't make Top Picks"), t("信息不够、重复或只是营销", "Too thin, a repeat or just marketing"));
+        if (x < L.gate) place(x, y, t("同一件事", "One story"), t(`${b.n} 個來源的報導合成一條`, `Reports from ${b.n} ${b.n === 1 ? "source" : "sources"}, grouped into one`));
+        else if (b.kept) place(x, y, t("進了精選", "Made Top Picks"), t("有資訊量，分數也夠", "Substantive and scores high enough"));
+        else place(x, y, t("沒進精選", "Didn't make Top Picks"), t("資訊不夠、重複或只是營銷", "Too thin, a repeat or just marketing"));
       }
       redraw();
     };
