@@ -127,7 +127,7 @@ export const POLICY = {
    * 只展示摘要的來源裡，哪些可以在列表卡片上放文章的封面（來源網頁宣告的分享圖；沒有時用正文第一張圖）：寫來源 id，
    * 或 "all" 表示全部。圖片經本站代理縮圖並快取，著作權屬於來源，先確認來源允許再寫。允許全文的來源不用寫，一律會放。
    */
-  coverSources: [] as "all" | readonly string[],
+  coverSources: "all" as "all" | readonly string[],
 } as const;
 
 /** 導航（頁首、“更多”選單、“更多”頁）。 */
