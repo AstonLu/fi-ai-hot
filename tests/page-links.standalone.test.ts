@@ -12,7 +12,7 @@ import * as cheerio from "cheerio";
 import type { SiteItemDetail, StoryDetail } from "@aihot/contracts/site";
 import { beijingDate } from "@aihot/contracts/time";
 import { ENGLISH } from "@aihot/contracts/english";
-import { ITEM_COPY, withSubject } from "@aihot/site";
+import { withSubject } from "@aihot/site";
 import { fakeApi, FIXTURE_AT, itemDetail, startWebServer, type WebServer } from "../apps/web/tests/web-server.ts";
 
 const agent = { slug: "agent", name: "Agent 智慧體" };
@@ -68,48 +68,33 @@ test("both language links on the cached Me page have canonical addresses", { ski
   }
 });
 
-/** The headings of the rail that has `heading`, in order. */
-function railOf($: cheerio.CheerioAPI, heading: string): string[] {
-  const rail = $("h2").filter((_, el) => $(el).text() === heading).closest("aside");
-  assert.equal(rail.length, 1, heading);
-  return rail.find("h2").toArray().map((el) => $(el).text());
-}
-
-test("an article a daily carries links to that issue, in the rail and first among the phone chips", async () => {
+test("an article a daily carries links to that issue, first among its chips", async () => {
   const daily = withSubject("日報");
   for (const [id, name] of [["links-lead", `11月7日 ${daily} · 頭條`], ["links-entry", `11月7日 ${daily}`]] as const) {
     const $ = await page(`/items/${id}`);
     const links = $("a[href='/daily/2026-11-07']");
-    // On phones it heads the row of topic and tag chips at the end of the text; wide screens have it in the rail.
-    assert.deepEqual(links.toArray().map((el) => $(el).text()), [`收錄於 ${name}`, name], id);
+    // It heads the row of topic and tag chips at the end of the text.
+    assert.deepEqual(links.toArray().map((el) => $(el).text()), [`收錄於 ${name}`], id);
     const chip = links.eq(0);
     assert.ok(chip.closest("article").length && chip.is(chip.parent().children().first()), id);
-    assert.equal(links.eq(1).closest("section").find("h2").text(), "收錄於");
   }
-  // Between the reason and the topics.
-  assert.deepEqual(railOf(await page("/items/links-lead"), "收錄於"), [ITEM_COPY.reasonLabel, "收錄於", "主題"]);
   const $ = await page("/items/links-none");
   assert.equal($("a[href^='/daily/2']").length, 0);
-  assert.equal($("h2").filter((_, el) => $(el).text() === "收錄於").length, 0);
 });
 
 test("a tag that is a topic's own leads to the topic page, and not beside that topic's chip", async () => {
   const $ = await page("/items/links-tags");
   const hrefs = (text: string) => $("a").filter((_, el) => $(el).text() === text).toArray().map((el) => $(el).attr("href"));
-  // The rail and the phone chips alike.
-  assert.deepEqual(hrefs("Agent 智慧體"), ["/topics/agent", "/topics/agent"]);
+  assert.deepEqual(hrefs("Agent 智慧體"), ["/topics/agent"]);
   assert.deepEqual(hrefs("#Agent"), []);
-  assert.deepEqual(hrefs("#OpenAI"), ["/topics/openai", "/topics/openai"]);
-  assert.deepEqual(hrefs("#框架"), [`/all?tag=${encodeURIComponent("框架")}`, `/all?tag=${encodeURIComponent("框架")}`]);
+  assert.deepEqual(hrefs("#OpenAI"), ["/topics/openai"]);
+  assert.deepEqual(hrefs("#框架"), [`/all?tag=${encodeURIComponent("框架")}`]);
   assert.equal($("a[href^='/all?tag=Agent']").length, 0);
   // Non-topic filter links carry nofollow while topic links remain crawlable.
   assert.ok($(`a[href="/all?tag=${encodeURIComponent("框架")}"]`).toArray().every((el) => $(el).attr("rel") === "nofollow"));
   assert.ok($('a[href="/topics/openai"]').toArray().every((el) => !$(el).attr("rel")));
 
   const pool = await page("/all");
-  assert.equal(pool('a[href="/topics/agent"]').text(), "#Agent");
-  assert.equal(pool('a[href="/topics/openai"]').text(), "#OpenAI");
-  assert.equal(pool(`a[href="/all?tag=${encodeURIComponent("框架")}"]`).attr("rel"), "nofollow");
   assert.equal(pool('a[href="/all?category=ai-models"]').first().attr("rel"), "nofollow");
 });
 

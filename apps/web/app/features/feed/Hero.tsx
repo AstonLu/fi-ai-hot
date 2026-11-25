@@ -105,7 +105,7 @@ export function Hero({ stories }: { stories: HeroStory[] }) {
                 <span className="hero-headline">{s.title}</span>
                 {!s.cover && s.summary && <span className="hero-summary">{shortAddresses(s.summary)}</span>}
               </span>
-              {k === 0 && <IntentLink viewTransition to={`/items/${s.id}`} tabIndex={-1} aria-label={s.title} className="absolute inset-0 rounded-[inherit]" />}
+              {k === 0 && <IntentLink viewTransition to={`/items/${s.id}`} tabIndex={-1} aria-label={s.title} className="absolute inset-0" />}
             </div>
           );
         })}

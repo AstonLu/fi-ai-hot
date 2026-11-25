@@ -284,9 +284,9 @@ test("navigation visibility is defined in shell/nav.ts", () => {
 // sizes from 4 to 20 pixels gave the same kind of box different corners. A radius worked out from a
 // drawing's own size (an inline style from a variable) is the drawing's geometry and is not read.
 const RADIUS_CLASS = /(?<![\w-])rounded(?:-(?:\[[^\]]*\]|\([^)]*\)|\w+))*/g;
-const RADIUS_ON_SCALE = /^rounded(?:-(?:s|e|t|r|b|l|ss|se|es|ee|tl|tr|br|bl))?-(?:mark|control|tile|card|panel|sheet|full|none)$/;
+const RADIUS_ON_SCALE = /^rounded(?:-(?:s|e|t|r|b|l|ss|se|es|ee|tl|tr|br|bl))?-(?:mark|control|tile|card|panel|sheet|board|full|none)$/;
 const CSS_RADIUS = /border(?:-[a-z]+)*-radius\s*:\s*([^;}]+)/g;
-const CSS_RADIUS_ON_SCALE = /^(?:var\(--radius-(?:mark|control|tile|card|panel|sheet)\)|9999px|0)$/;
+const CSS_RADIUS_ON_SCALE = /^(?:var\(--radius-(?:mark|control|tile|card|panel|sheet|board)\)|9999px|0)$/;
 
 test("corners use the radius scale", () => {
   const found = webLines().flatMap(({ at, line }) => [
@@ -294,7 +294,7 @@ test("corners use the radius scale", () => {
     ...[...line.matchAll(CSS_RADIUS)].map(([, value]) => value!.trim()).filter((value) => !CSS_RADIUS_ON_SCALE.test(value)),
     ...(/borderRadius\s*:\s*["'`]?\d/.test(line) ? ["borderRadius"] : []),
   ].map((written) => `${at} ${written}`));
-  assert.deepEqual(found, [], "use rounded-mark, -control, -tile, -card, -panel, -sheet or -full (var(--radius-…) in CSS); a size the scale lacks is added to the scale in app.css first");
+  assert.deepEqual(found, [], "use rounded-mark, -control, -tile, -card, -panel, -sheet, -board or -full (var(--radius-…) in CSS); a size the scale lacks is added to the scale in app.css first");
 });
 
 // Copying goes through copyText in apps/web/app/lib/clipboard.ts: in-app browsers without the asynchronous
