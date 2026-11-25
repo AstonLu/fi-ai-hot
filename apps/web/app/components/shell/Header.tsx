@@ -48,13 +48,13 @@ export function Header({ changelogVersion }: { changelogVersion: string | null }
   useSearchShortcut();
   return (
     <header className="hidden px-5 lg:block">
-      <div className="board-shell flex h-16 items-center gap-6">
+      <div className="board-shell flex h-16 items-center gap-2">
         <Brand className="mr-auto h-11" />
-        <nav className="flex items-center gap-6" aria-label={t("主導航", "Main")}>
+        <nav className="flex items-center" aria-label={t("主導航", "Main")}>
           {headerItems(locale).map((item) => {
             const on = navIsActive(item, pathname);
             return (
-              <IntentLink key={item.to} to={item.to} aria-current={on ? "page" : undefined} className={`flex h-11 items-center whitespace-nowrap text-ui-body font-semibold transition-colors hover:text-accent ${on ? "text-accent" : "text-ink"}`}>
+              <IntentLink key={item.to} to={item.to} aria-current={on ? "page" : undefined} className={`btn btn-text ${on ? "text-accent" : ""}`}>
                 {t(item.label)}
               </IntentLink>
             );

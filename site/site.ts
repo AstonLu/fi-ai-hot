@@ -23,14 +23,14 @@ export const EDITION_WHEN = {
 
 export const SITE = {
   /** 站名：導航、頁面標題、分享圖、RSS、MCP、後臺都用它。 */
-  name: "Fin AI",
+  name: "金非昔比",
   /**
    * 行業詞：拼進預設說法裡，比如“AI 日報”“AI 動態”。
    * 改成“法律”“HR”“黃金”之類，頁面上就會變成“法律日報”“法律動態”。
    */
   subject: "AI",
   /** 首頁的完整標題（瀏覽器標籤、搜尋結果）。 */
-  homeTitle: "Fin AI — 金融業 AI 導入與 AI 動態 · 每日精選與日報",
+  homeTitle: "金非昔比：每天讀懂 AI 如何改寫金融",
   /** 主題目錄頁（/topics）的標題。 */
   topicsTitle: "AI 主題：公司與模型、技術方向、內容形態的最新動態",
   /** 反饋表單輸入框裡的示例。 */
@@ -44,7 +44,7 @@ export const SITE = {
   /** llms.txt 裡一句話介紹下面的一段詳細介紹（選填）。 */
   llmsIntro: null as string | null,
   /** 一行小字：分享圖、海報下方。 */
-  tagline: "AI 與金融業 AI 導入動態",
+  tagline: "每天讀懂 AI 如何改寫金融",
   /** 搜尋引擎讀到的關鍵詞（首頁結構化資料）。 */
   keywords: ["AI 新聞", "金融科技", "金融業 AI 導入", "金融監理", "AI 日報"] as string[],
   /**
@@ -84,7 +84,7 @@ export const SITE = {
   poweredBy: { name: "AIHOT", url: "https://aihot.news" } as { name: string; url: string } | null,
   /** 結構化資料裡的網站運營者（搜尋引擎用）。 */
   organization: {
-    name: "Fin AI",
+    name: "金非昔比",
     /** 創始人（選填）。 */
     founder: null as Founder | null,
   },
@@ -157,13 +157,13 @@ interface ContactCard {
 
 /** 關於頁的文案。數字（來源數、收錄數、精選數、日報期數）來自站內即時統計，不用寫在這裡。 */
 export const ABOUT = {
-  kicker: `關於 ${SITE.name}`,
+  kicker: `關於${SITE.name}`,
   /** 頁面描述（搜尋結果、分享卡片）。 */
-  description: `關於 ${SITE.name}：${SITE.description}`,
+  description: `關於${SITE.name}：${SITE.description}`,
   /** 大標題：第一行正常顏色，第二行強調色。 */
-  headline: ["AI 圈每天都有新動靜，", "值得看的，只有幾條。"] as [string, string],
+  headline: ["每天讀懂", "AI 如何改寫金融"] as [string, string],
   /** 標題下面的一段話。{sources} 會換成即時的來源數（兩邊自動加空格，所以 {sources} 兩邊不寫空格）；統計沒取到時換成 sourcesFallback。 */
-  lead: `${SITE.name} 替你盯著{sources}個來源：抓取、歸併、打分、精選，${EDITION_WHEN.daily} 出一份日報。免費，不用註冊。`,
+  lead: `${SITE.name}替你盯著{sources}個來源：抓取、歸併、打分、精選，${EDITION_WHEN.daily} 出一份日報。免費，不用註冊。`,
   sourcesFallback: "十幾",
   /** 來源河動畫下面的四個環節。 */
   steps: {
@@ -185,7 +185,7 @@ export const ABOUT = {
     feishu?: ContactCard;
   },
   /** 頁面底部的版權與下架說明，中間接“反饋頁”的連結。 */
-  copyright: [`${SITE.name} 是聚合摘要和閱讀索引，原文版權歸各來源所有。如果你是來源方，希望更正、下架或調整展示方式，可以通過`, "聯絡我們。"] as [string, string],
+  copyright: [`${SITE.name}是聚合摘要和閱讀索引，原文版權歸各來源所有。如果你是來源方，希望更正、下架或調整展示方式，可以通過`, "聯絡我們。"] as [string, string],
   /** 頁面底部“使用規則”連結的錨點 id（選填）：外部文件寫死過這個錨點就填上，以後不要改。 */
   termsAnchor: null as string | null,
 } as const;
@@ -214,7 +214,7 @@ export const REPORTS = {
   motto: SITE.subject as string,
   /** 每種報告頁面的描述（搜尋結果、分享卡片），不帶句號；llms.txt 介紹週報、月報時也用它。 */
   descriptions: {
-    daily: `${SITE.name} ${subjectAfter(`${EDITION_WHEN.daily}（北京時間）發布的`, "行業精編日報")}`,
+    daily: `${SITE.name}${subjectAfter(`${EDITION_WHEN.daily}（北京時間）發布的`, "行業精編日報")}`,
     weekly: subjectAfter("每週", "行業綜合回顧"),
     monthly: subjectAfter("每月", "行業盤點"),
   },
@@ -266,12 +266,12 @@ export const CARDS: Record<string, { kicker: string; title: string; subtitle: st
   daily: { kicker: withSubject("日報"), title: subjectAfter(`每天 ${spokenTime(EDITION_TIMES.daily)}，一份讀得完的`, "日報"), subtitle: `${subjectAfter("前一天值得關注的", "動態")}。` },
   weekly: { kicker: withSubject("週報"), title: `一週${REPORTS.entry.noun}，一次看清`, subtitle: "本週的主線、重要發布與值得回看的討論。" },
   monthly: { kicker: withSubject("月報"), title: "一個月的變化", subtitle: "月度主線與關鍵事件回顧。" },
-  about: { kicker: "關於", title: `關於 ${SITE.name}`, subtitle: SITE.description },
-  terms: { kicker: "使用規則", title: `${SITE.name} 使用規則`, subtitle: "網頁、API、RSS 與 MCP 的使用範圍。" },
-  privacy: { kicker: "隱私說明", title: `${SITE.name} 隱私說明`, subtitle: "訪問日誌、瀏覽器本地資料與反饋資料的處理方式。" },
-  changelog: { kicker: "更新日誌", title: `${SITE.name} 更新日誌`, subtitle: "功能更新、最佳化、公告與下線記錄。" },
+  about: { kicker: "關於", title: `關於${SITE.name}`, subtitle: SITE.description },
+  terms: { kicker: "使用規則", title: `${SITE.name}使用規則`, subtitle: "網頁、API、RSS 與 MCP 的使用範圍。" },
+  privacy: { kicker: "隱私說明", title: `${SITE.name}隱私說明`, subtitle: "訪問日誌、瀏覽器本地資料與反饋資料的處理方式。" },
+  changelog: { kicker: "更新日誌", title: `${SITE.name}更新日誌`, subtitle: "功能更新、最佳化、公告與下線記錄。" },
   feedback: { kicker: "反饋", title: "告訴我們哪裡可以更好", subtitle: "內容、功能、接入，或來源方的更正與下架請求。" },
-  agent: { kicker: "Agent 接入", title: `把 ${SITE.name} 接進你的 Agent`, subtitle: "MCP、RSS、API 三種方式，匿名只讀，無需 API Key。" },
+  agent: { kicker: "Agent 接入", title: `把${SITE.name}接進你的 Agent`, subtitle: "MCP、RSS、API 三種方式，匿名只讀，無需 API Key。" },
 };
 
 /** 公開介面的訪問約定裡隨部署而變的幾處：給 Agent 的使用說明、llms.txt 會寫。 */
@@ -356,7 +356,7 @@ export const SEO_TITLES = {
   /** Agent 接入頁（/agent）。 */
   agent: `${withSubject("資訊")} API、MCP 與 RSS：接進你的 Agent`,
   /** 關於頁（/about）的完整標題，已含站名。 */
-  about: `關於 ${SITE.name}：${SITE.tagline}`,
+  about: `關於${SITE.name}：${SITE.tagline}`,
   /** 日報、週報、月報的最新一期（/daily、/weekly、/monthly）；date 是這一期的日期：“11月7日”“10月26日—11月1日”“2026年10月”。 */
   latestReport: (kind: "daily" | "weekly" | "monthly", date: string): string =>
     ({ daily: `${withSubject("日報")}：${subjectAfter("每日", "新聞")}（${date}）`, weekly: `${withSubject("週報")}：一週大事回顧（${date}）`, monthly: `${withSubject("月報")}：${date} 大事回顧` })[kind],
