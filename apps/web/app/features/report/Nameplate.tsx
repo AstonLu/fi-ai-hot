@@ -17,7 +17,7 @@ const NAMEPLATES = {
 
 /**
  * English pages set the nameplate in type: the same two parts in the same colours (the subject in the accent;
- * 合订本 is the accent of the archive's), in heavy capitals of the page's own font. Sizes are in the plate's units,
+ * 合訂本 is the accent of the archive's), in heavy capitals of the page's own font. Sizes are in the plate's units,
  * the Chinese logotype's: its capitals stand CAPS tall in a HEIGHT-tall box.
  */
 const ENGLISH_PLATES: Record<keyof typeof NAMEPLATES, Array<{ text: string; accent: boolean }>> = {

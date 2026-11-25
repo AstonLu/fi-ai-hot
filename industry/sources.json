@@ -1,6 +1,36 @@
 {
-  "$comment": "示范信源：首次启动时导入（scripts/seed.ts），已存在的不会被覆盖。之后在后台“信源”里新建、修改和暂停。字段说明见 docs/customize.md。",
+  "$comment": "第一批來源：首次啟動時匯入（scripts/seed.ts），已存在的不會被覆蓋。之後在後台「來源」頁新建、修改、暫停。所有網址都還沒實際連線驗證，上線前請在後台逐一按「預覽抓取」；enabled 為 false 的是把握較低、要先確認網址的。欄位說明見 docs/customize.md 與 industry/SOURCES.md。",
   "sources": [
+    {
+      "id": "json-aihot-selected",
+      "name": "AIHOT 精選（aihot.news）",
+      "kind": "json_list",
+      "config": {
+        "url": "https://aihot.news/api/v1/items?mode=selected&window=24h&limit=100",
+        "mode": "json_api",
+        "itemsPath": "items",
+        "titlePaths": [
+          "originalTitle",
+          "title"
+        ],
+        "summaryPaths": [
+          "summary"
+        ],
+        "publishedAtPath": "publishedAt",
+        "externalIdPath": "id",
+        "urlTemplate": "{raw:links.original}"
+      },
+      "tier": "T2",
+      "owner_entity_id": null,
+      "participation_mode": "editorial",
+      "interval_minutes": 60,
+      "tags": [
+        "聚合"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": false
+    },
     {
       "id": "rss-openai-news",
       "name": "OpenAI News",
@@ -19,7 +49,8 @@
         "官方"
       ],
       "site_fulltext": false,
-      "syndicate_fulltext": false
+      "syndicate_fulltext": false,
+      "enabled": false
     },
     {
       "id": "rss-google-deepmind",
@@ -39,7 +70,8 @@
         "官方"
       ],
       "site_fulltext": false,
-      "syndicate_fulltext": false
+      "syndicate_fulltext": false,
+      "enabled": false
     },
     {
       "id": "rss-google-research",
@@ -60,7 +92,8 @@
         "研究"
       ],
       "site_fulltext": false,
-      "syndicate_fulltext": false
+      "syndicate_fulltext": false,
+      "enabled": false
     },
     {
       "id": "rss-hugging-face",
@@ -81,7 +114,8 @@
         "开源"
       ],
       "site_fulltext": false,
-      "syndicate_fulltext": false
+      "syndicate_fulltext": false,
+      "enabled": false
     },
     {
       "id": "rss-microsoft-research",
@@ -102,7 +136,8 @@
         "研究"
       ],
       "site_fulltext": false,
-      "syndicate_fulltext": false
+      "syndicate_fulltext": false,
+      "enabled": false
     },
     {
       "id": "rss-nvidia-blog",
@@ -122,7 +157,8 @@
         "官方"
       ],
       "site_fulltext": false,
-      "syndicate_fulltext": false
+      "syndicate_fulltext": false,
+      "enabled": false
     },
     {
       "id": "rss-aws-ml",
@@ -143,7 +179,8 @@
         "教程"
       ],
       "site_fulltext": false,
-      "syndicate_fulltext": false
+      "syndicate_fulltext": false,
+      "enabled": false
     },
     {
       "id": "rss-github-ai",
@@ -163,7 +200,8 @@
         "官方"
       ],
       "site_fulltext": false,
-      "syndicate_fulltext": false
+      "syndicate_fulltext": false,
+      "enabled": false
     },
     {
       "id": "rss-mistral",
@@ -183,7 +221,8 @@
         "官方"
       ],
       "site_fulltext": false,
-      "syndicate_fulltext": false
+      "syndicate_fulltext": false,
+      "enabled": false
     },
     {
       "id": "rss-bair",
@@ -203,7 +242,8 @@
         "研究"
       ],
       "site_fulltext": false,
-      "syndicate_fulltext": false
+      "syndicate_fulltext": false,
+      "enabled": false
     },
     {
       "id": "rss-the-verge-ai",
@@ -223,7 +263,8 @@
         "媒体"
       ],
       "site_fulltext": false,
-      "syndicate_fulltext": false
+      "syndicate_fulltext": false,
+      "enabled": false
     },
     {
       "id": "rss-techcrunch-ai",
@@ -243,7 +284,8 @@
         "媒体"
       ],
       "site_fulltext": false,
-      "syndicate_fulltext": false
+      "syndicate_fulltext": false,
+      "enabled": false
     },
     {
       "id": "rss-ars-technica-ai",
@@ -263,7 +305,8 @@
         "媒体"
       ],
       "site_fulltext": false,
-      "syndicate_fulltext": false
+      "syndicate_fulltext": false,
+      "enabled": false
     },
     {
       "id": "rss-mit-tech-review-ai",
@@ -283,7 +326,8 @@
         "媒体"
       ],
       "site_fulltext": false,
-      "syndicate_fulltext": false
+      "syndicate_fulltext": false,
+      "enabled": false
     },
     {
       "id": "rss-the-decoder",
@@ -303,7 +347,8 @@
         "媒体"
       ],
       "site_fulltext": false,
-      "syndicate_fulltext": false
+      "syndicate_fulltext": false,
+      "enabled": false
     },
     {
       "id": "rss-simon-willison",
@@ -323,7 +368,8 @@
         "个人"
       ],
       "site_fulltext": false,
-      "syndicate_fulltext": false
+      "syndicate_fulltext": false,
+      "enabled": false
     },
     {
       "id": "rss-import-ai",
@@ -344,7 +390,8 @@
         "周刊"
       ],
       "site_fulltext": false,
-      "syndicate_fulltext": false
+      "syndicate_fulltext": false,
+      "enabled": false
     },
     {
       "id": "rss-latent-space",
@@ -364,7 +411,435 @@
         "个人"
       ],
       "site_fulltext": false,
-      "syndicate_fulltext": false
+      "syndicate_fulltext": false,
+      "enabled": false
+    },
+    {
+      "id": "rss-fed-speeches",
+      "name": "Federal Reserve 演講",
+      "kind": "rss",
+      "config": {
+        "feedUrl": "https://www.federalreserve.gov/feeds/speeches.xml",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
+      "tier": "T1",
+      "owner_entity_id": null,
+      "participation_mode": "editorial",
+      "interval_minutes": 120,
+      "tags": [
+        "監理"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "rss-fed-press",
+      "name": "Federal Reserve 新聞稿",
+      "kind": "rss",
+      "config": {
+        "feedUrl": "https://www.federalreserve.gov/feeds/press_all.xml",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
+      "tier": "T1",
+      "owner_entity_id": null,
+      "participation_mode": "editorial",
+      "interval_minutes": 120,
+      "tags": [
+        "監理"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "rss-boe-speeches",
+      "name": "Bank of England 演講",
+      "kind": "rss",
+      "config": {
+        "feedUrl": "https://www.bankofengland.co.uk/rss/speeches",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
+      "tier": "T1",
+      "owner_entity_id": null,
+      "participation_mode": "editorial",
+      "interval_minutes": 120,
+      "tags": [
+        "監理"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": false
+    },
+    {
+      "id": "rss-fsb",
+      "name": "Financial Stability Board",
+      "kind": "rss",
+      "config": {
+        "feedUrl": "https://www.fsb.org/feed/",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
+      "tier": "T1",
+      "owner_entity_id": null,
+      "participation_mode": "editorial",
+      "interval_minutes": 120,
+      "tags": [
+        "監理"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": false
+    },
+    {
+      "id": "rss-bis-speeches",
+      "name": "BIS 演講",
+      "kind": "rss",
+      "config": {
+        "feedUrl": "https://www.bis.org/doc/speeches.rss",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
+      "tier": "T1",
+      "owner_entity_id": "bis",
+      "participation_mode": "editorial",
+      "interval_minutes": 120,
+      "tags": [
+        "監理"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": false
+    },
+    {
+      "id": "rss-bis-research",
+      "name": "BIS 研究出版",
+      "kind": "rss",
+      "config": {
+        "feedUrl": "https://www.bis.org/doc/bis_research.rss",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
+      "tier": "T1",
+      "owner_entity_id": "bis",
+      "participation_mode": "editorial",
+      "interval_minutes": 120,
+      "tags": [
+        "監理",
+        "研究"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": false
+    },
+    {
+      "id": "rss-finextra",
+      "name": "Finextra",
+      "kind": "rss",
+      "config": {
+        "feedUrl": "https://www.finextra.com/rss/headlines.aspx",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
+      "tier": "T2",
+      "owner_entity_id": null,
+      "participation_mode": "editorial",
+      "interval_minutes": 120,
+      "tags": [
+        "媒體"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "rss-fintech-futures",
+      "name": "Fintech Futures",
+      "kind": "rss",
+      "config": {
+        "feedUrl": "https://www.fintechfutures.com/feed/",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
+      "tier": "T2",
+      "owner_entity_id": null,
+      "participation_mode": "editorial",
+      "interval_minutes": 120,
+      "tags": [
+        "媒體"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "rss-banking-dive",
+      "name": "Banking Dive",
+      "kind": "rss",
+      "config": {
+        "feedUrl": "https://www.bankingdive.com/feeds/news/",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
+      "tier": "T2",
+      "owner_entity_id": null,
+      "participation_mode": "editorial",
+      "interval_minutes": 120,
+      "tags": [
+        "媒體"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "rss-payments-dive",
+      "name": "Payments Dive",
+      "kind": "rss",
+      "config": {
+        "feedUrl": "https://www.paymentsdive.com/feeds/news/",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
+      "tier": "T2",
+      "owner_entity_id": null,
+      "participation_mode": "editorial",
+      "interval_minutes": 120,
+      "tags": [
+        "媒體"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "rss-financial-brand",
+      "name": "The Financial Brand",
+      "kind": "rss",
+      "config": {
+        "feedUrl": "https://thefinancialbrand.com/feed/",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
+      "tier": "T2",
+      "owner_entity_id": null,
+      "participation_mode": "editorial",
+      "interval_minutes": 120,
+      "tags": [
+        "媒體"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "rss-pymnts-ai",
+      "name": "PYMNTS",
+      "kind": "rss",
+      "config": {
+        "feedUrl": "https://www.pymnts.com/feed/",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
+      "tier": "T2",
+      "owner_entity_id": null,
+      "participation_mode": "editorial",
+      "interval_minutes": 180,
+      "tags": [
+        "媒體"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "rss-insurance-journal",
+      "name": "Insurance Journal",
+      "kind": "rss",
+      "config": {
+        "feedUrl": "https://www.insurancejournal.com/rss/news/",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
+      "tier": "T2",
+      "owner_entity_id": null,
+      "participation_mode": "editorial",
+      "interval_minutes": 120,
+      "tags": [
+        "媒體",
+        "保險"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": false
+    },
+    {
+      "id": "rss-fintech-business-weekly",
+      "name": "Fintech Business Weekly（Jason Mikula）",
+      "kind": "rss",
+      "config": {
+        "feedUrl": "https://fintechbusinessweekly.substack.com/feed",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
+      "tier": "T2",
+      "owner_entity_id": null,
+      "participation_mode": "editorial",
+      "interval_minutes": 360,
+      "tags": [
+        "電子報"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "rss-net-interest",
+      "name": "Net Interest（Marc Rubinstein）",
+      "kind": "rss",
+      "config": {
+        "feedUrl": "https://www.netinterest.co/feed",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
+      "tier": "T2",
+      "owner_entity_id": null,
+      "participation_mode": "editorial",
+      "interval_minutes": 360,
+      "tags": [
+        "電子報"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "rss-fintech-brainfood",
+      "name": "Fintech Brainfood（Simon Taylor）",
+      "kind": "rss",
+      "config": {
+        "feedUrl": "https://www.fintechbrainfood.com/feed",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
+      "tier": "T2",
+      "owner_entity_id": null,
+      "participation_mode": "editorial",
+      "interval_minutes": 360,
+      "tags": [
+        "電子報"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "rss-this-week-in-fintech",
+      "name": "This Week in Fintech",
+      "kind": "rss",
+      "config": {
+        "feedUrl": "https://thisweekinfintech.substack.com/feed",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
+      "tier": "T2",
+      "owner_entity_id": null,
+      "participation_mode": "editorial",
+      "interval_minutes": 360,
+      "tags": [
+        "電子報"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": false
+    },
+    {
+      "id": "rss-ithome",
+      "name": "iThome",
+      "kind": "rss",
+      "config": {
+        "feedUrl": "https://www.ithome.com.tw/rss",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
+      "tier": "T2",
+      "owner_entity_id": null,
+      "participation_mode": "editorial",
+      "interval_minutes": 90,
+      "tags": [
+        "台灣",
+        "媒體"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "rss-bnext",
+      "name": "數位時代",
+      "kind": "rss",
+      "config": {
+        "feedUrl": "https://www.bnext.com.tw/rss",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
+      "tier": "T2",
+      "owner_entity_id": null,
+      "participation_mode": "editorial",
+      "interval_minutes": 90,
+      "tags": [
+        "台灣",
+        "媒體"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": false
+    },
+    {
+      "id": "web-fsc-news",
+      "name": "金管會 新聞稿",
+      "kind": "web_list",
+      "config": {
+        "url": "https://www.fsc.gov.tw/ch/home.jsp?id=96&parentpath=0,2",
+        "itemSelector": ".newslist li",
+        "linkSelector": "a",
+        "titleSelector": "a",
+        "publishedAtSelector": ".date",
+        "publishedAtUtcOffset": "+08:00"
+      },
+      "tier": "T1",
+      "owner_entity_id": "fsc-tw",
+      "participation_mode": "editorial",
+      "interval_minutes": 180,
+      "tags": [
+        "監理",
+        "台灣"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": false
     }
   ]
 }

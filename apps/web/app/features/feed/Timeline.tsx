@@ -1,4 +1,4 @@
-// The 精选 home's day-grouped feed: a time rail with cards on desktop, rows under grey day bars on phones.
+// The 精選 home's day-grouped feed: a time rail with cards on desktop, rows under grey day bars on phones.
 // Keeps its place across back navigation and loads further pages. There is no "new items" prompt:
 // readers refresh for the latest head — on phones also by tapping the tab again. The paged lists
 // (DayList) share its day header and slot.
@@ -46,8 +46,8 @@ export function DayHeader({ day, today, count, collapsed, onToggle, aside, aside
   const date = t(monthDay(day, today), monthDayEn(day, today));
   const weekday = weekdayLong(day, locale);
   const short = weekdayShort(day, locale);
-  const items = (n: number) => t(<><span className="num">{n}</span> 条</>, <><span className="num">{n.toLocaleString("en-US")}</span> {n === 1 ? "item" : "items"}</>);
-  const fold = collapsed ? t(`展开${date}`, `Expand ${date}`) : t(`收起${date}`, `Collapse ${date}`);
+  const items = (n: number) => t(<><span className="num">{n}</span> 條</>, <><span className="num">{n.toLocaleString("en-US")}</span> {n === 1 ? "item" : "items"}</>);
+  const fold = collapsed ? t(`展開${date}`, `Expand ${date}`) : t(`收起${date}`, `Collapse ${date}`);
   const phoneRow = (
     <>
       <span className="text-ui-body-sm font-bold text-ink">{day === today ? t("今天", "Today") : date}</span>
@@ -274,7 +274,7 @@ export function Timeline({ initial, filters }: { initial: TimelineResponse; filt
   }, [state.nextCursor, state.batches, loadMore]);
 
   const today = beijingDate(Date.now());
-  // 只看未读 hides cards read in this browser: an ordinary card by its own id, a reading group by any
+  // 只看未讀 hides cards read in this browser: an ordinary card by its own id, a reading group by any
   // of its selected reports, so a read representative does not hide the unread reports behind it.
   // A group kept that way is not drawn as read; its expansion marks which reports are unread.
   const unreadVisible = useCallback(
@@ -302,7 +302,7 @@ export function Timeline({ initial, filters }: { initial: TimelineResponse; filt
   let order = 0;
   const unreadToggle = (
     <ToggleChip on={unreadOnly} onToggle={() => setUnreadOnly(!unreadOnly)}>
-      {t("只看未读", "Unread only")}
+      {t("只看未讀", "Unread only")}
     </ToggleChip>
   );
   return (
@@ -314,16 +314,16 @@ export function Timeline({ initial, filters }: { initial: TimelineResponse; filt
         <div className="lg:card">
           {unreadOnly ? (
             state.nextCursor ? (
-              <EmptyState title={t("这批精选都读过了", "You've read all of these")}>
+              <EmptyState title={t("這批精選都讀過了", "You've read all of these")}>
                 {loadError
-                  ? t("加载更早内容失败，点下方重试按钮继续查看。", "Couldn't load older picks. Try again below.")
-                  : t("点下方“加载更多”，继续看更早的未读精选。", "Use “Load more” below for older unread picks.")}
+                  ? t("載入更早內容失敗，點下方重試按鈕繼續檢視。", "Couldn't load older picks. Try again below.")
+                  : t("點下方“載入更多”，繼續看更早的未讀精選。", "Use “Load more” below for older unread picks.")}
               </EmptyState>
             ) : (
-              <EmptyState title={t("没有未读的精选内容", "No unread top picks")}>{t("关掉「只看未读」可以看到全部内容。", "Turn off “Unread only” to see everything.")}</EmptyState>
+              <EmptyState title={t("沒有未讀的精選內容", "No unread top picks")}>{t("關掉「只看未讀」可以看到全部內容。", "Turn off “Unread only” to see everything.")}</EmptyState>
             )
           ) : (
-            <EmptyState title={t("这个筛选下还没有精选内容", "No top picks match this filter yet")}>{t("换个类别看看，或者去全部动态里找找。", `Try another category, or browse All ${SITE.subject} News.`)}</EmptyState>
+            <EmptyState title={t("這個篩選下還沒有精選內容", "No top picks match this filter yet")}>{t("換個類別看看，或者去全部動態裡找找。", `Try another category, or browse All ${SITE.subject} News.`)}</EmptyState>
           )}
         </div>
       )}
@@ -358,27 +358,27 @@ export function Timeline({ initial, filters }: { initial: TimelineResponse; filt
   );
 }
 
-/** The foot of a paged list: loading, retry, "加载更多" after a few automatic pages, or the end. */
+/** The foot of a paged list: loading, retry, "載入更多" after a few automatic pages, or the end. */
 function FeedEnd({ loading, error, hasMore, manual, empty, onMore }: { loading: boolean; error: boolean; hasMore: boolean; manual: boolean; empty: boolean; onMore: () => void }) {
   const t = useT();
   return (
     <div className="flex justify-center py-6">
       {loading ? (
         <span className="inline-flex items-center gap-2 text-ui-caption-lg text-ink-4">
-          <RingMark className="size-4 text-accent" spinning /> {t("正在加载", "Loading")}
+          <RingMark className="size-4 text-accent" spinning /> {t("正在載入", "Loading")}
         </span>
       ) : error ? (
         <button type="button" onClick={onMore} className="h-9 rounded-full border border-hot/30 px-4 text-ui-label text-hot hover:bg-hot-soft">
-          {t("加载失败，点此重试", "Couldn't load. Try again")}
+          {t("載入失敗，點此重試", "Couldn't load. Try again")}
         </button>
       ) : hasMore ? (
         manual && (
           <button type="button" onClick={onMore} className="h-9 rounded-full border border-line-strong bg-surface px-5 text-ui-label font-medium text-ink-2 transition-colors hover:border-ink-4 hover:text-ink">
-            {t("加载更多", "Load more")}
+            {t("載入更多", "Load more")}
           </button>
         )
       ) : (
-        !empty && <span className="text-ui-caption text-ink-4">{t("已经到底了", "That's everything")}</span>
+        !empty && <span className="text-ui-caption text-ink-4">{t("已經到底了", "That's everything")}</span>
       )}
     </div>
   );

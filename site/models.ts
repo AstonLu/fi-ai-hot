@@ -7,6 +7,15 @@ export type { ModelPreset } from "@aihot/contracts/site-config";
 
 /** 具名的模型示例（每个要配自己的密钥）。用不上可以删掉。 */
 export const PRESETS: Record<string, ModelPreset> = {
+  // Google Gemini through its OpenAI-compatible endpoint, billed to the Google Cloud project behind the key.
+  // 2.5 Flash-Lite does not reason by default; gemini-3.1-flash-lite reasons, kept low for short structured tasks.
+  "gemini-2.5-flash-lite": {
+    service: "gemini", model: "gemini-2.5-flash-lite", baseUrlEnv: "GEMINI_BASE_URL", apiKeyEnv: "GEMINI_API_KEY", jsonMode: true, vision: true,
+  },
+  "gemini-3.1-flash-lite": {
+    service: "gemini", model: "gemini-3.1-flash-lite", baseUrlEnv: "GEMINI_BASE_URL", apiKeyEnv: "GEMINI_API_KEY",
+    extra: { reasoning_effort: "low" }, reasoningTokens: 2000, jsonMode: true, vision: true,
+  },
   // GLM 5.3 Flash always reasons; the lowest effort keeps short structured tasks fast.
   "glm-5.3-flash": {
     service: "zhipu", model: "glm-5.3-flash", baseUrlEnv: "ZHIPU_BASE_URL", apiKeyEnv: "ZHIPU_API_KEY",

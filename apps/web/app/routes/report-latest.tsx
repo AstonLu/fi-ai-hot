@@ -14,7 +14,7 @@ import { KIND_PATH, archiveGroups, feedLink, kindFromPath } from "../features/re
 import type { Screen } from "../components/shell/screens";
 import { apiIn, L, localeOf, translator, useLocale, useT } from "../lib/i18n";
 
-export const handle: Screen = { tab: "daily", name: L("日报", "Daily") };
+export const handle: Screen = { tab: "daily", name: L("日報", "Daily") };
 export { pageHeaders as headers } from "../lib/api.server";
 export const { clientLoader, shouldRevalidate } = pageReuse<typeof loader>();
 
@@ -54,7 +54,7 @@ export default function ReportLatestPage() {
   const t = useT();
   return (
     <ReportLayout kind={kind} groups={archiveGroups(kind, index, locale)} current={report?.key ?? null} today={today} outline={report ? reportOutline(report, locale) : []}>
-      {report ? <ReportPaper report={report} index={index} /> : <EmptyState title={t(subjectAfter("还没有发布", REPORT_NAMES[kind]), `No ${withSubject(REPORT_NAMES_EN[kind])} issues yet`)}>{t("第一期发布后会出现在这里。", "The first issue will appear here once it's out.")}</EmptyState>}
+      {report ? <ReportPaper report={report} index={index} /> : <EmptyState title={t(subjectAfter("還沒有發布", REPORT_NAMES[kind]), `No ${withSubject(REPORT_NAMES_EN[kind])} issues yet`)}>{t("第一期發布後會出現在這裡。", "The first issue will appear here once it's out.")}</EmptyState>}
     </ReportLayout>
   );
 }

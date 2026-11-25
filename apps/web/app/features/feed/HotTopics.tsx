@@ -14,16 +14,16 @@ function hrefOf(e: HotStripEntry): string {
 /** Where the heat is heading, as a small arrow (a "新" mark for a story new to the ranking). */
 function TrendMark({ trend }: { trend: HotStripEntry["trend"] }) {
   const t = useT();
-  if (trend === "up") return <IconTrendUp size={14} strokeWidth={2.2} className="text-hot" aria-label={t("热度上升", "Rising")} />;
-  if (trend === "down") return <IconTrendDown size={14} strokeWidth={2.2} className="text-ink-4" aria-label={t("热度回落", "Cooling")} />;
+  if (trend === "up") return <IconTrendUp size={14} strokeWidth={2.2} className="text-hot" aria-label={t("熱度上升", "Rising")} />;
+  if (trend === "down") return <IconTrendDown size={14} strokeWidth={2.2} className="text-ink-4" aria-label={t("熱度回落", "Cooling")} />;
   if (trend === "new") return <span className="rounded-full bg-accent-soft px-1.5 text-ui-micro-8 font-semibold leading-4 text-accent">{t("新", "New")}</span>;
   if (trend === "unknown") return null; // sources behind on collection: no comparison to show
-  return <IconMinus size={14} strokeWidth={2.2} className="text-ink-4" aria-label={t("热度持平", "Steady")} />;
+  return <IconMinus size={14} strokeWidth={2.2} className="text-ink-4" aria-label={t("熱度持平", "Steady")} />;
 }
 
 /**
  * The top of the hot ranking on the home page, kept quiet: a live dot, coloured ranks and titles, then
- * columns of fixed width so every row lines up — who is talking (精选组 faces, from sm), "N 热度" and an arrow for
+ * columns of fixed width so every row lines up — who is talking (精選組 faces, from sm), "N 熱度" and an arrow for
  * where it is heading. The whole row lights up on hover. Phones show the top three in one line each, so
  * the feed starts on the first screen.
  */
@@ -41,10 +41,10 @@ export function HotTopics({ entries }: { entries: HotStripEntry[] }) {
             <span className="absolute inline-flex size-full animate-ping rounded-full bg-hot opacity-40" />
             <span className="relative inline-flex size-2 rounded-full bg-hot" />
           </span>
-          {t("当前热点", "Trending now")}
+          {t("當前熱點", "Trending now")}
         </h2>
         <Link to="/hot" className="group -my-2 -mr-1.5 inline-flex h-10 items-center gap-1 px-1.5 text-ui-caption-lg text-ink-3 transition-colors hover:text-accent lg:my-0 lg:mr-0 lg:h-auto lg:px-0">
-          {t("完整榜单", "Full list")} <IconArrowRight size={13} className="transition-transform duration-200 group-hover:translate-x-0.5" />
+          {t("完整榜單", "Full list")} <IconArrowRight size={13} className="transition-transform duration-200 group-hover:translate-x-0.5" />
         </Link>
       </div>
       <ol>
@@ -60,8 +60,8 @@ export function HotTopics({ entries }: { entries: HotStripEntry[] }) {
                 <Faces participants={e.participants} total={e.participantCount} size={20} interactive={false} />
               </span>
               <span className="flex items-center justify-end gap-2.5 sm:contents">
-                <span className="whitespace-nowrap text-right text-ui-caption-lg text-ink-4" title={t("热度指数", "Heat index")}>
-                  <span className="num text-ui-label-lg font-semibold text-ink-2">{t(String(Math.round(e.heat)), Math.round(e.heat).toLocaleString("en-US"))}</span> {t("热度", "heat")}
+                <span className="whitespace-nowrap text-right text-ui-caption-lg text-ink-4" title={t("熱度指數", "Heat index")}>
+                  <span className="num text-ui-label-lg font-semibold text-ink-2">{t(String(Math.round(e.heat)), Math.round(e.heat).toLocaleString("en-US"))}</span> {t("熱度", "heat")}
                 </span>
                 <span className="flex w-5 justify-center">
                   <TrendMark trend={e.trend} />

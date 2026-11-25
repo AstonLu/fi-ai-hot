@@ -20,8 +20,8 @@ const reportsUrl = (factId: string, filters: TimelineFilters | undefined, locale
 const labelOf = (group: GroupInfo, t: Translate) => {
   const others = group.additionalSourceCount;
   return others > 0
-    ? t(`另外 ${others} 家也报道了`, `Also covered by ${others} other ${others === 1 ? "source" : "sources"}`)
-    : t(`${group.reportCount} 篇报道`, `${group.reportCount} ${group.reportCount === 1 ? "report" : "reports"}`);
+    ? t(`另外 ${others} 家也報導了`, `Also covered by ${others} other ${others === 1 ? "source" : "sources"}`)
+    : t(`${group.reportCount} 篇報導`, `${group.reportCount} ${group.reportCount === 1 ? "report" : "reports"}`);
 };
 
 // The groups left open in each history entry, with what they showed (null: still loading): back from an
@@ -95,11 +95,11 @@ function Panel({ open, children }: { open: boolean; children: ReactNode }) {
 function LoadState({ loading, error, onRetry, empty }: { loading: boolean; error: boolean; onRetry: () => void; empty: boolean }) {
   const t = useT();
   if (loading && empty) return <div className="space-y-2 py-1">{[0, 1].map((i) => <div key={i} className="skeleton h-4" />)}</div>;
-  if (error) return <button type="button" onClick={onRetry} className="min-h-11 py-1 text-ui-caption-lg text-hot lg:min-h-0">{t("暂时无法加载，点此重试", "Couldn't load. Try again")}</button>;
+  if (error) return <button type="button" onClick={onRetry} className="min-h-11 py-1 text-ui-caption-lg text-hot lg:min-h-0">{t("暫時無法載入，點此重試", "Couldn't load. Try again")}</button>;
   return null;
 }
 
-/** "另外 N 家也报道了": the other reports of the fact the card stands for, behind a toggle. */
+/** "另外 N 家也報導了": the other reports of the fact the card stands for, behind a toggle. */
 export function GroupSources({ group, filters, parentId }: { group: GroupInfo; filters?: TimelineFilters; parentId: string }) {
   const entry = useLocation().key;
   const key = `${group.factId}|${parentId}`;
@@ -143,7 +143,7 @@ export function GroupSources({ group, filters, parentId }: { group: GroupInfo; f
               <Link viewTransition to={`/items/${r.id}`} className={`min-w-0 flex-1 truncate hover:text-accent ${readTone(read.has(r.id), "text-ink-2")}`}>
                 {r.title}
               </Link>
-              <a href={r.originalUrl} target="_blank" rel="noopener noreferrer" aria-label={t("打开原文", "Open original")} className="shrink-0 text-ink-4 hover:text-accent">
+              <a href={r.originalUrl} target="_blank" rel="noopener noreferrer" aria-label={t("開啟原文", "Open original")} className="shrink-0 text-ink-4 hover:text-accent">
                 <IconArrowUpRight size={13} />
               </a>
             </li>
@@ -198,7 +198,7 @@ function GroupSheet({ open, onClose, group, filters, parentId }: {
   const t = useT();
   const locale = useLocale();
   return (
-    <Sheet open={open} onClose={onClose} title={t("这件事的其他报道", "Other reports on this story")}>
+    <Sheet open={open} onClose={onClose} title={t("這件事的其他報導", "Other reports on this story")}>
       <div className="px-5">
         <ul className="divide-y divide-line-soft">
           {others.map((r) => (
@@ -209,7 +209,7 @@ function GroupSheet({ open, onClose, group, filters, parentId }: {
                 </span>
                 <span className={`mt-0.5 line-clamp-2 text-ui-body leading-[1.5] ${readTone(read.has(r.id), "text-ink-2")}`}>{r.title}</span>
               </Link>
-              <a href={r.originalUrl} target="_blank" rel="noopener noreferrer" aria-label={t("打开原文", "Open original")} className="-mr-2 grid size-11 shrink-0 place-items-center rounded-full text-ink-4 active:bg-bg-sunk">
+              <a href={r.originalUrl} target="_blank" rel="noopener noreferrer" aria-label={t("開啟原文", "Open original")} className="-mr-2 grid size-11 shrink-0 place-items-center rounded-full text-ink-4 active:bg-bg-sunk">
                 <IconArrowUpRight size={16} />
               </a>
             </li>

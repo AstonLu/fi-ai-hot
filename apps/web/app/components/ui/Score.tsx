@@ -16,7 +16,7 @@ export function shownScore(score: number | null): number | null {
   return ITEM_COPY.showScore ? score : null;
 }
 
-/** "AI 评分 · 88" on desktop cards; `compact` keeps only the number (phones). */
+/** "AI 評分 · 88" on desktop cards; `compact` keeps only the number (phones). */
 export function ScoreLabel({ score, compact = false }: { score: number | null; compact?: boolean }) {
   const t = useT();
   const shown = shownScore(score);
@@ -25,14 +25,14 @@ export function ScoreLabel({ score, compact = false }: { score: number | null; c
   const tier = TIERS.find((level) => value >= level.min)!;
   return (
     <span
-      title={t(`AI 评分 ${value}/100`, `AI score ${value}/100`)}
-      aria-label={t(`AI 评分 ${value} 分`, `AI score: ${value} out of 100`)}
+      title={t(`AI 評分 ${value}/100`, `AI score ${value}/100`)}
+      aria-label={t(`AI 評分 ${value} 分`, `AI score: ${value} out of 100`)}
       className={`inline-flex h-[20px] shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full px-2 ring-1 ring-inset ${tier.className}`}
     >
       {!compact && (
         <>
           {/* The nudges center the ink, not the line box: the CJK label sits ~1px low and the mono digits ~0.5px high. */}
-          <span className="-translate-y-px text-ui-caption-sm font-medium leading-none opacity-80">{t("AI 评分", "AI score")}</span>
+          <span className="-translate-y-px text-ui-caption-sm font-medium leading-none opacity-80">{t("AI 評分", "AI score")}</span>
           <span className="h-2.5 w-px bg-current opacity-25" aria-hidden="true" />
         </>
       )}

@@ -2,18 +2,18 @@
   "groups": [
     {
       "key": "company",
-      "name": "公司与模型",
-      "blurb": "追踪重点公司的模型发布、产品变化与动向"
+      "name": "公司與機構",
+      "blurb": "追蹤重點 AI 公司與金融機構的發布、導入與動向"
     },
     {
       "key": "field",
-      "name": "技术方向",
-      "blurb": "按技术方向深挖：Agent、多模态、具身智能……"
+      "name": "領域與方向",
+      "blurb": "金融業 AI 應用場景與 AI 技術方向：反詐、財富管理、Agent……"
     },
     {
       "key": "genre",
-      "name": "内容类型",
-      "blurb": "按内容形式看：新模型、论文、教程、观点……"
+      "name": "內容型別",
+      "blurb": "按內容形式看：導入案例、監理、新模型、研究、觀點……"
     }
   ],
   "topics": [
@@ -22,14 +22,14 @@
       "name": "OpenAI / ChatGPT",
       "group": "company",
       "entityId": "openai",
-      "definition": "GPT 系列模型、ChatGPT、Sora 的最新动作，以及 OpenAI 的战略与人事变化。"
+      "definition": "GPT 系列模型、ChatGPT、Sora 的最新動作，以及 OpenAI 的戰略與人事變化。"
     },
     {
       "slug": "anthropic",
       "name": "Anthropic / Claude",
       "group": "company",
       "entityId": "anthropic",
-      "definition": "Claude 模型和 Claude Code 的更新，以及 Anthropic 在安全研究与商业上的动向。"
+      "definition": "Claude 模型和 Claude Code 的更新，以及 Anthropic 在安全研究與商業上的動向。"
     },
     {
       "slug": "google",
@@ -39,110 +39,223 @@
       "aliases": [
         "DeepMind"
       ],
-      "definition": "Gemini、Veo 等模型进展，DeepMind 前沿研究，以及 Google 各条产品线的 AI 更新。"
+      "definition": "Gemini、Veo 等模型進展，DeepMind 前沿研究，以及 Google 各條產品線的 AI 更新。"
     },
     {
       "slug": "deepseek",
       "name": "DeepSeek",
       "group": "company",
       "entityId": "deepseek",
-      "definition": "深度求索的新模型、开源权重、技术报告，以及 API 价格与服务动态。"
+      "definition": "深度求索的新模型、開源權重、技術報告，以及 API 價格與服務動態。"
     },
     {
       "slug": "qwen",
-      "name": "千问 Qwen",
+      "name": "千問 Qwen",
       "group": "company",
       "entityId": "qwen",
-      "definition": "阿里千问 Qwen 从旗舰到端侧小模型的各代发布与开源动态。"
+      "definition": "阿里千問 Qwen 從旗艦到端側小模型的各代發布與開源動態。"
     },
     {
       "slug": "kimi",
       "name": "月之暗面 / Kimi",
       "group": "company",
       "entityId": "kimi",
-      "aliases": ["Kimi / 月之暗面"],
-      "definition": "月之暗面的 Kimi 产品迭代、K 系列开源模型与长文本能力进展。"
+      "aliases": [
+        "Kimi / 月之暗面"
+      ],
+      "definition": "月之暗面的 Kimi 產品迭代、K 系列開源模型與長文本能力進展。"
     },
     {
       "slug": "minimax",
       "name": "MiniMax",
       "group": "company",
       "entityId": "minimax",
-      "definition": "MiniMax 的 M 系列模型、语音和音视频生成能力，以及开源与商业化动作。"
+      "definition": "MiniMax 的 M 系列模型、語音和音影片生成能力，以及開源與商業化動作。"
     },
     {
       "slug": "zhipu",
-      "name": "智谱 GLM",
+      "name": "智譜 GLM",
       "group": "company",
       "entityId": "zhipu",
-      "definition": "智谱 GLM 系列的新模型与开源发布，重点看编程、推理和商业化进展。"
+      "definition": "智譜 GLM 系列的新模型與開源發布，重點看程式設計、推理和商業化進展。"
     },
     {
       "slug": "xai",
       "name": "xAI / Grok",
       "group": "company",
       "entityId": "xai",
-      "definition": "马斯克旗下 xAI 的 Grok 模型迭代、算力集群建设，以及与 X 平台的整合。"
+      "definition": "馬斯克旗下 xAI 的 Grok 模型迭代、算力叢集建設，以及與 X 平臺的整合。"
     },
     {
       "slug": "meta",
       "name": "Meta / Llama",
       "group": "company",
       "entityId": "meta",
-      "definition": "Meta 推出的 Llama、Muse 等模型，以及超级智能实验室和 Meta AI 产品动向。"
+      "definition": "Meta 推出的 Llama、Muse 等模型，以及超級智慧實驗室和 Meta AI 產品動向。"
     },
     {
       "slug": "microsoft",
       "name": "Microsoft / Copilot",
       "group": "company",
       "entityId": "microsoft",
-      "definition": "微软 Copilot 全线产品、Azure AI 云服务，以及与 OpenAI 合作的最新动向。"
+      "definition": "微軟 Copilot 全線產品、Azure AI 雲服務，以及與 OpenAI 合作的最新動向。"
     },
     {
       "slug": "nvidia",
-      "name": "NVIDIA 英伟达",
+      "name": "NVIDIA 輝達",
       "group": "company",
       "entityId": "nvidia",
-      "definition": "英伟达的新一代 GPU、CUDA 软件生态、机器人平台，以及 AI 算力供需变化。"
+      "definition": "輝達的新一代 GPU、CUDA 軟體生態、機器人平臺，以及 AI 算力供需變化。"
     },
     {
       "slug": "hugging-face",
       "name": "Hugging Face",
       "group": "company",
       "entityId": "hugging-face",
-      "definition": "Hugging Face 社区里最受关注的开源模型、数据集、工具和榜单变化。"
+      "definition": "Hugging Face 社群裡最受關注的開源模型、資料集、工具和榜單變化。"
     },
     {
       "slug": "cursor",
       "name": "Cursor",
       "group": "company",
       "entityId": "cursor",
-      "definition": "Cursor 编辑器与编程 Agent 的功能迭代、自研模型和订阅定价变化。"
+      "definition": "Cursor 編輯器與程式設計 Agent 的功能迭代、自研模型和訂閱定價變化。"
     },
     {
       "slug": "openrouter",
       "name": "OpenRouter",
       "group": "company",
       "entityId": "openrouter",
-      "definition": "OpenRouter 上的热门新模型、接口价格变化与开发者真实调用排行。"
+      "definition": "OpenRouter 上的熱門新模型、介面價格變化與開發者真實呼叫排行。"
+    },
+    {
+      "slug": "fsc-tw",
+      "name": "金管會",
+      "group": "company",
+      "entityId": "fsc-tw",
+      "definition": "金管會的 AI 指引、金融科技政策、監理沙盒與官員發言。"
+    },
+    {
+      "slug": "jpmorgan",
+      "name": "JPMorgan",
+      "group": "company",
+      "entityId": "jpmorgan",
+      "definition": "摩根大通的 AI 預算、內部工具、人才與導入成效。"
+    },
+    {
+      "slug": "dbs",
+      "name": "DBS 星展",
+      "group": "company",
+      "entityId": "dbs",
+      "definition": "星展銀行的 AI 轉型、量化成效與對外分享。"
+    },
+    {
+      "slug": "fin-fraud",
+      "name": "風控與反詐",
+      "group": "field",
+      "tags": [
+        "風控/反詐"
+      ],
+      "definition": "金融機構用 AI 做反詐騙、反洗錢、交易監控與信用風險評估的做法與成效。"
+    },
+    {
+      "slug": "fin-wealth",
+      "name": "財富管理與投資研究",
+      "group": "field",
+      "tags": [
+        "財富管理"
+      ],
+      "definition": "理財顧問助理、智能投顧、投研摘要與資產配置工具在銀行與券商的導入。"
+    },
+    {
+      "slug": "fin-service",
+      "name": "客服與對話",
+      "group": "field",
+      "tags": [
+        "客服/對話"
+      ],
+      "definition": "銀行、保險與券商的 AI 客服、語音機器人與行員助理，含客訴與滿意度數字。"
+    },
+    {
+      "slug": "fin-regtech",
+      "name": "法遵與 RegTech",
+      "group": "field",
+      "tags": [
+        "法遵/RegTech"
+      ],
+      "definition": "用 AI 做 KYC、法遵檢核、申報與監理科技，以及法遵單位自己的工作方式改變。"
+    },
+    {
+      "slug": "fin-insurance",
+      "name": "核保與理賠",
+      "group": "field",
+      "tags": [
+        "核保理賠"
+      ],
+      "definition": "保險業把 AI 用在核保、理賠審核、詐保偵測與保單服務的案例。"
+    },
+    {
+      "slug": "fin-ops",
+      "name": "營運自動化",
+      "group": "field",
+      "tags": [
+        "營運自動化"
+      ],
+      "definition": "後台作業、文件處理、授信流程與內部知識庫的自動化與 Agent 化。"
+    },
+    {
+      "slug": "fin-model-risk",
+      "name": "模型風險與治理",
+      "group": "field",
+      "tags": [
+        "模型風險"
+      ],
+      "definition": "生成式 AI 的模型風險管理、驗證、可解釋性、第三方模型委外與內部治理框架。"
+    },
+    {
+      "slug": "fin-data",
+      "name": "資料治理與資安",
+      "group": "field",
+      "tags": [
+        "資料治理"
+      ],
+      "definition": "金融業資料治理、隱私、資安與 AI 帶來的新攻擊面。"
+    },
+    {
+      "slug": "fin-talent",
+      "name": "人才與組織",
+      "group": "field",
+      "tags": [
+        "人才/組織"
+      ],
+      "definition": "金融機構的 AI 團隊編制、首席 AI 長、員工培訓與職務轉型。"
+    },
+    {
+      "slug": "fin-roi",
+      "name": "成本與投資報酬",
+      "group": "field",
+      "tags": [
+        "成本/ROI"
+      ],
+      "definition": "金融業 AI 支出、節省的工時與成本、營收貢獻，以及喊停的專案。"
     },
     {
       "slug": "agent",
-      "name": "Agent 智能体",
+      "name": "Agent 智慧體",
       "group": "field",
       "tags": [
         "Agent"
       ],
-      "definition": "能自己拆任务、调工具、把活干完的智能体，涵盖 Claude Code、Manus 等产品、框架与评测。"
+      "definition": "能自己拆任務、調工具、把活幹完的智慧體，涵蓋 Claude Code、Manus 等產品、框架與評測。"
     },
     {
       "slug": "coding",
-      "name": "AI 编码",
+      "name": "AI 編碼",
       "group": "field",
       "tags": [
-        "编码"
+        "編碼"
       ],
-      "definition": "AI 编程助手、Vibe Coding 实践、代码模型评测，以及软件开发方式的变化。"
+      "definition": "AI 程式設計助手、Vibe Coding 實踐、程式碼模型評測，以及軟體開發方式的變化。"
     },
     {
       "slug": "reasoning",
@@ -151,71 +264,71 @@
       "tags": [
         "推理"
       ],
-      "definition": "主打先思考再作答的推理模型、思维链方法，以及数学与逻辑评测上的突破和争议。"
+      "definition": "主打先思考再作答的推理模型、思維鏈方法，以及數學與邏輯評測上的突破和爭議。"
     },
     {
       "slug": "multimodal",
-      "name": "多模态",
+      "name": "多模態",
       "group": "field",
       "tags": [
-        "多模态"
+        "多模態"
       ],
-      "definition": "文字之外的图像理解、图文混排以及音视频输入输出模型与产品进展。"
+      "definition": "文字之外的影像理解、圖文混排以及音影片輸入輸出模型與產品進展。"
     },
     {
       "slug": "image-gen",
-      "name": "图像生成",
+      "name": "影像生成",
       "group": "field",
       "tags": [
-        "图像生成"
+        "影像生成"
       ],
-      "definition": "文生图模型更新、修图与图像编辑能力，以及主流 AI 绘画创作工具。"
+      "definition": "文生圖模型更新、修圖與影像編輯能力，以及主流 AI 繪畫創作工具。"
     },
     {
       "slug": "video",
-      "name": "AI 视频",
+      "name": "AI 影片",
       "group": "field",
       "tags": [
-        "视频"
+        "影片"
       ],
-      "definition": "文生视频模型、AI 视频编辑工具，以及影视和短片创作的新玩法。"
+      "definition": "文生影片模型、AI 影片編輯工具，以及影視和短片創作的新玩法。"
     },
     {
       "slug": "voice",
-      "name": "语音与音频",
+      "name": "語音與音訊",
       "group": "field",
       "tags": [
-        "语音"
+        "語音"
       ],
-      "definition": "语音合成、实时语音对话、音乐生成和音频理解相关的模型与产品。"
+      "definition": "語音合成、即時語音對話、音樂生成和音訊理解相關的模型與產品。"
     },
     {
       "slug": "embodied",
-      "name": "具身智能",
+      "name": "具身智慧",
       "group": "field",
       "tags": [
-        "具身智能"
+        "具身智慧"
       ],
-      "definition": "装进机器人身体里的 AI，涵盖人形机器人、具身基础模型与真实场景操控。"
+      "definition": "裝進機器人身體裡的 AI，涵蓋人形機器人、具身基礎模型與真實場景操控。"
     },
     {
       "slug": "on-device",
-      "name": "端侧 AI",
+      "name": "端側 AI",
       "group": "field",
       "tags": [
-        "端侧"
+        "端側"
       ],
-      "definition": "直接跑在手机和电脑本地的小模型、离线运行工具与端侧芯片进展。"
+      "definition": "直接跑在手機和電腦本地的小模型、離線執行工具與端側晶片進展。"
     },
     {
       "slug": "open-source",
-      "name": "开源生态",
+      "name": "開源生態",
       "group": "field",
       "tags": [
-        "开源生态",
-        "开源/仓库"
+        "開源生態",
+        "開源/倉庫"
       ],
-      "definition": "开放权重、可下载自部署的模型，以及开源框架和 GitHub 上走红的 AI 项目。"
+      "definition": "開放權重、可下載自部署的模型，以及開源框架和 GitHub 上走紅的 AI 專案。"
     },
     {
       "slug": "engineering",
@@ -224,115 +337,142 @@
       "tags": [
         "部署/工程"
       ],
-      "definition": "把大模型跑得更快、更省钱的工程实践：推理加速、显存优化、服务部署与基础设施。"
+      "definition": "把大模型跑得更快、更省錢的工程實踐：推理加速、視訊記憶體最佳化、服務部署與基礎設施。"
     },
     {
       "slug": "data-training",
-      "name": "数据与训练",
+      "name": "資料與訓練",
       "group": "field",
       "tags": [
-        "数据/训练"
+        "資料/訓練"
       ],
-      "definition": "大模型的训练方法与数据工程：数据集构建、合成数据、预训练、后训练和算力成本。"
+      "definition": "大模型的訓練方法與資料工程：資料集構建、合成數據、預訓練、後訓練和算力成本。"
     },
     {
       "slug": "safety",
-      "name": "安全对齐",
+      "name": "安全對齊",
       "group": "field",
       "tags": [
-        "安全/对齐"
+        "安全/對齊"
       ],
-      "definition": "围绕模型可控与防滥用的安全研究：越狱与防御、模型行为分析、安全评测和治理框架。"
+      "definition": "圍繞模型可控與防濫用的安全研究：越獄與防禦、模型行為分析、安全評測和治理框架。"
     },
     {
       "slug": "mcp",
-      "name": "MCP 与工具调用",
+      "name": "MCP 與工具呼叫",
       "group": "field",
       "tags": [
-        "MCP/工具调用"
+        "MCP/工具呼叫"
       ],
-      "definition": "让模型连上外部软件和数据的 MCP 协议、工具调用（Function Calling）及各类生态集成。"
+      "definition": "讓模型連上外部軟體和資料的 MCP 協議、工具呼叫（Function Calling）及各類生態整合。"
+    },
+    {
+      "slug": "fin-ai-cases",
+      "name": "AI 導入案例",
+      "group": "genre",
+      "tags": [
+        "AI 導入案例"
+      ],
+      "definition": "具名金融機構把 AI 用進業務的上線、試點、採購與成效。"
+    },
+    {
+      "slug": "fin-regulation",
+      "name": "金融監理",
+      "group": "genre",
+      "tags": [
+        "金融監理"
+      ],
+      "definition": "各國金融監理機關與國際組織對 AI 的規範、指引、諮詢與裁罰。"
+    },
+    {
+      "slug": "surveys",
+      "name": "調查與數據",
+      "group": "genre",
+      "tags": [
+        "調查/數據"
+      ],
+      "definition": "顧問公司、研究機構與監理機關發表的 AI 導入調查、指數與統計。"
     },
     {
       "slug": "model-releases",
-      "name": "模型发布",
+      "name": "模型發布",
       "group": "genre",
       "tags": [
-        "模型发布"
+        "模型發布"
       ],
-      "definition": "各家新模型发布、开源权重上线，以及重点版本的能力和价格变化。"
+      "definition": "各家新模型發布、開源權重上線，以及重點版本的能力和價格變化。"
     },
     {
       "slug": "product-updates",
-      "name": "产品更新",
+      "name": "產品更新",
       "group": "genre",
       "tags": [
-        "产品更新"
+        "產品更新"
       ],
-      "definition": "AI 应用和工具的功能上新、改版与定价调整——看谁家的产品更好用或更贵了。"
+      "definition": "AI 應用和工具的功能上新、改版與定價調整——看誰家的產品更好用或更貴了。"
     },
     {
       "slug": "papers",
-      "name": "论文研究",
+      "name": "論文研究",
       "group": "genre",
       "tags": [
-        "论文/研究"
+        "論文/研究"
       ],
-      "definition": "值得精读的 AI 论文与科研成果，覆盖模型架构、训练方法、能力评测和理论发现。"
+      "definition": "值得精讀的 AI 論文與科研成果，覆蓋模型架構、訓練方法、能力評測和理論發現。"
     },
     {
       "slug": "benchmarks",
-      "name": "评测基准",
+      "name": "評測基準",
       "group": "genre",
       "tags": [
-        "评测/基准"
+        "評測/基準"
       ],
-      "definition": "各大模型的第三方评测成绩、榜单变动，以及评测方法本身的争议。"
+      "definition": "各大模型的第三方評測成績、榜單變動，以及評測方法本身的爭議。"
     },
     {
       "slug": "tutorials",
-      "name": "教程实践",
+      "name": "教程實踐",
       "group": "genre",
       "tags": [
-        "教程/实践"
+        "教程/實踐"
       ],
-      "definition": "上手就能用的实操文章：提示词写法、工作流搭建、工具用法与真实踩坑经验。"
+      "definition": "上手就能用的實操文章：提示詞寫法、工作流搭建、工具用法與真實踩坑經驗。"
     },
     {
       "slug": "opinions",
-      "name": "大佬观点",
+      "name": "大佬觀點",
       "group": "genre",
       "tags": [
-        "大佬观点"
+        "大佬觀點"
       ],
-      "definition": "行业关键人物的思考与交锋：创始人访谈、研究者论战与一线投资人判断。"
+      "definition": "行業關鍵人物的思考與交鋒：創始人訪談、研究者論戰與一線投資人判斷。"
     },
     {
       "slug": "trends",
-      "name": "现象与趋势",
+      "name": "現象與趨勢",
       "group": "genre",
       "tags": [
-        "现象/趋势"
+        "現象/趨勢"
       ],
-      "definition": "AI 正在带来的变化：新的使用方式、刚冒头的能力，以及对行业和社会的影响。"
+      "definition": "AI 正在帶來的變化：新的使用方式、剛冒頭的能力，以及對行業和社會的影響。"
     },
     {
       "slug": "industry",
-      "name": "行业动态",
+      "name": "產業動態",
       "group": "genre",
       "tags": [
-        "行业动态"
+        "行業動態"
       ],
-      "definition": "AI 圈的商业大事件：融资并购、高层变动、巨头合作与竞争格局变化。"
+      "definition": "AI 圈的商業大事件：融資併購、高層變動、巨頭合作與競爭格局變化。"
     },
     {
       "slug": "policy",
-      "name": "政策监管",
+      "name": "政策監管",
       "group": "genre",
       "tags": [
-        "政策/监管"
+        "政策/監管"
       ],
-      "definition": "各国关于 AI 的法规立法、算力与模型出口管制，以及全球治理动向。"
+      "definition": "各國關於 AI 的法規立法、算力與模型出口管制，以及全球治理動向。"
     }
   ]
 }

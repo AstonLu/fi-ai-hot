@@ -68,7 +68,7 @@ clientLoader.hydrate = true as const;
 export function meta({ loaderData, location }: Route.MetaArgs) {
   const locale = localeOf(location.pathname);
   const t = translator(locale);
-  if (!loaderData) return [{ title: titled(t("内容不存在", "Article not found")) }, { name: "robots", content: "noindex" }];
+  if (!loaderData) return [{ title: titled(t("內容不存在", "Article not found")) }, { name: "robots", content: "noindex" }];
   const { item } = loaderData;
   if (!item) return [{ title: titled(loaderData.preview.title) }];
   const section = [...new Set([...(item.category ? [categoryLabel(item.category, locale)] : []), ...item.topics.map((topic) => topicName(topic.slug, topic.name, locale))])];
@@ -85,7 +85,7 @@ export function meta({ loaderData, location }: Route.MetaArgs) {
       articleLd({ locale, path: `/items/${item.id}`, headline: item.title, description: item.summary, publishedAt: item.publishedAt ?? item.discoveredAt, image: `/og/items/${item.id}.png`, basedOn: item.links.original, section }),
       breadcrumbLd([
         { name: SITE.name, path: "/" },
-        { name: item.selected ? t("精选", "Top Picks") : t("全部动态", `All ${SITE.subject} News`), path: item.selected ? "/" : "/all" },
+        { name: item.selected ? t("精選", "Top Picks") : t("全部動態", `All ${SITE.subject} News`), path: item.selected ? "/" : "/all" },
         { name: item.title, path: `/items/${item.id}` },
       ], locale),
     ],
@@ -141,8 +141,8 @@ function ArticleOutline({ outline }: { outline: SiteItemDetail["outline"] }) {
     if ((up && nav.scrollTop <= 0) || (down && nav.scrollTop + nav.clientHeight >= nav.scrollHeight - 1)) e.preventDefault();
   };
   return (
-    <RailSection title={t("本文目录", "Contents")} shrink>
-      <nav ref={nav} aria-label={t("本文目录", "Contents")} tabIndex={overscroll ? 0 : undefined} onKeyDown={containKeys} className={`scrollbar-thin min-h-[calc(6*(12.5px*1.375+8px))] overflow-y-auto ${overscroll}`}>
+    <RailSection title={t("本文目錄", "Contents")} shrink>
+      <nav ref={nav} aria-label={t("本文目錄", "Contents")} tabIndex={overscroll ? 0 : undefined} onKeyDown={containKeys} className={`scrollbar-thin min-h-[calc(6*(12.5px*1.375+8px))] overflow-y-auto ${overscroll}`}>
         <ol className="space-y-0.5 border-l border-line">
           {outline.map((o) => (
             <li key={o.id}>
@@ -170,7 +170,7 @@ function hostOf(url: string): string {
   }
 }
 
-/** The byline, unless the source's name already says it (公众号：卡尔的AI沃茨 by AI沃茨, Claude：YouTube by Claude). */
+/** The byline, unless the source's name already says it (公眾號：卡爾的AI沃茨 by AI沃茨, Claude：YouTube by Claude). */
 function bylineOf(author: string | null, source: string): string | null {
   const key = (s: string) => s.toLowerCase().replace(/[\s\p{P}]/gu, "");
   const a = author ? key(author) : "";
@@ -178,11 +178,11 @@ function bylineOf(author: string | null, source: string): string | null {
   return a && !s.includes(a) && !a.includes(s) ? author : null;
 }
 
-/** "11月7日 AI 日报 · 头条" / "AI Daily, Nov 7 · Lead story": the daily that carries the article, named as the site names its issues. */
+/** "11月7日 AI 日報 · 頭條" / "AI Daily, Nov 7 · Lead story": the daily that carries the article, named as the site names its issues. */
 function dailyName(daily: NonNullable<SiteItemDetail["daily"]>, locale: Locale): string {
   const t = translator(locale);
   return t(
-    `${reportDateLabel("daily", daily.key)} ${withSubject(REPORT_NAMES.daily)}${daily.lead ? " · 头条" : ""}`,
+    `${reportDateLabel("daily", daily.key)} ${withSubject(REPORT_NAMES.daily)}${daily.lead ? " · 頭條" : ""}`,
     `${SITE.subject} Daily, ${monthDayEn(daily.key)}${daily.lead ? " · Lead story" : ""}`,
   );
 }
@@ -261,13 +261,13 @@ function ItemPreview({ preview }: { preview: FeedItemSummary }) {
   const shownAt = preview.publishedAt ?? preview.timelineAt;
   return (
     <div className="mx-auto max-w-[var(--page-max-reading)] pb-8">
-      <PhoneBar back={{ to: preview.selected ? "/" : "/all", label: preview.selected ? t("精选", "Top Picks") : t("全部", "All") }} title={isPost ? preview.x!.authorName : preview.title} />
+      <PhoneBar back={{ to: preview.selected ? "/" : "/all", label: preview.selected ? t("精選", "Top Picks") : t("全部", "All") }} title={isPost ? preview.x!.authorName : preview.title} />
       <article className="pb-6 pt-3" aria-busy="true">
         <div className={`flex flex-wrap items-center gap-x-1.5 gap-y-1 text-ui-label text-ink-3 ${isPost ? "" : "mb-3"}`}>
           <span className="font-semibold text-ink-2">{isX ? preview.x!.authorName : preview.source.name}</span>
           {isX && <span>· @{preview.x!.handle} · X</span>}
           <span>·</span>
-          {!preview.publishedAt && <span>{t("收录于", "Added")}</span>}
+          {!preview.publishedAt && <span>{t("收錄於", "Added")}</span>}
           <time dateTime={shownAt} className="mono">{fullDateTime(shownAt)}</time>
           {preview.selected && <span className="ml-1">{preview.sameEvent ? <SameEventBadge /> : <SelectedBadge />}</span>}
           {shownScore(preview.score) !== null && (
@@ -279,7 +279,7 @@ function ItemPreview({ preview }: { preview: FeedItemSummary }) {
         {isPost ? <h1 className="sr-only">{preview.title}</h1> : <h1 data-page-title="" className="text-ui-title-2 font-bold leading-[1.38] tracking-[-0.01em] text-ink">{preview.title}</h1>}
         {preview.summary && (
           <section className={isPost ? "mt-4" : "mt-7"}>
-            <div className="mb-2 text-ui-caption font-semibold text-accent">{isPost && preview.summary.replace(/\s+/g, " ").trim() === preview.title ? t("原文", "Original") : t("AI 导读", "AI brief")}</div>
+            <div className="mb-2 text-ui-caption font-semibold text-accent">{isPost && preview.summary.replace(/\s+/g, " ").trim() === preview.title ? t("原文", "Original") : t("AI 導讀", "AI brief")}</div>
             <p className="text-ui-heading-sm leading-[1.7] text-ink"><MentionText runs={addressRuns(preview.summary)} /></p>
           </section>
         )}
@@ -299,7 +299,7 @@ function ItemPreview({ preview }: { preview: FeedItemSummary }) {
         item={preview}
         originalLabel={isX ? t("原推", "View on X") : t("原文", "Original")}
         onShare={async () => {
-          if ((await shareOrCopy(preview, locale)) === "copied") setToast(t("链接已复制", "Link copied"));
+          if ((await shareOrCopy(preview, locale)) === "copied") setToast(t("連結已複製", "Link copied"));
         }}
       />
       <Toast text={toast} />
@@ -315,13 +315,13 @@ function ItemGone() {
   const gone = isRouteErrorResponse(error) && error.status === 404;
   return (
     <div className="mx-auto max-w-sm pb-8">
-      <PhoneBar back={{ to: "/", label: t("精选", "Top Picks") }} />
+      <PhoneBar back={{ to: "/", label: t("精選", "Top Picks") }} />
       <div className="py-24 text-center">
-        <div className="text-ui-heading font-bold text-ink">{gone ? t("找不到这篇内容", "Article not found") : t("暂时无法加载", "Can't load this page")}</div>
-        <p className="mt-2 text-ui-label-lg leading-relaxed text-ink-3">{gone ? t("链接可能有误，或者这篇内容已经下架。", "The link may be wrong, or this article has been taken down.") : t("服务暂时繁忙，请稍后再试。", "The service is busy right now. Please try again later.")}</p>
+        <div className="text-ui-heading font-bold text-ink">{gone ? t("找不到這篇內容", "Article not found") : t("暫時無法載入", "Can't load this page")}</div>
+        <p className="mt-2 text-ui-label-lg leading-relaxed text-ink-3">{gone ? t("連結可能有誤，或者這篇內容已經下架。", "The link may be wrong, or this article has been taken down.") : t("服務暫時繁忙，請稍後再試。", "The service is busy right now. Please try again later.")}</p>
         {!gone && (
           <button type="button" onClick={() => void revalidator.revalidate()} className="mt-6 h-11 rounded-full border border-line-strong bg-surface px-5 text-ui-body-sm font-medium text-ink-2 active:bg-bg-sunk">
-            {t("重试", "Try again")}
+            {t("重試", "Try again")}
           </button>
         )}
       </div>
@@ -348,12 +348,12 @@ function ItemView({ item, followups }: Loaded) {
   };
   const share = async () => {
     const r = await shareOrCopy(item, locale);
-    if (r === "copied") setToast(t("链接已复制", "Link copied"));
+    if (r === "copied") setToast(t("連結已複製", "Link copied"));
   };
   const copyLink = async () => {
     try {
       await copyText(`${siteUrl()}${localizePath(`/items/${item.id}`, locale)}`);
-      setToast(t("链接已复制", "Link copied"));
+      setToast(t("連結已複製", "Link copied"));
     } catch {
       // clipboard unavailable
     }
@@ -363,24 +363,24 @@ function ItemView({ item, followups }: Loaded) {
       const res = await fetch(`/items/${item.id}/markdown`);
       if (!res.ok) throw new Error(String(res.status));
       await copyText(await res.text());
-      setToast(t("Markdown 已复制", "Markdown copied"));
+      setToast(t("Markdown 已複製", "Markdown copied"));
     } catch {
-      setToast(t("复制失败，请在浏览器中打开后导出", "Couldn't copy. Open this page in a browser to export it."));
+      setToast(t("複製失敗，請在瀏覽器中開啟後匯出", "Couldn't copy. Open this page in a browser to export it."));
     }
   };
 
   const bodyHtml = lang === "zh" ? (item.body?.zh ?? item.body?.original) : (item.body?.original ?? item.body?.zh);
-  const bodyLabel = !item.body ? null : lang === "zh" && item.body.zhKind === "translation" ? t("正文 · AI 翻译", "Full text · AI translation") : lang === "original" ? t("正文 · 原文", "Full text · Original") : t("正文", "Full text");
+  const bodyLabel = !item.body ? null : lang === "zh" && item.body.zhKind === "translation" ? t("正文 · AI 翻譯", "Full text · AI translation") : lang === "original" ? t("正文 · 原文", "Full text · Original") : t("正文", "Full text");
   const isX = item.channel === "x" && !!item.x;
   // A post reads under its author; one that publishes a long X Article reads like an article, under its headline.
   const isPost = isX && !item.x!.article;
   const byline = isX ? null : bylineOf(item.author, item.source.name);
   // Without a reliable date from the original, the time shown is when it was collected, labelled as such.
   const shownAt = item.publishedAt ?? item.discoveredAt;
-  const timeLabel = item.publishedAt ? t("发布时间", "Published") : t("收录时间", "Added");
+  const timeLabel = item.publishedAt ? t("發布時間", "Published") : t("收錄時間", "Added");
   const summaryOnly = item.readingMode === "summary-only";
   const showOutline = item.outline.length >= 3;
-  const originalLabel = isX ? t("在 X 查看原推", "View on X") : t("打开原文", "Open original");
+  const originalLabel = isX ? t("在 X 檢視原推", "View on X") : t("開啟原文", "Open original");
 
   const related = item.relatedStories.filter((s) => s.publicId !== item.story?.publicId);
   const [summaryRuns] = useMemo(() => linkMentions([item.summary], item.mentions), [item.summary, item.mentions]);
@@ -402,15 +402,15 @@ function ItemView({ item, followups }: Loaded) {
     <Menu label={t("更多操作", "More actions")} trigger={<IconMenu size={17} />}>
       {(close) => (
         <>
-          <MenuItem icon={<IconShare size={15} />} onSelect={() => { close(); void share(); }}>{t("分享链接", "Share link")}</MenuItem>
-          <MenuItem icon={<IconImage size={15} />} onSelect={() => { close(); openPoster(); }}>{t("生成分享海报", "Share as image")}</MenuItem>
-          <MenuItem icon={<IconCopy size={15} />} onSelect={() => { close(); void copyLink(); }}>{t("复制链接", "Copy link")}</MenuItem>
+          <MenuItem icon={<IconShare size={15} />} onSelect={() => { close(); void share(); }}>{t("分享連結", "Share link")}</MenuItem>
+          <MenuItem icon={<IconImage size={15} />} onSelect={() => { close(); openPoster(); }}>{t("生成分享海報", "Share as image")}</MenuItem>
+          <MenuItem icon={<IconCopy size={15} />} onSelect={() => { close(); void copyLink(); }}>{t("複製連結", "Copy link")}</MenuItem>
           {item.markdownAvailable &&
             (inWeChat() ? (
-              <MenuItem icon={<IconDownload size={15} />} onSelect={() => { close(); void copyMarkdown(); }}>{t("复制 Markdown", "Copy as Markdown")}</MenuItem>
+              <MenuItem icon={<IconDownload size={15} />} onSelect={() => { close(); void copyMarkdown(); }}>{t("複製 Markdown", "Copy as Markdown")}</MenuItem>
             ) : (
               <MenuItem icon={<IconDownload size={15} />} href={`/items/${item.id}/markdown`} download onSelect={close}>
-                {t("导出 Markdown", "Export as Markdown")}
+                {t("匯出 Markdown", "Export as Markdown")}
               </MenuItem>
             ))}
         </>
@@ -419,12 +419,12 @@ function ItemView({ item, followups }: Loaded) {
   );
   // Phones: the same actions as a sheet from the bar (分享 and 原文 are on the toolbar).
   const phoneActions: ActionRow[] = [
-    { key: "poster", label: t("生成分享海报", "Share as image"), icon: <IconImage size={20} />, onSelect: openPoster },
-    { key: "copy", label: t("复制链接", "Copy link"), icon: <IconCopy size={20} />, onSelect: () => void copyLink() },
+    { key: "poster", label: t("生成分享海報", "Share as image"), icon: <IconImage size={20} />, onSelect: openPoster },
+    { key: "copy", label: t("複製連結", "Copy link"), icon: <IconCopy size={20} />, onSelect: () => void copyLink() },
     ...(item.markdownAvailable
       ? [inWeChat()
-        ? { key: "markdown", label: t("复制 Markdown", "Copy as Markdown"), icon: <IconDownload size={20} />, onSelect: () => void copyMarkdown() }
-        : { key: "markdown", label: t("导出 Markdown", "Export as Markdown"), icon: <IconDownload size={20} />, href: `/items/${item.id}/markdown`, download: true }]
+        ? { key: "markdown", label: t("複製 Markdown", "Copy as Markdown"), icon: <IconDownload size={20} />, onSelect: () => void copyMarkdown() }
+        : { key: "markdown", label: t("匯出 Markdown", "Export as Markdown"), icon: <IconDownload size={20} />, href: `/items/${item.id}/markdown`, download: true }]
       : []),
   ];
   const originalLink = (className: string) => (
@@ -455,7 +455,7 @@ function ItemView({ item, followups }: Loaded) {
   // Rails: the piece's facts on the left (wide screens), the editor's notes on the right, the outline
   // under the facts (or under the notes when only the right rail shows).
   const facts = (
-    <RailSection title={t("来源", "Source")}>
+    <RailSection title={t("來源", "Source")}>
       <div className="text-ui-body-sm font-semibold leading-snug text-ink">{isX ? item.x!.authorName : item.source.name}</div>
       <div className="mt-1 text-ui-caption-lg leading-relaxed text-ink-3">
         {isX ? `@${item.x!.handle} · X` : byline ?? hostOf(item.links.original)}
@@ -478,10 +478,10 @@ function ItemView({ item, followups }: Loaded) {
           <p className="text-ui-label-lg leading-[1.8] text-ink-2">{item.reason}</p>
         </RailSection>
       ) : (
-        verdict && <RailSection title={shownScore(item.score) !== null ? t("AI 评分", "AI score") : undefined}>{verdict}</RailSection>
+        verdict && <RailSection title={shownScore(item.score) !== null ? t("AI 評分", "AI score") : undefined}>{verdict}</RailSection>
       )}
       {daily && (
-        <RailSection title={t("收录于", "Featured in")}>
+        <RailSection title={t("收錄於", "Featured in")}>
           <div className="flex flex-wrap gap-1.5">
             <Link viewTransition to={daily.to} className="chip">
               {daily.name}
@@ -490,7 +490,7 @@ function ItemView({ item, followups }: Loaded) {
         </RailSection>
       )}
       {item.topics.length > 0 && (
-        <RailSection title={t("主题", "Topics")}>
+        <RailSection title={t("主題", "Topics")}>
           <div className="flex flex-wrap gap-1.5">
             {item.topics.map((topic) => (
               <Link viewTransition key={topic.slug} to={`/topics/${topic.slug}`} className="chip">
@@ -501,7 +501,7 @@ function ItemView({ item, followups }: Loaded) {
         </RailSection>
       )}
       {tags.length > 0 && (
-        <RailSection title={t("标签", "Tags")}>
+        <RailSection title={t("標籤", "Tags")}>
           <div className="flex flex-wrap gap-1.5">
             {tags.slice(0, 8).map(({ tag, label, to }) => (
               <Link key={tag} to={to} rel={to.startsWith("/all?") ? "nofollow" : undefined} className="chip">
@@ -520,7 +520,7 @@ function ItemView({ item, followups }: Loaded) {
 
       {/* Phones: back to where the reader came from, the title once it has scrolled away, more actions. */}
       <PhoneBar
-        back={{ to: item.selected ? "/" : "/all", label: item.selected ? t("精选", "Top Picks") : t("全部", "All") }}
+        back={{ to: item.selected ? "/" : "/all", label: item.selected ? t("精選", "Top Picks") : t("全部", "All") }}
         title={isPost ? item.x!.authorName : item.title}
         actions={
           <BarButton label={t("更多操作", "More actions")} onClick={() => setActionsOpen(true)}>
@@ -553,7 +553,7 @@ function ItemView({ item, followups }: Loaded) {
           <div className="flex items-center gap-1 side:hidden">
             {showOutline && (
               <button type="button" onClick={() => setOutlineOpen(true)} className="inline-flex h-8 items-center gap-1.5 rounded-full px-3 text-ui-caption-lg font-medium text-ink-3 transition-colors hover:bg-bg-sunk hover:text-ink touch:h-11">
-                <IconList size={15} />{t(" 目录", " Contents")}
+                <IconList size={15} />{t(" 目錄", " Contents")}
               </button>
             )}
             {originalLink("touch:h-11")}
@@ -567,7 +567,7 @@ function ItemView({ item, followups }: Loaded) {
             {isX && <span>· @{item.x!.handle} · X</span>}
             {byline && <span>· {byline}</span>}
             <span>·</span>
-            {!item.publishedAt && <span>{t("收录于", "Added")}</span>}
+            {!item.publishedAt && <span>{t("收錄於", "Added")}</span>}
             <time dateTime={shownAt} className="mono">{fullDateTime(shownAt)}</time>
             <span className="empty:hidden" suppressHydrationWarning>{timeAgo(shownAt, undefined, locale) && `· ${timeAgo(shownAt, undefined, locale)}`}</span>
             {item.selected && (
@@ -586,7 +586,7 @@ function ItemView({ item, followups }: Loaded) {
 
           {item.summary && (!isPost || item.summary.replace(/\s+/g, " ").trim() !== item.title) && (
             <section className={isPost ? "mt-4" : "mt-7 xl:mt-8"}>
-              <div className="mb-2 text-ui-caption font-semibold text-accent">{summaryOnly ? t("摘要", "Summary") : t("AI 导读", "AI brief")}</div>
+              <div className="mb-2 text-ui-caption font-semibold text-accent">{summaryOnly ? t("摘要", "Summary") : t("AI 導讀", "AI brief")}</div>
               <p className="text-ui-heading-sm leading-[1.7] text-ink xl:text-ui-heading xl:leading-[1.7]"><MentionText runs={summaryRuns} /></p>
             </section>
           )}
@@ -600,7 +600,7 @@ function ItemView({ item, followups }: Loaded) {
 
           {item.sameEvent && (
             <p className="mt-5 text-ui-label leading-relaxed text-ink-4">
-              {t("同一件事，精选收录的是", "Same story in Top Picks: ")}
+              {t("同一件事，精選收錄的是", "Same story in Top Picks: ")}
               <Link viewTransition to={`/items/${item.sameEvent.id}`} className="text-ink-3 transition-colors hover:text-accent">
                 {t(<>《{item.sameEvent.title}》</>, <>“{item.sameEvent.title}”</>)}
               </Link>
@@ -614,7 +614,7 @@ function ItemView({ item, followups }: Loaded) {
             </div>
           )}
 
-          {summaryOnly && <p className="mt-7 rounded-control bg-bg-sunk px-4 py-3 text-ui-label-lg leading-relaxed text-ink-3">{t("本站只提供摘要与原文链接。", "Only a summary and a link to the original are available here.")}</p>}
+          {summaryOnly && <p className="mt-7 rounded-control bg-bg-sunk px-4 py-3 text-ui-label-lg leading-relaxed text-ink-3">{t("本站只提供摘要與原文連結。", "Only a summary and a link to the original are available here.")}</p>}
 
           {item.body && bodyHtml && (
             <section className="mt-9 border-t border-line pt-4 xl:mt-10">
@@ -624,7 +624,7 @@ function ItemView({ item, followups }: Loaded) {
                   <PillTabs
                     size="xs"
                     layoutId="item-body-lang"
-                    label={t("正文语言", "Full text language")}
+                    label={t("正文語言", "Full text language")}
                     active={lang}
                     items={[
                       { key: "zh", label: t("中文", "Chinese"), prefetchOnPress: true, replace: true, to: `/items/${item.id}` },
@@ -634,7 +634,7 @@ function ItemView({ item, followups }: Loaded) {
                 )}
               </div>
               {hasTranslation && lang === "zh" && !item.body.complete && (
-                <p className="mb-5 rounded-control bg-bg-sunk px-3 py-2 text-ui-label text-ink-3">{t("译文尚不完整，完整内容请切换到原文。", "The translation isn't complete yet. Switch to the original for the full text.")}</p>
+                <p className="mb-5 rounded-control bg-bg-sunk px-3 py-2 text-ui-label text-ink-3">{t("譯文尚不完整，完整內容請切換到原文。", "The translation isn't complete yet. Switch to the original for the full text.")}</p>
               )}
               <ArticleBody html={bodyHtml} />
             </section>
@@ -644,7 +644,7 @@ function ItemView({ item, followups }: Loaded) {
           {isX && item.x!.quoted?.html && <QuotedPost quoted={item.x!.quoted} original={lang === "original"} />}
 
           <p className="mt-8 text-ui-label text-ink-4">
-            {t("来源：", "Source: ")}
+            {t("來源：", "Source: ")}
             <a href={item.links.original} target="_blank" rel="noopener noreferrer" className="text-ink-3 hover:text-accent">
               {isX ? item.x!.authorName : item.source.name}
             </a>
@@ -655,7 +655,7 @@ function ItemView({ item, followups }: Loaded) {
             <div className="mt-4 flex flex-wrap gap-1.5 side:hidden">
               {daily && (
                 <Link viewTransition to={daily.to} className="chip">
-                  {t(<>收录于 {daily.name}</>, <>Featured in {daily.name}</>)}
+                  {t(<>收錄於 {daily.name}</>, <>Featured in {daily.name}</>)}
                 </Link>
               )}
               {item.topics.map((topic) => (
@@ -675,7 +675,7 @@ function ItemView({ item, followups }: Loaded) {
 
           {related.length > 0 && (
             <section className="mt-8">
-              <h2 className="mb-2 text-ui-body-sm font-semibold text-ink">{t("相关事件", "Related stories")}</h2>
+              <h2 className="mb-2 text-ui-body-sm font-semibold text-ink">{t("相關事件", "Related stories")}</h2>
               <ul className="divide-y divide-line-soft">
                 {related.map((s) => (
                   <li key={s.publicId}>

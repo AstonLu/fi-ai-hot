@@ -37,7 +37,7 @@ export function QuotedPost({ quoted, original = false }: { quoted: QuotedPostVie
       )}
       {quoted.url && (
         <a href={quoted.url} target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex items-center gap-0.5 text-ui-label text-accent hover:text-accent-ink">
-          {t("在 X 查看被引用的帖子 ", "View the quoted post on X ")}<IconArrowUpRight size={13} />
+          {t("在 X 檢視被引用的帖子 ", "View the quoted post on X ")}<IconArrowUpRight size={13} />
         </a>
       )}
     </figure>

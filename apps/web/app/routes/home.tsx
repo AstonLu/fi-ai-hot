@@ -13,7 +13,7 @@ import { HotTopics } from "../features/feed/HotTopics";
 import { ActiveFilters, CategoryTabs, FeedBar, SearchField } from "../features/feed/Filters";
 import { apiIn, L, localeOf, localizePath, translator, useLocale, useT } from "../lib/i18n";
 
-export const handle: Screen = { tab: "featured", name: L("精选", "Top Picks") };
+export const handle: Screen = { tab: "featured", name: L("精選", "Top Picks") };
 export { pageHeaders as headers } from "../lib/api.server";
 export const { clientLoader, shouldRevalidate } = pageReuse<typeof loader>();
 
@@ -35,7 +35,7 @@ export function meta({ loaderData, location }: Route.MetaArgs) {
   const t = translator(locale);
   const path = listPath("/", loaderData ? filterParams(loaderData.filters) : {});
   const titles = loaderData?.data.cards.map((c) => c.item.title) ?? [];
-  const jsonLd = path === "/" ? [...siteLd(locale), itemListLd("/", t("精选", "Top Picks"), titles, locale)] : undefined;
+  const jsonLd = path === "/" ? [...siteLd(locale), itemListLd("/", t("精選", "Top Picks"), titles, locale)] : undefined;
   const tags = pageMeta({ locale, path, noindex: hasFeedFilters(loaderData?.filters), jsonLd });
   // Webmaster platforms look for their verification tag on the (Chinese) home page only.
   if (path !== "/" || locale === "en") return tags;
@@ -49,11 +49,11 @@ export default function Home() {
   const shownTag = filters.tag ? displayTagIn(filters.tag, locale) : null;
   return (
     <div className="pb-6">
-      {/* Phones: the bar (精选 | 全部, filter, search), the filter in use, today's hot topics, the feed. */}
+      {/* Phones: the bar (精選 | 全部, filter, search), the filter in use, today's hot topics, the feed. */}
       <FeedBar base="/" category={filters.category} channel={filters.channel} />
       <ActiveFilters base="/" category={filters.category} channel={filters.channel} tag={filters.tag} />
       <h1 className="sr-only lg:not-sr-only lg:text-ui-heading-lg lg:font-semibold lg:leading-[1.3] lg:text-ink">
-        {shownTag ? `#${shownTag}` : t("精选", "Top Picks")}
+        {shownTag ? `#${shownTag}` : t("精選", "Top Picks")}
       </h1>
       <div className="mb-5 mt-4 hidden items-center justify-between gap-4 lg:flex">
         <CategoryTabs base="/" category={filters.category} channel={filters.channel} layoutId="home-cat-desk" className="min-w-0" />

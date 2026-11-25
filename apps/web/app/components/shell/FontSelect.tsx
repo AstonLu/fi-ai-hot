@@ -7,9 +7,9 @@ export function FontSelect() {
   const font = useFontPreference();
   const t = useT();
   return (
-    <Select aria-label={t("字体", "Font")} value={font ?? "system"} onChange={(e) => setFontPreference(e.target.value === "browser" ? "browser" : null)}>
-      <option value="system">{t("默认字体", "Default")}</option>
-      <option value="browser">{t("浏览器默认字体", "Browser default")}</option>
+    <Select aria-label={t("字型", "Font")} value={font ?? "system"} onChange={(e) => setFontPreference(e.target.value === "browser" ? "browser" : null)}>
+      <option value="system">{t("預設字型", "Default")}</option>
+      <option value="browser">{t("瀏覽器預設字型", "Browser default")}</option>
     </Select>
   );
 }

@@ -13,9 +13,9 @@ import { useT, zh } from "../../lib/i18n";
 export function CopyPage({ doc, rendered, eyebrow, footer }: { doc: CopyDocument; rendered: RenderedCopy; eyebrow?: ReactNode; footer?: ReactNode }) {
   const t = useT();
   // Keys of the document's own meta table, shown as the document writes them: its pages have no English edition.
-  const facts = [zh("版本"), zh("生效日期"), zh("运营主体"), zh("联系方式"), zh("备案号")].filter((k) => doc.meta[k]);
+  const facts = [zh("版本"), zh("生效日期"), zh("運營主體"), zh("聯絡方式"), zh("備案號")].filter((k) => doc.meta[k]);
   const info = facts.length > 0 && (
-    <RailSection title={t("文档信息", "Document info")}>
+    <RailSection title={t("文件資訊", "Document info")}>
       <dl className="space-y-2 text-ui-caption-lg">
         {facts.map((k) => (
           <div key={k}>
@@ -27,8 +27,8 @@ export function CopyPage({ doc, rendered, eyebrow, footer }: { doc: CopyDocument
     </RailSection>
   );
   const outline = rendered.outline.length > 2 && (
-    <RailSection title={t("目录", "Contents")}>
-      <nav aria-label={t("目录", "Contents")}>
+    <RailSection title={t("目錄", "Contents")}>
+      <nav aria-label={t("目錄", "Contents")}>
         <ol className="-ml-px space-y-0.5 border-l border-line">
           {rendered.outline.map((o) => (
             <li key={o.id}>

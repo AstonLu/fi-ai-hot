@@ -12,7 +12,7 @@ import { KIND_PATH, archiveGroups, feedLink, kindFromPath } from "../features/re
 import type { Screen } from "../components/shell/screens";
 import { apiIn, L, localeOf, translator, useLocale } from "../lib/i18n";
 
-export const handle: Screen = { tab: "daily", name: L("日报", "Daily") };
+export const handle: Screen = { tab: "daily", name: L("日報", "Daily") };
 export { pageHeaders as headers } from "../lib/api.server";
 export const { clientLoader, shouldRevalidate } = pageReuse<typeof loader>();
 
@@ -38,7 +38,7 @@ export async function loader({ request, params }: Route.LoaderArgs) {
 export function meta({ loaderData, location }: Route.MetaArgs) {
   const locale = localeOf(location.pathname);
   const t = translator(locale);
-  if (!loaderData) return [{ title: titled(t("报告不存在", "Report not found")) }, { name: "robots", content: "noindex" }];
+  if (!loaderData) return [{ title: titled(t("報告不存在", "Report not found")) }, { name: "robots", content: "noindex" }];
   const r = loaderData.report;
   const description = reportDescription(r, locale) ?? t(`${SITE.name} ${r.key} ${subjectAfter("的", REPORT_NAMES[r.kind])}。`, `${SITE.name}'s ${withSubject(REPORT_NAMES_EN[r.kind])} for ${reportDateLabelEn(r.kind, r.key)}.`);
   const path = `/${r.kind}/${r.key}`;

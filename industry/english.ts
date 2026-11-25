@@ -12,6 +12,8 @@ export const CATEGORY_EN: Record<CategoryKey, { label: string; feedLabel: string
   paper: { label: "Papers", feedLabel: "Papers", section: "Research papers" },
   tip: { label: "Tutorials", feedLabel: "Tutorials", section: "Tips & opinions" },
   opinion: { label: "Opinion", feedLabel: "Opinion", section: "Tips & opinions" },
+  "fin-ai": { label: "Finance AI", feedLabel: "AI in Finance", section: "AI adoption in financial services" },
+  "fin-reg": { label: "Regulation", feedLabel: "Financial AI Regulation", section: "Financial AI regulation" },
 };
 
 /** 标签（含 TAG_DISPLAY 里给读者看的短词）。 */
@@ -22,6 +24,8 @@ export const TAG_EN: Record<string, string> = {
   Agent: "Agents", 编码: "Coding", 推理: "Reasoning", 多模态: "Multimodal", 语音: "Voice", 视频: "Video", 图像生成: "Image generation", RAG: "RAG",
   端侧: "On-device", "数据/训练": "Data & training", 数据与训练: "Data & training", 搜索: "Search", "部署/工程": "Engineering", 工程部署: "Engineering",
   开源生态: "Open source", 具身智能: "Embodied AI", "MCP/工具调用": "MCP & tool use", "MCP 与工具调用": "MCP & tool use",
+  // 這個站的標籤是繁體，另外列一份；金融業 AI 導入的標籤也在這裡。
+  產品更新: "Product updates", 模型發布: "Model releases", "AI 導入案例": "AI adoption cases", 金融監理: "Financial regulation", "調查/數據": "Surveys & data", 調查數據: "Surveys & data", "論文/研究": "Research", 論文: "Papers", "開源/倉庫": "Open source", 開源: "Open source", "教程/實踐": "Tutorials", 教學: "Tutorials", "現象/趨勢": "Trends", 趨勢: "Trends", 大佬觀點: "Opinion", "評測/基準": "Benchmarks", 評測: "Benchmarks", "安全/對齊": "Safety", 行業動態: "Industry", 產業動態: "Industry", "政策/監管": "Policy", 編碼: "Coding", 多模態: "Multimodal", 語音: "Voice", 影片: "Video", 影像生成: "Image generation", 端側: "On-device", "資料/訓練": "Data & training", 資料與訓練: "Data & training", 搜尋: "Search", 開源生態: "Open source", 具身智慧: "Embodied AI", "MCP/工具呼叫": "MCP & tool use", "MCP 與工具呼叫": "MCP & tool use", "客服/對話": "Customer service", "風控/反詐": "Risk & fraud", 財富管理: "Wealth management", 投資研究: "Investment research", "法遵/RegTech": "Compliance & RegTech", 核保理賠: "Underwriting & claims", 營運自動化: "Operations automation", 資料治理: "Data governance", 資安: "Cybersecurity", 模型風險: "Model risk", "人才/組織": "Talent & organization", "成本/ROI": "Cost & ROI",
 };
 
 /** 主题（topics.json 的 slug）：名字和一句话介绍。 */
@@ -64,6 +68,22 @@ export const TOPIC_EN: Record<string, { name: string; definition: string }> = {
   trends: { name: "Trends", definition: "Patterns across the AI world: adoption, markets and how things are changing." },
   industry: { name: "Industry News", definition: "Funding, deals, people, partnerships, lawsuits and other company news." },
   policy: { name: "Policy & Regulation", definition: "AI laws, regulation, government policy and their effects." },
+  "fsc-tw": { name: "Taiwan FSC", definition: "Taiwan's Financial Supervisory Commission on AI in finance: guidelines, sandboxes and supervision." },
+  jpmorgan: { name: "JPMorgan", definition: "How JPMorgan Chase builds and uses AI across banking, markets and operations." },
+  dbs: { name: "DBS", definition: "DBS Bank's AI programme: use cases, results and how it organises the work." },
+  "fin-fraud": { name: "Risk & Fraud", definition: "AI for credit risk, fraud detection and anti-money laundering." },
+  "fin-wealth": { name: "Wealth & Research", definition: "AI in wealth management, advisory and investment research." },
+  "fin-service": { name: "Customer Service", definition: "AI assistants, chatbots and contact centres at banks and insurers." },
+  "fin-regtech": { name: "Compliance & RegTech", definition: "AI for compliance, reporting and regulatory technology." },
+  "fin-insurance": { name: "Underwriting & Claims", definition: "AI in insurance underwriting, pricing and claims." },
+  "fin-ops": { name: "Operations Automation", definition: "AI that automates back-office and operations work in financial firms." },
+  "fin-model-risk": { name: "Model Risk & Governance", definition: "Model risk management, AI governance and explainability in finance." },
+  "fin-data": { name: "Data & Security", definition: "Data governance, privacy and cybersecurity around AI in finance." },
+  "fin-talent": { name: "Talent & Organization", definition: "How financial firms staff, train and organise for AI." },
+  "fin-roi": { name: "Cost & ROI", definition: "What AI costs financial firms and what it returns." },
+  "fin-ai-cases": { name: "AI Adoption Cases", definition: "Named financial institutions putting AI into production, with results." },
+  "fin-regulation": { name: "Financial Regulation", definition: "Regulators and central banks on AI: rules, guidance and speeches." },
+  surveys: { name: "Surveys & Data", definition: "Surveys, reports and data on AI adoption in financial services." },
 };
 
 /** 主题分组（topics.json 的 groups）。 */

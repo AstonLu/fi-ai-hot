@@ -23,13 +23,13 @@ export interface NavItem {
 const SECTIONS: Array<{ key: string; title: Text; items: NavItem[] }> = [
   {
     key: "content",
-    title: L("内容", "News"),
+    title: L("內容", "News"),
     items: [
-      { to: "/", label: L("精选", "Top Picks"), icon: IconBolt, end: true },
-      { to: "/all", label: L(subjectAfter("全部", "动态"), `All ${SITE.subject} News`), icon: IconList },
-      { to: "/hot", label: L("热点榜", "Trending"), icon: IconFlame },
-      { to: "/daily", label: L(withSubject("日报"), `${SITE.subject} Daily`), icon: IconDoc, covers: ["/weekly", "/monthly"] },
-      { to: "/topics", label: L("主题", "Topics"), icon: IconGrid },
+      { to: "/", label: L("精選", "Top Picks"), icon: IconBolt, end: true },
+      { to: "/all", label: L(subjectAfter("全部", "動態"), `All ${SITE.subject} News`), icon: IconList },
+      { to: "/hot", label: L("熱點榜", "Trending"), icon: IconFlame },
+      { to: "/daily", label: L(withSubject("日報"), `${SITE.subject} Daily`), icon: IconDoc, covers: ["/weekly", "/monthly"] },
+      { to: "/topics", label: L("主題", "Topics"), icon: IconGrid },
       { to: "/starred", label: L("收藏", "Saved"), icon: IconBookmark },
     ],
   },
@@ -38,9 +38,9 @@ const SECTIONS: Array<{ key: string; title: Text; items: NavItem[] }> = [
     title: L("更多", "More"),
     items: [
       { to: "/agent", label: L("Agent 接入", "For Agents"), icon: IconPlug },
-      { to: "/about", label: L("关于", "About"), icon: IconHeart },
-      { to: "/changelog", label: L("更新日志", "Changelog"), icon: IconHistory, changelog: true },
-      { to: "/feedback", label: L("反馈", "Feedback"), icon: IconMessage },
+      { to: "/about", label: L("關於", "About"), icon: IconHeart },
+      { to: "/changelog", label: L("更新日誌", "Changelog"), icon: IconHistory, changelog: true },
+      { to: "/feedback", label: L("反饋", "Feedback"), icon: IconMessage },
     ],
   },
 ];
@@ -57,22 +57,22 @@ const chinese = (text: Text) => (typeof text === "string" ? text : text.zh);
 const inLanguage = (to: string, locale: Locale) => locale === "zh" || hasEnglish(to);
 
 const UP = {
-  "/hot": { name: L("热点榜", "Trending"), back: L("热点", "Trending"), tab: "hot" },
-  "/topics": { name: L("主题", "Topics"), back: L("全部主题", "All topics"), tab: "me" },
+  "/hot": { name: L("熱點榜", "Trending"), back: L("熱點", "Trending"), tab: "hot" },
+  "/topics": { name: L("主題", "Topics"), back: L("全部主題", "All topics"), tab: "me" },
 } as const;
 
 /**
- * Where pages under a navigation entry lead back up to: the entry, or 精选 in its place while the site hides
- * it. `name` is for breadcrumbs and desktop back links (热点榜), `back` for the phone bar (热点), `tab` the
+ * Where pages under a navigation entry lead back up to: the entry, or 精選 in its place while the site hides
+ * it. `name` is for breadcrumbs and desktop back links (熱點榜), `back` for the phone bar (熱點), `tab` the
  * phone tab it sits under, `crumbs` its breadcrumb after the site's home.
  */
 export function navUp(entry: keyof typeof UP): { to: string; name: Phrase; back: Phrase; tab: TabKey; crumbs: Array<{ name: Phrase; path: string }> } {
-  if (!inNav(entry)) return { to: "/", name: L("精选", "Top Picks"), back: L("精选", "Top Picks"), tab: "featured", crumbs: [] };
+  if (!inNav(entry)) return { to: "/", name: L("精選", "Top Picks"), back: L("精選", "Top Picks"), tab: "featured", crumbs: [] };
   return { to: entry, ...UP[entry], crumbs: [{ name: UP[entry].name, path: entry }] };
 }
 
 /**
- * The sidebar: the engine's sections with the modules' between 内容 and 更多; a module naming a section
+ * The sidebar: the engine's sections with the modules' between 內容 and 更多; a module naming a section
  * that is already there adds to it. A section takes its title from the first module with an entry in it here.
  */
 export function sidebar(locale: Locale): Array<{ key: string; title: Text; items: NavItem[] }> {
@@ -93,7 +93,7 @@ export function sidebar(locale: Locale): Array<{ key: string; title: Text; items
   return [...sections, { ...more, items: shown(more.items) }];
 }
 
-/** A sidebar entry is lit on its pages and the ones it covers (日报 also covers weekly and monthly reports). */
+/** A sidebar entry is lit on its pages and the ones it covers (日報 also covers weekly and monthly reports). */
 export function sidebarIsActive(item: Pick<NavItem, "to" | "end" | "covers">, pathname: string): boolean {
   if (item.end) return pathname === item.to;
   return [item.to, ...(item.covers ?? [])].some((to) => pathname === to || pathname.startsWith(`${to}/`));
@@ -112,8 +112,8 @@ export function activeSidebarItem(items: readonly NavItem[], pathname: string): 
 }
 
 /**
- * The phone tab bar: 全部 lives beside 精选 as a switch, 热点 and 日报 are tabs, and "我的" at /more holds
- * 收藏, 外观, the tools and the site's own pages. Which tab a page sits under is declared by the page
+ * The phone tab bar: 全部 lives beside 精選 as a switch, 熱點 and 日報 are tabs, and "我的" at /more holds
+ * 收藏, 外觀, the tools and the site's own pages. Which tab a page sits under is declared by the page
  * itself (components/shell/screens.ts).
  */
 export type TabKey =
@@ -135,9 +135,9 @@ export interface Tab {
 }
 
 const ENGINE_TABS: Tab[] = [
-  { key: "featured", to: "/", label: L("精选", "Top Picks"), icon: IconBolt },
-  { key: "hot", to: "/hot", label: L("热点", "Trending"), icon: IconFlame },
-  { key: "daily", to: "/daily", label: L("日报", "Daily"), icon: IconDoc, covers: ["/weekly", "/monthly"] },
+  { key: "featured", to: "/", label: L("精選", "Top Picks"), icon: IconBolt },
+  { key: "hot", to: "/hot", label: L("熱點", "Trending"), icon: IconFlame },
+  { key: "daily", to: "/daily", label: L("日報", "Daily"), icon: IconDoc, covers: ["/weekly", "/monthly"] },
   { key: "me", to: "/more", label: L("我的", "Me"), icon: IconUser, changelog: true },
 ];
 
@@ -149,7 +149,7 @@ export function tabs(locale: Locale): Tab[] {
 
 /**
  * The rail that stands in for the sidebar on narrow desktops (unfolded foldables, tablets upright): the
- * tabs, with 全部 after 精选 since desktop pages have no 精选 | 全部 switch.
+ * tabs, with 全部 after 精選 since desktop pages have no 精選 | 全部 switch.
  */
 export function rail(locale: Locale): Tab[] {
   const all = tabs(locale);

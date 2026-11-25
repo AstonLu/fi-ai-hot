@@ -82,11 +82,11 @@ test("a company topic takes the articles about it, not the ones that only mentio
 
 test("an article page says which of its tags are a topic's own", async () => {
   // A direction's or a form's tags, and the tag cards show for a company (its subject tag is never shown).
-  const id = await report({ at: hoursAgo(3), title: `Anthropic 开源智能体框架 ${T}`, subjects: ["anthropic", "openai"], tags: ["Agent", "开源/仓库", "Anthropic", "OpenAI", "框架"] });
+  const id = await report({ at: hoursAgo(3), title: `Anthropic 开源智能体框架 ${T}`, subjects: ["anthropic", "openai"], tags: ["Agent", "開源/倉庫", "Anthropic", "OpenAI", "框架"] });
   const res = await app.inject({ method: "GET", url: `/api/site/items/${id}` });
   const body = JSON.parse(res.body) as { tags: string[]; tagTopics: Record<string, string>; topics: Array<{ slug: string }> };
-  assert.deepEqual(body.tags, ["模型发布", "Agent", "开源/仓库", "Anthropic", "OpenAI", "框架"]);
-  assert.deepEqual(body.tagTopics, { "模型发布": "model-releases", Agent: "agent", "开源/仓库": "open-source", Anthropic: "anthropic", OpenAI: "openai" });
+  assert.deepEqual(body.tags, ["模型發布", "Agent", "開源/倉庫", "Anthropic", "OpenAI", "框架"]);
+  assert.deepEqual(body.tagTopics, { "模型發布": "model-releases", Agent: "agent", "開源/倉庫": "open-source", Anthropic: "anthropic", OpenAI: "openai" });
   // The company its title does not name is a topic of the tag, not of the article.
   assert.deepEqual(body.topics.map((t) => t.slug), ["anthropic", "agent", "open-source", "model-releases"]);
 });
@@ -103,7 +103,7 @@ test("renaming a company topic keeps its old full name usable for search", async
 test("a story page names the topics of its reports", async () => {
   const launch = await story(`智能体框架 V2 发布 ${T}`);
   await report({ source: OFFICIAL, at: hoursAgo(26), title: `智能体框架 V2 发布 ${T}`, tags: ["Agent"], fact: await fact(launch.id, "发布 V2") });
-  assert.deepEqual(await topicsOfStory(launch.id), [{ slug: "agent", name: "Agent 智能体" }, { slug: "model-releases", name: "模型发布" }]);
+  assert.deepEqual(await topicsOfStory(launch.id), [{ slug: "agent", name: "Agent 智慧體" }, { slug: "model-releases", name: "模型發布" }]);
 });
 
 test("withdrawn articles stay out of lists and counts", async () => {

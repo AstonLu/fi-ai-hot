@@ -318,7 +318,7 @@ export interface StoryDetail {
 export type ReportKind = "daily" | "weekly" | "monthly";
 
 /** What each kind of report is called. */
-export const REPORT_NAMES: Record<ReportKind, string> = { daily: "日报", weekly: "周报", monthly: "月报" };
+export const REPORT_NAMES: Record<ReportKind, string> = { daily: "日報", weekly: "週報", monthly: "月報" };
 export const REPORT_NAMES_EN: Record<ReportKind, string> = { daily: "Daily", weekly: "Weekly", monthly: "Monthly" };
 
 /** An issue's date as Chinese readers write and search it: "10月17日", "10月12日—18日" (or "9月28日—10月4日"), "2026年10月". */

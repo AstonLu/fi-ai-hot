@@ -1,4 +1,4 @@
-// Failure mode: WeChat's in-app browser cannot save downloads, so the article offers "复制 Markdown" there
+// Failure mode: WeChat's in-app browser cannot save downloads, so the article offers "複製 Markdown" there
 // instead; it copied with the async clipboard, which that browser does not have, and always failed.
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
@@ -6,14 +6,14 @@ import { after, before, test } from "node:test";
 import { chromium, expect, webkit, type Browser } from "@playwright/test";
 import { fakeApi, itemDetail, startWebServer, visit, type WebServer } from "./web-server.ts";
 
-const markdown = "# 复制检查\n\n固定正文";
+const markdown = "# 複製檢查\n\n固定正文";
 
 const path = "/items/article-actions";
 let web: WebServer;
 let chrome: Browser;
 before(async () => {
   web = await startWebServer(fakeApi((url, res) => {
-    if (url.pathname === `/api/site${path}`) return itemDetail({ id: "article-actions", title: "菜单检查" });
+    if (url.pathname === `/api/site${path}`) return itemDetail({ id: "article-actions", title: "選單檢查" });
     if (url.pathname === `${path}/markdown`) {
       res.setHeader("Content-Type", "text/markdown; charset=utf-8");
       return res.end(markdown);
@@ -28,9 +28,9 @@ test("article actions support keyboard navigation and return focus on Escape", a
   t.after(() => page.close());
   await visit(page, web.origin + path);
   const trigger = page.getByRole("button", { name: "更多操作", exact: true }).filter({ visible: true });
-  const first = page.getByRole("menuitem", { name: "分享链接", exact: true });
-  const second = page.getByRole("menuitem", { name: "生成分享海报", exact: true });
-  const last = page.getByRole("menuitem", { name: "导出 Markdown", exact: true });
+  const first = page.getByRole("menuitem", { name: "分享連結", exact: true });
+  const second = page.getByRole("menuitem", { name: "生成分享海報", exact: true });
+  const last = page.getByRole("menuitem", { name: "匯出 Markdown", exact: true });
   await trigger.press("Enter");
   await expect(first).toBeFocused();
   await first.press("ArrowDown");
@@ -58,7 +58,7 @@ test("article actions support keyboard navigation and return focus on Escape", a
   await expect(trigger).not.toBeFocused();
   await trigger.click();
   await expect(first).toBeFocused();
-  await page.getByRole("heading", { name: "菜单检查", exact: true }).click();
+  await page.getByRole("heading", { name: "選單檢查", exact: true }).click();
   await expect(page.getByRole("menu")).toHaveCount(0);
   await trigger.press("ArrowDown");
   await expect(first).toBeFocused();
@@ -71,9 +71,9 @@ test("article actions support keyboard navigation and return focus on Escape", a
   await trigger.press("Enter");
   await first.press("ArrowDown");
   await second.press("Enter");
-  const poster = page.getByRole("dialog", { name: "分享海报", exact: true });
+  const poster = page.getByRole("dialog", { name: "分享海報", exact: true });
   await expect(poster).toBeVisible();
-  await poster.getByRole("button", { name: "关闭", exact: true }).click();
+  await poster.getByRole("button", { name: "關閉", exact: true }).click();
   await expect(poster).toHaveCount(0);
   await expect(trigger).toBeFocused();
 });
@@ -86,12 +86,12 @@ test("in Safari, pressing the trigger of an open menu closes it", async (t) => {
   await visit(page, web.origin + path);
   const trigger = page.getByRole("button", { name: "更多操作", exact: true }).filter({ visible: true });
   await trigger.click();
-  await expect(page.getByRole("menuitem", { name: "分享链接", exact: true })).toBeFocused();
+  await expect(page.getByRole("menuitem", { name: "分享連結", exact: true })).toBeFocused();
   await trigger.click();
   await expect(page.getByRole("menu")).toHaveCount(0);
 });
 
-test("in WeChat, 复制 Markdown copies the article without the async clipboard", async (t) => {
+test("in WeChat, 複製 Markdown copies the article without the async clipboard", async (t) => {
   const context = await chrome.newContext({
     viewport: { width: 1366, height: 900 },
     userAgent: "Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.50",
@@ -109,7 +109,7 @@ test("in WeChat, 复制 Markdown copies the article without the async clipboard"
   const page = await context.newPage();
   await visit(page, web.origin + path);
   await page.getByRole("button", { name: "更多操作" }).filter({ visible: true }).click();
-  await page.getByRole("menuitem", { name: "复制 Markdown" }).click();
-  await expect(page.getByRole("status")).toHaveText("Markdown 已复制");
+  await page.getByRole("menuitem", { name: "複製 Markdown" }).click();
+  await expect(page.getByRole("status")).toHaveText("Markdown 已複製");
   assert.equal(await page.evaluate(() => (window as { copied?: string }).copied), markdown);
 });

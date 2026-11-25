@@ -227,9 +227,9 @@ export function siteLd(locale: Locale) {
       "@context": "https://schema.org",
       "@type": "Dataset",
       "@id": `${address("/", locale)}#dataset`,
-      name: t(`${SITE.name} — ${withSubject("行业动态数据集")}`, `${SITE.name} — ${SITE.subject} news dataset`),
+      name: t(`${SITE.name} — ${withSubject("行業動態資料集")}`, `${SITE.name} — ${SITE.subject} news dataset`),
       description: t(
-        `${subjectAfter("持续更新的中文", "行业动态")}：每条附中文摘要、评分与原文出处，${subjectAfter("另有每日精选与", "日报")}，可通过 RSS 与公开 API 获取。`,
+        `${subjectAfter("持續更新的中文", "行業動態")}：每條附中文摘要、評分與原文出處，${subjectAfter("另有每日精選與", "日報")}，可通過 RSS 與公開 API 獲取。`,
         `${SITE.subject} news, updated around the clock: every item has a summary, an AI score and a link to the original, plus daily top picks and the ${SITE.subject} Daily, all available via RSS and a public API.`,
       ),
       url: home,
@@ -240,12 +240,12 @@ export function siteLd(locale: Locale) {
       creator: orgRef(),
       publisher: orgRef(),
       distribution: [
-        { "@type": "DataDownload", name: t("精选 RSS", "Top Picks RSS"), encodingFormat: "application/rss+xml", contentUrl: `${base}${feedPath("/feed.xml", locale)}` },
-        { "@type": "DataDownload", name: t("全部动态 RSS", `All ${SITE.subject} News RSS`), encodingFormat: "application/rss+xml", contentUrl: `${base}${feedPath("/feed/all.xml", locale)}` },
-        { "@type": "DataDownload", name: t(`${withSubject("日报")} RSS`, `${SITE.subject} Daily RSS`), encodingFormat: "application/rss+xml", contentUrl: `${base}${feedPath("/feed/daily.xml", locale)}` },
-        { "@type": "DataDownload", name: t(`${withSubject("周报")} RSS`, `${SITE.subject} Weekly RSS`), encodingFormat: "application/rss+xml", contentUrl: `${base}${feedPath("/feed/weekly.xml", locale)}` },
-        { "@type": "DataDownload", name: t(`${withSubject("月报")} RSS`, `${SITE.subject} Monthly RSS`), encodingFormat: "application/rss+xml", contentUrl: `${base}${feedPath("/feed/monthly.xml", locale)}` },
-        { "@type": "DataDownload", name: t("公开 API v1", "Public API v1"), encodingFormat: "application/json", contentUrl: `${base}/api/v1/items` },
+        { "@type": "DataDownload", name: t("精選 RSS", "Top Picks RSS"), encodingFormat: "application/rss+xml", contentUrl: `${base}${feedPath("/feed.xml", locale)}` },
+        { "@type": "DataDownload", name: t("全部動態 RSS", `All ${SITE.subject} News RSS`), encodingFormat: "application/rss+xml", contentUrl: `${base}${feedPath("/feed/all.xml", locale)}` },
+        { "@type": "DataDownload", name: t(`${withSubject("日報")} RSS`, `${SITE.subject} Daily RSS`), encodingFormat: "application/rss+xml", contentUrl: `${base}${feedPath("/feed/daily.xml", locale)}` },
+        { "@type": "DataDownload", name: t(`${withSubject("週報")} RSS`, `${SITE.subject} Weekly RSS`), encodingFormat: "application/rss+xml", contentUrl: `${base}${feedPath("/feed/weekly.xml", locale)}` },
+        { "@type": "DataDownload", name: t(`${withSubject("月報")} RSS`, `${SITE.subject} Monthly RSS`), encodingFormat: "application/rss+xml", contentUrl: `${base}${feedPath("/feed/monthly.xml", locale)}` },
+        { "@type": "DataDownload", name: t("公開 API v1", "Public API v1"), encodingFormat: "application/json", contentUrl: `${base}/api/v1/items` },
         { "@type": "DataDownload", name: "OpenAPI", encodingFormat: "application/json", contentUrl: `${base}/openapi-v1.json` },
       ],
     },
@@ -343,13 +343,13 @@ export function reportDescription(r: ReportDetail, locale: Locale): string | nul
         text += t(`；${title}`, `; ${title}`);
       }
       return t(
-        `${date} ${withSubject("新闻")}：${text}${/[。！？!?]$/.test(text) ? "" : "。"}`,
+        `${date} ${withSubject("新聞")}：${text}${/[。！？!?]$/.test(text) ? "" : "。"}`,
         `${SITE.subject} news, ${date}: ${text}${/[.!?]$/.test(text) ? "" : "."}`,
       );
     }
   }
   const lead = r.lead?.leadParagraph ?? r.overview?.slice(0, t(150, 220));
-  return lead ? t(`${date} ${withSubject("资讯")}：${lead}`, `${SITE.subject} news, ${date}: ${lead}`) : null;
+  return lead ? t(`${date} ${withSubject("資訊")}：${lead}`, `${SITE.subject} news, ${date}: ${lead}`) : null;
 }
 
 /** One report issue: an editorial round-up by the site (no personal byline), sections as its sections. */
@@ -389,7 +389,7 @@ export function storyLd(story: StoryDetail, locale: Locale) {
     ...(reports.length ? {
       mainEntity: {
         "@type": "ItemList",
-        name: t("报道时间线", "Coverage timeline"),
+        name: t("報導時間線", "Coverage timeline"),
         itemListOrder: "https://schema.org/ItemListOrderDescending",
         numberOfItems: reports.length,
         itemListElement: reports.map((report, index) => ({ "@type": "ListItem", position: index + 1, name: report.title })),

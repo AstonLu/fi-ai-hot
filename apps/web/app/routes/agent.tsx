@@ -29,15 +29,15 @@ const V = PUBLIC_INTERFACE_VERSION;
 /** The ways in, the modules' first. The chooser's cards are the tabs: `?tab=` (the first is the default and not written). */
 const TRACKS: AgentTrack[] = [
   ...AGENT_PARTS.flatMap((p) => p.tracks ?? []),
-  { key: "mcp", name: "MCP", short: "MCP", pitch: L(`填一个地址，多出 ${mcpToolCount()} 个工具`, `Add one URL, get ${mcpToolCount()} new tools`), fit: L("Claude 桌面版、Cursor 等远程 MCP 客户端", "Claude Desktop, Cursor and other remote MCP clients"), icon: IconPlug, Panel: McpPanel },
-  { key: "rss", name: "RSS", short: "RSS", pitch: L("复制地址，用阅读器订阅", "Copy a feed URL into your reader"), fit: L("Reeder、Folo、Inoreader、n8n", "Reeder, Folo, Inoreader, n8n"), icon: IconRss, Panel: RssPanel },
-  { key: "api", name: "REST API", short: "API", pitch: L("匿名 GET，自己写程序取数", "Anonymous GET requests from your own code"), fit: L("脚本、机器人、小程序、看板", "Scripts, bots, mini apps, dashboards"), icon: IconCode, Panel: ApiPanel, anchors: ["agent-api-recovery"] },
+  { key: "mcp", name: "MCP", short: "MCP", pitch: L(`填一個地址，多出 ${mcpToolCount()} 個工具`, `Add one URL, get ${mcpToolCount()} new tools`), fit: L("Claude 桌面版、Cursor 等遠端 MCP 客戶端", "Claude Desktop, Cursor and other remote MCP clients"), icon: IconPlug, Panel: McpPanel },
+  { key: "rss", name: "RSS", short: "RSS", pitch: L("複製地址，用閱讀器訂閱", "Copy a feed URL into your reader"), fit: L("Reeder、Folo、Inoreader、n8n", "Reeder, Folo, Inoreader, n8n"), icon: IconRss, Panel: RssPanel },
+  { key: "api", name: "REST API", short: "API", pitch: L("匿名 GET，自己寫程式取數", "Anonymous GET requests from your own code"), fit: L("指令碼、機器人、小程式、看板", "Scripts, bots, mini apps, dashboards"), icon: IconCode, Panel: ApiPanel, anchors: ["agent-api-recovery"] },
 ];
 const FIRST = TRACKS[0]!.key;
 const tabKey = (key: string | null) => key && TRACKS.some(w => w.key === key) ? key : FIRST;
 const hrefOf = (key: string) => (key === FIRST ? "/agent" : `/agent?tab=${key}`);
-/** How many ways, as the copy counts them ("四种方式", "four ways"). */
-const WAYS = L(["零", "一", "两", "三", "四", "五", "六"][TRACKS.length], ["zero", "one", "two", "three", "four", "five", "six"][TRACKS.length]);
+/** How many ways, as the copy counts them ("四種方式", "four ways"). */
+const WAYS = L(["零", "一", "兩", "三", "四", "五", "六"][TRACKS.length], ["zero", "one", "two", "three", "four", "five", "six"][TRACKS.length]);
 
 /** The modules' sections at the end of a panel. */
 const BLOCKS = AGENT_PARTS.flatMap((p) => p.blocks ?? []);
@@ -50,9 +50,9 @@ const anchorHref = (id: string) => `${hrefOf(ANCHORS.get(id)!)}#${id}`;
 
 /** Machine-readable entry points, with what each one is for. */
 const RESOURCES: Array<[label: Text, href: Text, note: Text]> = [
-  ["llms.txt", "/llms.txt", L("给大模型读的站点说明", "The site explained for LLMs")],
-  [L("Agent 使用说明", "Agent guide"), L("/api/v1/agent", "/api/v1/agent?lang=en"), L(`Agent 读了就能查${GUIDE_CLIENTS ? `，${GUIDE_CLIENTS.zh} 用的也是它` : ""}`, `Agents read it and can start querying${GUIDE_CLIENTS ? `; it also powers ${GUIDE_CLIENTS.en}` : ""}`)],
-  ["OpenAPI 3.1", "/openapi-v1.json", L(`REST API 的完整定义 · ${V}`, `The full REST API definition · ${V}`)],
+  ["llms.txt", "/llms.txt", L("給大模型讀的站點說明", "The site explained for LLMs")],
+  [L("Agent 使用說明", "Agent guide"), L("/api/v1/agent", "/api/v1/agent?lang=en"), L(`Agent 讀了就能查${GUIDE_CLIENTS ? `，${GUIDE_CLIENTS.zh} 用的也是它` : ""}`, `Agents read it and can start querying${GUIDE_CLIENTS ? `; it also powers ${GUIDE_CLIENTS.en}` : ""}`)],
+  ["OpenAPI 3.1", "/openapi-v1.json", L(`REST API 的完整定義 · ${V}`, `The full REST API definition · ${V}`)],
   ...AGENT_PARTS.flatMap((p) => p.resources ?? []),
 ];
 
@@ -84,34 +84,34 @@ function tabMeta(tab: string, track: AgentTrack | undefined, locale: Locale): { 
     return {
       title,
       description: t(
-        `把 ${SITE.name} 接进你的 Agent：${TRACKS.map((w) => w.name).join("、")} ${WAYS.zh}种方式，匿名只读，无需 API Key，一分钟接好。`,
+        `把 ${SITE.name} 接進你的 Agent：${TRACKS.map((w) => w.name).join("、")} ${WAYS.zh}種方式，匿名只讀，無需 API Key，一分鐘接好。`,
         `Plug ${SITE.name} into your agent: ${namesEn(TRACKS.map((w) => w.name))}, ${WAYS.en} ways in. Anonymous and read-only, no API key, set up in a minute.`,
       ),
     };
   }
   if (tab === "mcp") {
     return {
-      title: t(`${withSubject("新闻")} MCP 服务：接入 Claude、Cursor 等客户端`, `${SITE.subject} News MCP Server: Connect Claude, Cursor and Other Clients`),
+      title: t(`${withSubject("新聞")} MCP 服務：接入 Claude、Cursor 等客戶端`, `${SITE.subject} News MCP Server: Connect Claude, Cursor and Other Clients`),
       description: t(
-        `免费接入 ${SITE.name} 远程 MCP 服务（${mcpToolCount()} 个工具）：支持 Claude 桌面版、Cursor 等客户端，匿名只读、无需 API Key，实时获取${withSubject("精选")}、热点与日报。`,
+        `免費接入 ${SITE.name} 遠端 MCP 服務（${mcpToolCount()} 個工具）：支援 Claude 桌面版、Cursor 等客戶端，匿名只讀、無需 API Key，即時獲取${withSubject("精選")}、熱點與日報。`,
         `Connect to ${SITE.name}'s remote MCP server for free (${mcpToolCount()} tools): works with Claude Desktop, Cursor and other clients. Anonymous and read-only, no API key. Get ${SITE.subject} top picks, trending stories and the ${SITE.subject} Daily as they happen.`,
       ),
     };
   }
   if (tab === "rss") {
     return {
-      title: t(`${withSubject("新闻")} RSS 订阅：精选、全部动态与日报 Feed`, `${SITE.subject} News RSS Feeds: Top Picks, All ${SITE.subject} News and ${SITE.subject} Daily`),
+      title: t(`${withSubject("新聞")} RSS 訂閱：精選、全部動態與日報 Feed`, `${SITE.subject} News RSS Feeds: Top Picks, All ${SITE.subject} News and ${SITE.subject} Daily`),
       description: t(
-        `订阅 ${SITE.name} 的${withSubject("资讯")} RSS（精选、全部动态、日报、周报、月报）：支持 Reeder、Folo、Inoreader、n8n，免费匿名订阅，无需注册。`,
+        `訂閱 ${SITE.name} 的${withSubject("資訊")} RSS（精選、全部動態、日報、週報、月報）：支援 Reeder、Folo、Inoreader、n8n，免費匿名訂閱，無需註冊。`,
         `Subscribe to ${SITE.name}'s ${SITE.subject} news via RSS (top picks, all news, and the daily, weekly and monthly reports): works with Reeder, Folo, Inoreader and n8n. Free and anonymous, no sign-up.`,
       ),
     };
   }
   if (tab === "api") {
     return {
-      title: t(`${withSubject("新闻")}免费 REST API 与 OpenAPI 文档`, `Free ${SITE.subject} News REST API and OpenAPI Docs`),
+      title: t(`${withSubject("新聞")}免費 REST API 與 OpenAPI 文件`, `Free ${SITE.subject} News REST API and OpenAPI Docs`),
       description: t(
-        `${SITE.name} 公开只读 REST API（v${V}）：匿名 GET 请求，无需 API Key，提供${withSubject("精选动态")}、全文搜索、热点与日报 JSON 接口及 OpenAPI 3.1 定义。`,
+        `${SITE.name} 公開只讀 REST API（v${V}）：匿名 GET 請求，無需 API Key，提供${withSubject("精選動態")}、全文搜尋、熱點與日報 JSON 介面及 OpenAPI 3.1 定義。`,
         `${SITE.name}'s public read-only REST API (v${V}): anonymous GET requests, no API key. JSON endpoints for ${SITE.subject} top picks, full-text search, trending stories and daily reports, plus an OpenAPI 3.1 definition.`,
       ),
     };
@@ -119,8 +119,8 @@ function tabMeta(tab: string, track: AgentTrack | undefined, locale: Locale): { 
   return {
     title: track ? `${track.name} · ${title}` : title,
     description: track
-      ? t(`${SITE.name} ${track.name} 接入：${t(track.pitch)}，适合${t(track.fit)}。匿名只读，无需 API Key。`, `${SITE.name} via ${track.name}: ${t(track.pitch)}. Good for: ${t(track.fit)}. Anonymous and read-only, no API key.`)
-      : t(`把 ${SITE.name} 接进你的 Agent。`, `Plug ${SITE.name} into your agent.`),
+      ? t(`${SITE.name} ${track.name} 接入：${t(track.pitch)}，適合${t(track.fit)}。匿名只讀，無需 API Key。`, `${SITE.name} via ${track.name}: ${t(track.pitch)}. Good for: ${t(track.fit)}. Anonymous and read-only, no API key.`)
+      : t(`把 ${SITE.name} 接進你的 Agent。`, `Plug ${SITE.name} into your agent.`),
   };
 }
 
@@ -210,8 +210,8 @@ export default function AgentPage() {
           })}
         </nav>
       </AsideCard>
-      <AsideCard title={t("接入资源", "Resources")}>
-        <nav aria-label={t("接入资源", "Resources")} className="-mx-2 -mb-1">
+      <AsideCard title={t("接入資源", "Resources")}>
+        <nav aria-label={t("接入資源", "Resources")} className="-mx-2 -mb-1">
           {shownIn(locale, RESOURCES, ([, , note]) => note).map(([l, href, note]) => [l, t(href), note] as const).map(([l, h, note]) => (
             <a key={h} href={h} target={h.startsWith("http") ? "_blank" : undefined} rel="noopener noreferrer" className="group flex items-start gap-2 rounded-control px-2 py-2 transition-colors hover:bg-bg-sunk">
               <span className="min-w-0 flex-1">
@@ -223,10 +223,10 @@ export default function AgentPage() {
           ))}
         </nav>
       </AsideCard>
-      <AsideCard title={t("没接上？", "Can't connect?")}>
-        <p className="text-ui-label leading-[1.75] text-ink-3">{t("把平台、版本和报错写在反馈页，别发 token 或本地文件。", "Tell us your platform, version and the error on the feedback page. Don't send tokens or local files.")}</p>
+      <AsideCard title={t("沒接上？", "Can't connect?")}>
+        <p className="text-ui-label leading-[1.75] text-ink-3">{t("把平臺、版本和報錯寫在反饋頁，別發 token 或本地檔案。", "Tell us your platform, version and the error on the feedback page. Don't send tokens or local files.")}</p>
         <IntentLink viewTransition to="/feedback" className="mt-3 inline-flex items-center gap-1 text-ui-label font-medium text-accent hover:underline">
-          {t("去反馈 ", "Send feedback ")}<IconChevronRight size={14} />
+          {t("去反饋 ", "Send feedback ")}<IconChevronRight size={14} />
         </IntentLink>
       </AsideCard>
     </>
@@ -238,15 +238,15 @@ export default function AgentPage() {
     <ReadingLayout aside={aside}>
       <header className="lg:pt-5">
         <Kicker>{t("AGENT 接入", "For Agents")}</Kicker>
-        <h1 data-page-title="" className="mt-4 text-ui-title-4 font-semibold leading-[1.3] text-ink sm:text-ui-title-6">{t(`把 ${SITE.name} 接进你的 Agent`, `Plug ${SITE.name} into your agent`)}</h1>
-        <p className="mt-3 max-w-[40em] text-ui-body leading-[1.8] text-ink-3">{t(`${TRACKS.map((w) => w.short).join("、")} ${WAYS.zh}种方式读的是同一份数据：精选、热点、日报、周报和月报，按你用的工具选一种就行。全部匿名只读，不用注册，也不用 API Key。`, `${namesEn(TRACKS.map((w) => w.short))}: ${WAYS.en} ways to read the same data, from top picks and trending stories to the daily, weekly and monthly reports. Pick whichever suits the tools you use. All anonymous and read-only: no sign-up, no API key.`)}</p>
+        <h1 data-page-title="" className="mt-4 text-ui-title-4 font-semibold leading-[1.3] text-ink sm:text-ui-title-6">{t(`把 ${SITE.name} 接進你的 Agent`, `Plug ${SITE.name} into your agent`)}</h1>
+        <p className="mt-3 max-w-[40em] text-ui-body leading-[1.8] text-ink-3">{t(`${TRACKS.map((w) => w.short).join("、")} ${WAYS.zh}種方式讀的是同一份資料：精選、熱點、日報、週報和月報，按你用的工具選一種就行。全部匿名只讀，不用註冊，也不用 API Key。`, `${namesEn(TRACKS.map((w) => w.short))}: ${WAYS.en} ways to read the same data, from top picks and trending stories to the daily, weekly and monthly reports. Pick whichever suits the tools you use. All anonymous and read-only: no sign-up, no API key.`)}</p>
         <div className="mt-4 flex flex-wrap items-center gap-2">
           <span className={`${chip} ${healthy ? "text-ok" : "text-hot"}`}>
             <span className={`size-1.5 rounded-full ${healthy ? "bg-ok" : "bg-hot"}`} aria-hidden="true" />
-            {healthy ? t("服务正常", "Service OK") : t("服务异常", "Service issues")}
+            {healthy ? t("服務正常", "Service OK") : t("服務異常", "Service issues")}
           </span>
           <span className={chip}>{t("版本 ", "Version ")}<span className="mono text-ink-2">{V}</span></span>
-          <span className={chip}>{t("匿名只读 · 无需 Key", "Anonymous, read-only · No API key needed")}</span>
+          <span className={chip}>{t("匿名只讀 · 無需 Key", "Anonymous, read-only · No API key needed")}</span>
         </div>
       </header>
 

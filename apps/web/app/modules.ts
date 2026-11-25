@@ -78,7 +78,7 @@ export interface AgentPart {
   resources?: Array<[label: Text, href: string, note: Text]>;
   /** The MCP panel's tool table: its tools. */
   tools?: Array<{ name: string; does: Text; ask: Text }>;
-  /** The MCP panel's 连不上怎么办: entries after the engine's first. */
+  /** The MCP panel's 連不上怎麼辦: entries after the engine's first. */
   mcpTroubles?: Text[];
   /** What the RSS panel's opening sentence goes on to say, a clause each after "；". */
   rssLead?: Text[];
@@ -86,13 +86,13 @@ export interface AgentPart {
   api?: { group: Text; rows: Array<[path: string, does: Text, often: Text]> };
   /** The API panel's usage tabs: one each, after the engine's. */
   recipes?: Array<{ key: string; label: Text; Body: ComponentType<{ base: string; curl: string }> }>;
-  /** The API panel's 出错了怎么办: [status, what to do], after the engine's. */
+  /** The API panel's 出錯了怎麼辦: [status, what to do], after the engine's. */
   apiErrors?: Array<[status: Text, what: ReactNode]>;
 }
 
 /** A module's part of a topic page (routes/topic.tsx), from what its server module's topics.page returned for it. */
 export interface TopicPagePart {
-  /** What it is called: after "最新动态与" in the page's title, and in the name of its structured-data list. */
+  /** What it is called: after "最新動態與" in the page's title, and in the name of its structured-data list. */
   name: Text;
   /** Whether it has anything on this page; without, the page leaves it out of its body and its head. */
   shows: (data: unknown, topic: TopicSummary) => boolean;
@@ -104,7 +104,7 @@ export interface TopicPagePart {
   news: (data: unknown) => string[];
 }
 
-/** Where the reader's account shows: the 我的 page's first row, the first row of the desktop sidebar's 更多 menu, the 收藏 page's note, the 卡册. */
+/** Where the reader's account shows: the 我的 page's first row, the first row of the desktop sidebar's 更多 menu, the 收藏 page's note, the 卡冊. */
 export type AccountPlace = "me" | "menu" | "starred" | "album";
 
 export interface WebModule {
@@ -114,7 +114,7 @@ export interface WebModule {
   account?: ComponentType<{ place: AccountPlace }>;
   /** The email of the reader signed in in this browser, or null (read after hydration). */
   signedInEmail?: () => string | null;
-  /** Desktop sidebar: entries in a section between the engine's 内容 and 更多; modules sharing sectionKey (or section title) share it. */
+  /** Desktop sidebar: entries in a section between the engine's 內容 and 更多; modules sharing sectionKey (or section title) share it. */
   sidebar?: { sectionKey?: string; section: Text; items: NavItem[] };
   /** Phone tab bar: tabs before 我的. */
   tabs?: Tab[];
@@ -135,7 +135,7 @@ export interface WebModule {
   topicPage?: Part<TopicPagePart>;
   /** Paths of the marks it serves that are drawn in white, for a dark tile (components/BrandMark.tsx). */
   darkMarks?: string[];
-  /** The starred page (routes/starred.tsx): buttons ahead of 导入文件 that bring stars in from elsewhere, each resolving to the line it reports. */
+  /** The starred page (routes/starred.tsx): buttons ahead of 匯入檔案 that bring stars in from elsewhere, each resolving to the line it reports. */
   starredImports?: Array<{ label: Text; run: () => Promise<{ ok: boolean; text: Text }> }>;
   /**
    * The feedback page (routes/feedback.tsx): a draft kept elsewhere in this browser, read when the page
