@@ -9,8 +9,9 @@ export const SELECTION = {
    * 信源分級 → 入選門檻（平均分）。分級在後臺“信源”裡給每個源設定：
    *   T1 官方一手（官網、官方部落格、機構）· T1_5 官方賬號、準官方創作者 · T2 媒體與個人
    * 分級 EXCLUDE_MP 以及這裡沒有列出的分級，不參與精選評分（只進“全部動態”）。
+   * 本站用 Claude Haiku 5.5 評分，分數多落在 20–65，原本 60／65／76 的門檻幾乎選不到文章，2026-11-25 依第一批 40 篇調為 50／55／55；類別下限與內容理解下限跟著下調，維持在兩者之間。
    */
-  thresholds: { T1: 60, T1_5: 65, T2: 76 } as Record<string, number>,
+  thresholds: { T1: 50, T1_5: 55, T2: 55 } as Record<string, number>,
   /**
    * 信源類別 → 門檻下限。分級只說明來源是不是官方、一手；有些官方信源的日常內容主要寫給開發者或業內，
    * 讀者要看的只是其中的大事，就在後臺“信源”裡給它一個類別，門檻抬到不低於這裡的數。
@@ -19,14 +20,14 @@ export const SELECTION = {
    *   leaderboard 評測榜單：給各家模型跑分、排名的評測機構
    */
   classes: {
-    ecosystem: { label: "生態與基礎設施", threshold: 70 },
-    leaderboard: { label: "評測榜單", threshold: 76 },
+    ecosystem: { label: "生態與基礎設施", threshold: 52 },
+    leaderboard: { label: "評測榜單", threshold: 55 },
   } as Record<string, { label: string; threshold: number }>,
   /**
    * 沒入選、但平均分高於這個數的資料，也用精選的寫法（內容理解：標題、摘要、推薦理由）來寫，
    * 其餘用更便宜的“標題摘要翻譯”。
    */
-  understandFloor: 50,
+  understandFloor: 45,
   /**
    * 瀏覽“全部動態”（網頁列表、介面和 RSS 的全部模式）只出平均分不低於這個數的資料，沒評上分的照常出；
    * 搜尋仍覆蓋全部。低於 40 分的多是轉述和資訊賬號的刷屏（曾佔全部動態三分之一以上），精選從沒收過 60 分以下的。
