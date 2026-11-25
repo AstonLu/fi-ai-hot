@@ -24,10 +24,11 @@ import { Link } from "./lib/link";
 import { feedPath, localeOf, translator, useLocale, useT } from "./lib/i18n";
 
 export const links: Route.LinksFunction = () => [
-  { rel: "icon", href: "/favicon.ico", sizes: "any" },
-  { rel: "icon", type: "image/png", href: "/icon.png" },
-  { rel: "apple-touch-icon", href: "/apple-icon.png" },
-  { rel: "manifest", href: "/manifest.webmanifest" },
+  // Browsers keep icons for a month: raise v (here and in site/public/manifest.webmanifest) when they change, so readers get the new ones.
+  { rel: "icon", href: "/favicon.ico?v=2", sizes: "any" },
+  { rel: "icon", type: "image/png", href: "/icon.png?v=2" },
+  { rel: "apple-touch-icon", href: "/apple-icon.png?v=2" },
+  { rel: "manifest", href: "/manifest.webmanifest?v=2" },
 ];
 
 /** The release rendering this document: once a newer one is deployed, a render error reloads the page (entry.client). */
