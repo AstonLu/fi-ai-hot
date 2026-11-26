@@ -59,8 +59,9 @@ export function monthDayTime(iso: string, locale: Locale = "zh"): string {
 }
 
 /** The source a card names and draws: a relayed report's outlet (SourceRef.outlet), its avatar from its name; else the source. */
-export function cardSource(source: SourceRef): { id?: string; name: string } {
-  return source.outlet ? { name: source.outlet } : source;
+export function cardSource(source: SourceRef): { id?: string; name: string; iconUrl?: string; iconSrcSet?: string } {
+  if (!source.outlet) return source;
+  return { name: source.outlet, ...(source.iconUrl ? { iconUrl: source.iconUrl } : {}), ...(source.iconSrcSet ? { iconSrcSet: source.iconSrcSet } : {}) };
 }
 
 /**

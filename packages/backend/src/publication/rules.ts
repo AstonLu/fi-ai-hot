@@ -1,5 +1,6 @@
 // Publication rules. Each rule is defined once here and used by every exit.
 import type { SourceRef } from "@aihot/contracts/site";
+import { proxiedImage, proxiedImageSet } from '../media/imgproxy.ts';
 import { serverModules } from '../modules.ts';
 import type { SourceRow } from "../sources/types.ts";
 
@@ -41,12 +42,26 @@ export interface SourceRefRow {
   /** Read only to tell whether the source relays other outlets' reports (relayedOutlet). */
   source_config: SourceRow["config"];
   author: string | null;
+  /** The source's own icon (sources.icon_url), shown when no outlet stands in for it. */
+  source_icon_url?: string | null;
+  /** The icon of the outlet on the report's host (outlet_icons), shown for a relayed report. */
+  outlet_icon_url?: string | null;
 }
 
 /** A source as readers see it on a report: its public name, and the outlet of a relayed report. */
 export function sourceRef(row: SourceRefRow): SourceRef {
   const outlet = relayedOutlet({ kind: row.source_kind, config: row.source_config }, row.author);
-  return { id: row.source_id, name: publicSourceName(row.source_name), ...(outlet ? { outlet } : {}) };
+  // A relayed report shows its outlet's icon, never the search's.
+  const icon = outlet ? row.outlet_icon_url : row.source_icon_url;
+  const iconUrl = proxiedImage(icon, "avatar");
+  const iconSrcSet = iconUrl ? proxiedImageSet(icon, "avatar") : null;
+  return {
+    id: row.source_id,
+    name: publicSourceName(row.source_name),
+    ...(outlet ? { outlet } : {}),
+    ...(iconUrl ? { iconUrl } : {}),
+    ...(iconSrcSet ? { iconSrcSet } : {}),
+  };
 }
 
 export interface SourceFacts {

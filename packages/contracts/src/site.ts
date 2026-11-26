@@ -14,6 +14,9 @@ export interface SourceRef {
    * the outlet; publication/rules.ts relayedOutlet). A card names it, and draws its avatar, in the source's place.
    */
   outlet?: string;
+  /** The icon a card shows for the name it shows (the outlet's for a relayed report), through the image proxy. */
+  iconUrl?: string;
+  iconSrcSet?: string;
 }
 
 export interface MediaView {

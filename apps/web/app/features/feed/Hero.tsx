@@ -68,7 +68,7 @@ export function Hero({ stories }: { stories: HeroStory[] }) {
         <p className="hero-sources">
           <span className="flex" aria-hidden="true">
             {sources.slice(0, 4).map((s) => (
-              <span key={s.name} className="hero-face"><SourceAvatar id={s.id} name={s.name} iconUrl={sourceIcon(s.id)} size={36} /></span>
+              <span key={s.name} className="hero-face"><SourceAvatar id={s.id} name={s.name} iconUrl={sourceIcon(s.id) ?? s.iconUrl} iconSrcSet={sourceIcon(s.id) ? undefined : s.iconSrcSet} size={36} /></span>
             ))}
           </span>
           <span>{t(`來自 ${sources.length} 個來源`, `From ${sources.length} ${sources.length === 1 ? "source" : "sources"}`)}</span>
@@ -106,7 +106,7 @@ export function Hero({ stories }: { stories: HeroStory[] }) {
             <div key={s.id} className="hero-card" data-place={place} aria-hidden={k !== 0 || undefined} onClick={k ? () => go(k) : undefined}>
               <span className={`hero-text ${s.cover ? "" : "is-plain"}`}>
                 <span className="hero-source">
-                  <SourceAvatar id={source.id} name={source.name} iconUrl={sourceIcon(source.id)} size={24} />
+                  <SourceAvatar id={source.id} name={source.name} iconUrl={sourceIcon(source.id) ?? source.iconUrl} iconSrcSet={sourceIcon(source.id) ? undefined : source.iconSrcSet} size={24} />
                   <span className="min-w-0 truncate">{source.name}</span>
                 </span>
                 {s.cover && <span className="hero-picture"><Picture src={s.cover.fullUrl || s.cover.poster || s.cover.url} alt="" decoding="async" /></span>}

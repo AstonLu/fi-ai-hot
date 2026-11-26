@@ -166,3 +166,21 @@ test("an outlet named differently by each edition reads under one name", () => {
   assert.equal(outletName("BigGo 財經"), "BigGo 財經");
   assert.equal(outletName("經濟日報"), "經濟日報");
 });
+
+test("a relayed report shows its outlet's icon, never the search's", async () => {
+  await sql`UPDATE sources SET icon_url = 'https://news.google.com/favicon.ico' WHERE id = ${SOURCE}`;
+  await sql`INSERT INTO outlet_icons (host, icon_url) VALUES ('money.example.org', 'https://money.example.org/icon.png')
+    ON CONFLICT (host) DO UPDATE SET icon_url = EXCLUDED.icon_url`;
+  try {
+    const rows = await sql<ItemRow[]>`SELECT ${ITEM_COLUMNS} ${ITEM_FROM} WHERE p.source_id = ${SOURCE} ORDER BY p.url`;
+    const sources = rows.map((r) => toFeedItemSummary(r).source);
+    const withOutlet = sources.find((s) => s.outlet === "經濟日報");
+    const without = sources.find((s) => !s.outlet);
+    assert.ok(withOutlet?.iconUrl, "the outlet's icon, through the image proxy");
+    assert.ok(!withOutlet.iconUrl.includes("google"), "not the search's icon");
+    assert.ok(without?.iconUrl, "no outlet known: the source's own icon");
+  } finally {
+    await sql`DELETE FROM outlet_icons WHERE host = 'money.example.org'`;
+    await sql`UPDATE sources SET icon_url = NULL WHERE id = ${SOURCE}`;
+  }
+});

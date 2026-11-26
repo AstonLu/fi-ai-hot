@@ -1,10 +1,15 @@
 // Source icons ("来源图标缓存"): the face a source shows next to its reports and on the hot list.
 // X accounts take the avatar on their latest post; 公众号 the account avatar on their latest article
 // page; sites the best icon their home page declares. A source with none keeps its tinted initial.
+// Outlets a news search relays get the icon of the site their reports live on (outlet_icons).
 import { sql } from "../db.ts";
 import { guardedFetch, DEFAULT_UA } from "../lib/http-fetch.ts";
 import { produceImage } from "../media/images.ts";
+import { serverModules } from "../modules.ts";
 import { sourceOwnsPost } from "./account.ts";
+import type { SourceRow } from "./types.ts";
+
+type SourceRowKind = SourceRow["kind"];
 
 const BATCH = 200;
 // A site without an icon rarely grows one; 公众号 misses are mostly WeChat turning the server away for a while.
@@ -132,8 +137,53 @@ async function findMissingIcons(): Promise<{ checked: number; found: number }> {
   return { checked: due.length, found };
 }
 
+/** How far back a relayed report's host still counts as an outlet worth an icon. */
+const OUTLET_WINDOW_DAYS = 30;
+
+/** The host of an address, lower case as outlet_icons keys it; null for an unusable one. */
+export function outletHost(url: string): string | null {
+  try {
+    const u = new URL(url);
+    return /^https?:$/.test(u.protocol) && u.hostname ? u.hostname.toLowerCase() : null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Outlets a relaying source passes on (ServerModule.relays), by the host of their recent reports: each host
+ * without a row is looked up once, a host whose site had no usable icon again after RETRY_DAYS.
+ */
+async function refreshOutletIcons(): Promise<{ outletsChecked: number; outletsFound: number }> {
+  const sources = await sql<{ id: string; kind: SourceRowKind; config: Record<string, unknown> }[]>`SELECT id, kind, config FROM sources`;
+  const relaying = sources.filter((s) => serverModules().some((m) => m.relays?.(s))).map((s) => s.id);
+  if (relaying.length === 0) return { outletsChecked: 0, outletsFound: 0 };
+  const urls = await sql<{ url: string }[]>`
+    SELECT DISTINCT ON (lower(substring(a.url from '^[a-zA-Z][a-zA-Z0-9+.-]*://([^/:?#]+)'))) a.url
+    FROM articles a
+    WHERE a.source_id IN ${sql(relaying)} AND a.discovered_at > now() - make_interval(days => ${OUTLET_WINDOW_DAYS}::int)
+    ORDER BY lower(substring(a.url from '^[a-zA-Z][a-zA-Z0-9+.-]*://([^/:?#]+)')), a.discovered_at DESC`;
+  const hosts = [...new Set(urls.map((r) => outletHost(r.url)).filter((h): h is string => !!h))];
+  if (hosts.length === 0) return { outletsChecked: 0, outletsFound: 0 };
+  const known = await sql<{ host: string }[]>`
+    SELECT host FROM outlet_icons
+    WHERE host IN ${sql(hosts)} AND (icon_url IS NOT NULL OR checked_at > now() - make_interval(days => ${RETRY_DAYS}::int))`;
+  const skip = new Set(known.map((k) => k.host));
+  const due = hosts.filter((h) => !skip.has(h)).slice(0, BATCH);
+  let found = 0;
+  for (const host of due) {
+    const icon = await siteIcon(`https://${host}/`).catch(() => null);
+    if (icon) found++;
+    await sql`
+      INSERT INTO outlet_icons (host, icon_url, checked_at) VALUES (${host}, ${icon}, now())
+      ON CONFLICT (host) DO UPDATE SET icon_url = coalesce(EXCLUDED.icon_url, outlet_icons.icon_url), checked_at = now()`;
+  }
+  return { outletsChecked: due.length, outletsFound: found };
+}
+
 export async function refreshSourceIcons() {
   const x = await refreshXAvatars();
   const sites = await findMissingIcons();
-  return { xAvatars: x, ...sites };
+  const outlets = await refreshOutletIcons();
+  return { xAvatars: x, ...sites, ...outlets };
 }
