@@ -1,6 +1,7 @@
 // A paused external source must not accept new reports or look healthy after a rejected push.
 import "./setup.ts";
 import assert from "node:assert/strict";
+import { randomUUID } from "node:crypto";
 import { after, test } from "node:test";
 import { closeDb, sql } from "@aihot/backend/db";
 import { IngestError, ingestItems } from "@aihot/backend/ingest/items";
@@ -43,7 +44,7 @@ test("an externally reported calendar day stays date-only through storage", asyn
 
 test("a pushed X post with its text is stored as the post itself, keyed by its id", async () => {
   const sourceId = `test-x-ingest-${tag()}`;
-  const tweetId = `19${Date.now()}`;
+  const tweetId = `19${BigInt(`0x${randomUUID().replace(/-/g, "").slice(0, 15)}`)}`;
   const url = `https://x.com/somebank/status/${tweetId}`;
   const text = "We are rolling out an AI assistant to all branch staff.\nDetails in the thread.";
   assert.deepEqual(await ingestItems({ sourceId, items: [{ url, text, authorName: "Some Bank", publishedAt: "2026-11-26T08:00:00Z" }] }), { ok: true, created: 1 });
