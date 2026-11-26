@@ -37,15 +37,18 @@ function text(v: unknown): string {
   return "";
 }
 
-/** Text of an element whose only content is markup, e.g. FINRA's <title><a href="…">Headline</a></title>. */
+/** A title whose only content is one plain-text element, e.g. FINRA's <title><a href="…">Headline</a></title>.
+ * Anything richer stays empty, as before: the parser loses the order of mixed text and markup. */
 function elementText(v: unknown): string {
   const own = text(v);
   if (own || !v || typeof v !== "object" || Array.isArray(v)) return own;
-  return Object.entries(v as Record<string, unknown>)
-    .filter(([key]) => !key.startsWith("@"))
-    .map(([, child]) => elementText(child))
-    .filter(Boolean)
-    .join(" ");
+  const children = Object.entries(v as Record<string, unknown>).filter(([key]) => !key.startsWith("@"));
+  if (children.length !== 1) return "";
+  const [name, child] = children[0]!;
+  if (/^(script|style)$/i.test(name) || Array.isArray(child)) return "";
+  const plain = typeof child === "string" || typeof child === "number" ||
+    (!!child && typeof child === "object" && Object.keys(child).every((key) => key.startsWith("@") || key === "#text" || key === "#cdata"));
+  return plain ? text(child) : "";
 }
 
 /** Atom defaults to text: XML entities have already been decoded, and literal markup is not HTML. */
