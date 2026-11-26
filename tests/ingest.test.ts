@@ -40,3 +40,31 @@ test("an externally reported calendar day stays date-only through storage", asyn
   assert.equal(row!.publication_time, "2026-10-13");
   assert.equal(row!.published_at_claim.toISOString(), "2026-10-13T00:00:00.000Z");
 });
+
+test("a pushed X post with its text is stored as the post itself, keyed by its id", async () => {
+  const sourceId = `test-x-ingest-${tag()}`;
+  const tweetId = `19${Date.now()}`;
+  const url = `https://x.com/somebank/status/${tweetId}`;
+  const text = "We are rolling out an AI assistant to all branch staff.\nDetails in the thread.";
+  assert.deepEqual(await ingestItems({ sourceId, items: [{ url, text, authorName: "Some Bank", publishedAt: "2026-11-26T08:00:00Z" }] }), { ok: true, created: 1 });
+  const [row] = await sql<{ identity_key: string; title: string; author: string; body_text: string; body_status: string; x_post: Record<string, any> }[]>`
+    SELECT identity_key, title, author, body_text, body_status, x_post FROM articles WHERE source_id = ${sourceId}`;
+  assert.equal(row!.identity_key, `x:${tweetId}`);
+  assert.equal(row!.title, "We are rolling out an AI assistant to all branch staff.");
+  assert.equal(row!.author, "somebank");
+  assert.equal(row!.body_text, text);
+  assert.equal(row!.body_status, "ok");
+  assert.deepEqual(row!.x_post, { tweetId, authorName: "Some Bank", handle: "somebank", text });
+
+  // The same post pushed again under another address form is the same item.
+  assert.deepEqual(await ingestItems({ sourceId, items: [{ url: `https://twitter.com/somebank/status/${tweetId}?s=20`, text }] }), { ok: true, created: 0 });
+});
+
+test("a pushed page with text keeps it as the body and needs no title", async () => {
+  const sourceId = `test-text-ingest-${tag()}`;
+  await ingestItems({ sourceId, items: [{ url: `https://example.org/${sourceId}`, text: "First line is the title\nRest of the body." }] });
+  const [row] = await sql<{ title: string; body_status: string; x_post: unknown }[]>`SELECT title, body_status, x_post FROM articles WHERE source_id = ${sourceId}`;
+  assert.equal(row!.title, "First line is the title");
+  assert.equal(row!.body_status, "ok");
+  assert.equal(row!.x_post, null);
+});

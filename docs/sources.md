@@ -252,11 +252,12 @@ Content-Type: application/json
   "sourceId": "my-crawler",
   "sourceName": "我的抓取脚本",
   "items": [
-    { "title": "必填", "url": "必填", "publishedAt": "2026-10-01T08:00:00+08:00", "author": "可选" }
+    { "title": "必填，有 text 时可省略", "url": "必填", "publishedAt": "2026-10-01T08:00:00+08:00", "author": "可选", "text": "可选", "authorName": "可选" }
   ]
 }
 ```
 
+- `text` 是条目自己的正文，带上就不再去抓原文页；没写 `title` 时取 `text` 的第一行当标题。`url` 是 X 贴文地址（`x.com/<账号>/status/<id>`）时，按贴文存：以贴文 id 判重，显示成 X 贴文，`authorName` 是作者的显示名。X 贴文页不登录抓不到，推 X 贴文时要带 `text`。
 - `INGEST_TOKEN` 在 `.env` 里设置，至少 16 位；不设置时接口一律返回 401。
 - 每次最多 50 条，超过返回 413。每个客户端每分钟能推几次由 `INGEST_RATE_LIMIT` 决定：`docker compose` 默认 10，超过返回 429（带 `Retry-After: 60`）；不用 Docker 时默认不限，前面没有反向代理限流的话在 `.env` 里设上，设成 0 表示不限。
 - 返回 `{"ok": true, "created": <新建条数>}`。不是 JSON 对象的条目、缺标题或网址的条目会被跳过，同一请求里重复的网址只取第一条。
