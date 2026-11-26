@@ -19,6 +19,7 @@ import { fetchXSearch, planXShards, readXSearch, shardHandle, shardQuery, selfTh
 import { xHandle } from "./account.ts";
 import { FetchError, type Candidate, type SourceRow } from "./types.ts";
 import { readsWhole, usePace } from "./uses.ts";
+import { serverModules } from "../modules.ts";
 import { pageFetchable } from "../content/extract.ts";
 import { fetchArticleCover, hasPicture, type Cover } from "../content/cover.ts";
 
@@ -68,13 +69,15 @@ export type CollectionCandidate = Candidate & { detailRules?: string; cover?: Co
 const detailRulesOf = (source: SourceRow) => (source.config.detail ? sha256(JSON.stringify(source.config.detail)) : null);
 
 /**
- * A listing as every run reads it: the source's URL, category and noise rules, its order, and one entry
- * per stored identity. Deduplication comes before detail reads and limits: URL aliases must neither buy
- * duplicate reads nor crowd other articles out of the window. The identity is exactly the one the
+ * A listing as every run reads it: rewritten by the modules that handle the source (ServerModule.listing),
+ * then the source's URL, category and noise rules, its order, and one entry per stored identity.
+ * Deduplication comes before detail reads and limits: URL aliases must neither buy duplicate reads nor
+ * crowd other articles out of the window. The identity is exactly the one the
  * material will store; a source whose entries are sections of one page (#september-24-2026 …) keeps
  * their fragments in it. Listing dates marked unreliable give way to the detail page's rule.
  */
 export async function listingEntries(source: SourceRow, found: Candidate[]): Promise<CollectionCandidate[]> {
+  for (const m of serverModules()) if (m.listing) found = await m.listing(source, found);
   let candidates = admitListing(found, source);
   if (source.kind === "json_list" && source.config.externalIdPath) candidates = await reuseExternalMaterialIdentities(source.id, candidates);
   if (source.config.sortByPublishedAt) candidates.sort((a, b) => (b.publishedAt?.getTime() ?? 0) - (a.publishedAt?.getTime() ?? 0));

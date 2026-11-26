@@ -12,6 +12,7 @@ import type { QueueOptions } from "./jobs/queue.ts";
 import type { Finding, FollowUp } from "./notify/feishu.ts";
 import type { ContentPart } from "./providers/llm.ts";
 import type { WantedText } from "./publication/english.ts";
+import type { Candidate, SourceRow } from "./sources/types.ts";
 import type { Topic, TopicMember } from "./publication/topics.ts";
 
 /** A cron schedule (Asia/Shanghai), recorded in job_runs like the engine's (apps/worker/src/schedules.ts). */
@@ -238,6 +239,12 @@ export interface ServerModule {
     resumed?: (sourceId: string, tx: Db) => Promise<void>;
     fetchNow?: (source: { id: string; config: Record<string, unknown> }) => Promise<Record<string, unknown>>;
   }>;
+  /**
+   * Rewrites what a source's listing found, before identity and admission rules (sources/collect.ts
+   * listingEntries), so collection and the admin's preview see the same entries. Returns the entries
+   * unchanged for a source it does not handle; an entry it leaves out is not stored this run.
+   */
+  listing?: (source: SourceRow, found: Candidate[]) => Promise<Candidate[]>;
   /**
    * Uses of sources besides the news pipeline, by name (sources.uses, sources/uses.ts): the module reads the
    * articles of the sources that name one itself, so nothing is collected twice.
