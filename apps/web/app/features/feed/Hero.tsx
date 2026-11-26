@@ -58,7 +58,9 @@ export function Hero({ stories }: { stories: HeroStory[] }) {
   };
   // Counted and drawn as the cards name them: a relayed report by its outlet.
   const sources = [...new Map(stories.map((s) => cardSource(s.source)).map((s) => [s.name, s])).values()];
-  const word = (s: HeroStory) => (s.category ? t(`${categoryLabel(s.category, "zh")}動態`, categoryLabel(s.category, locale)) : "");
+  // A label ending in a Latin letter or digit ("金融 AI") takes a space before the Chinese word.
+  const gap = (label: string) => (/[A-Za-z0-9]$/.test(label) ? " " : "");
+  const word = (s: HeroStory) => (s.category ? t(`${categoryLabel(s.category, "zh")}${gap(categoryLabel(s.category, "zh"))}動態`, categoryLabel(s.category, locale)) : "");
 
   return (
     <section ref={box} aria-label={t("近期值得看", "Worth reading")} className={`hero ${paused || !inView ? "is-paused" : ""}`} onPointerMove={lean} onPointerLeave={rest}>
