@@ -1,6 +1,6 @@
 // Public read layer, item level. Every exit (site API, v1, RSS, MCP, sitemap) reads
 // items through these columns and views; which rows are public is decided by scope.ts.
-import { CATEGORY_KEYS, toPublicApiCategory, type CategoryKey, type ChannelKey, type PublicApiCategoryKey } from "@aihot/contracts/taxonomy";
+import { CATEGORY_KEYS, isCategoryKey, toPublicApiCategory, type CategoryKey, type ChannelKey, type PublicApiCategoryKey } from "@aihot/contracts/taxonomy";
 import { STORY_INDEX_MIN_SOURCES, type FeedItemSummary, type ItemSummary, type MediaView, type XPostView } from "@aihot/contracts/site";
 import { itemUrl } from "./links.ts";
 import { POLICY, SITE } from "@aihot/site";
@@ -256,7 +256,7 @@ export function toItemSummary(row: ItemRow): ItemSummary {
     publishedAt: row.published_at?.toISOString() ?? null,
     discoveredAt: row.discovered_at.toISOString(),
     timelineAt: row.timeline_at.toISOString(),
-    category: (row.category as CategoryKey | null) ?? null,
+    category: isCategoryKey(row.category) ? row.category : null, // a key the pack no longer has reads as none until re-analysis
     tags: displayTags(row.tags),
     score: row.score === null ? null : Math.round(Number(row.score)),
     selected: row.selected,
