@@ -2,7 +2,7 @@
 // 這個模組把它還原成原文網址，標題去掉 Google 加的「 - 媒體名」（見 backend/links.ts）。媒體名記成作者，
 // 卡片上顯示它，不顯示搜尋的來源名（relays）。
 import { defineServerModule } from "@aihot/backend/modules";
-import { GOOGLE_NEWS, handles, pruneLinks, resolveListing } from "./backend/links.ts";
+import { GOOGLE_NEWS, handles, outletName, pruneLinks, resolveListing } from "./backend/links.ts";
 
 /** `origin` is Google News; the tests point it at a local stand-in. */
 export function googleNewsModule(origin = GOOGLE_NEWS) {
@@ -10,6 +10,7 @@ export function googleNewsModule(origin = GOOGLE_NEWS) {
     name: "google-news",
     listing: (source, found) => resolveListing(source, found, origin),
     relays: (source) => handles(source, origin),
+    outletName,
     retention: async (now) => ({ googleNewsLinks: await pruneLinks(now) }),
   });
 }

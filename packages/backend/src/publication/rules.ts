@@ -24,11 +24,13 @@ export function echoesOfIndependent(sourceId: string): string[] {
 
 /**
  * The outlet a report came from when its source relays other outlets' reports (ServerModule.relays) and the
- * article names one as its author; null otherwise, and the card names the source.
+ * article names one as its author, under the one name the module gives it (ServerModule.outletName); null
+ * otherwise, and the card names the source.
  */
 export function relayedOutlet(source: Pick<SourceRow, "kind" | "config">, author: string | null): string | null {
   const outlet = author?.trim();
-  return outlet && serverModules().some((m) => m.relays?.(source)) ? outlet : null;
+  const relay = outlet ? serverModules().find((m) => m.relays?.(source)) : undefined;
+  return outlet && relay ? (relay.outletName?.(outlet) ?? outlet) : null;
 }
 
 /** What sourceRef reads of a report (items.ts SOURCE_REF_COLUMNS). */

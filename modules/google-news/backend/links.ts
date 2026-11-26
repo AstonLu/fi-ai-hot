@@ -25,6 +25,21 @@ export function handles(source: Pick<SourceRow, "kind" | "config">, origin: stri
   return source.kind === "rss" && URL.parse(String(source.config.feedUrl ?? ""))?.origin === origin;
 }
 
+/**
+ * Outlets each language edition of Google News names differently, under the one name cards show. Keys are
+ * compared without case or spaces. Add a pair when the same outlet shows up under two names.
+ */
+const OUTLET_ALIASES: Record<string, string> = {
+  "BigGo Finance": "BigGo 財經",
+};
+const aliasKey = (name: string) => name.toLowerCase().replace(/\s+/g, "");
+const ALIASES = new Map(Object.entries(OUTLET_ALIASES).map(([from, to]) => [aliasKey(from), to]));
+
+/** The name cards show for an outlet Google News names (ServerModule.outletName). */
+export function outletName(outlet: string): string {
+  return ALIASES.get(aliasKey(outlet)) ?? outlet;
+}
+
 /** The id of a Google News article link (/rss/articles/<id>?oc=5), or null for any other address. */
 function articleId(link: string, origin: string): string | null {
   const url = URL.parse(link);
