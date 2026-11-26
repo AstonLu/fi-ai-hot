@@ -52,7 +52,7 @@ const api=fakeApi((url,res,req)=>{
   }
   if(p==='/api/site/pool'){
     const page=Number(url.searchParams.get('page')||1);
-    return {filters:{channel:'all',category:null,tag:null,q:null,tab:'time'},items:[{...item,title:'全部第 '+page+' 頁'}],page,pageCount:3,total:3,todayCount:1,freshness:at};
+    return {filters:{channel:'all',category:null,tag:null,q:null,tab:'time'},items:[{...item,id:'pool-'+page,title:'全部第 '+page+' 頁'}],page,pageCount:3,total:3,todayCount:1,freshness:at};
   }
   if(p==='/api/site/items/navigation-fixture')return detail;
   if(p==='/api/site/items/navigation-fixture/original')return {...detail,body:{zh:null,original:'<p>Original fixture</p>',zhKind:null,complete:true},bodyLanguage:'original'};
@@ -131,15 +131,31 @@ test('SSR all-pages and report kinds return offline with their own content',asyn
   const context=await chrome.newContext();const page=await context.newPage();
   try{
     await visit(page,origin+'/all');
-    await page.locator('a[href="/all?page=2"]').first().click();
-    await expect(page.getByRole('link',{name:'全部第 2 頁',exact:true})).toBeVisible();
+    // The later pages load on by themselves; a return brings back every page loaded, without the network.
+    await expect(page.getByRole('link',{name:'全部第 3 頁',exact:true})).toBeVisible();
+    await expect(page.getByText('已經到底',{exact:true})).toBeVisible();
+    await page.getByRole('link',{name:'金融 AI',exact:true}).first().click();
+    await expect(page).toHaveURL(/category=fin-ai/);
     await context.setOffline(true);await page.goBack();
     await expect(page.getByRole('link',{name:'全部第 1 頁',exact:true})).toBeVisible({timeout:1500});
+    await expect(page.getByRole('link',{name:'全部第 3 頁',exact:true})).toBeVisible();
     await context.setOffline(false);await visit(page,origin+'/daily');
     await page.getByRole('link',{name:'週報',exact:true}).click();
     await expect(page.locator('#report-start')).toContainText('週報');
     await context.setOffline(true);await page.getByRole('main').getByRole('link',{name:'日報',exact:true}).click();
     await expect(page.locator('#report-start')).toContainText('日報',{timeout:1500});
+  }finally{await context.close();}
+});
+
+test('without JavaScript all-news pages link on page by page',async()=>{
+  const context=await chrome.newContext({javaScriptEnabled:false});const page=await context.newPage();
+  try{
+    await page.goto(origin+'/all');
+    const next=page.getByRole('link',{name:'下一頁'});
+    await expect(next).toHaveAttribute('href','/all?page=2');
+    await next.click();
+    await expect(page.getByRole('link',{name:'全部第 2 頁',exact:true})).toBeVisible();
+    await expect(page.getByRole('link',{name:'下一頁'})).toHaveAttribute('href','/all?page=3');
   }finally{await context.close();}
 });
 

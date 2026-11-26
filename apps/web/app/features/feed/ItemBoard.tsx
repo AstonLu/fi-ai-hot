@@ -1,4 +1,4 @@
-// A page of reports as a board (全部動態, topics, search results), and the numbered pages under it.
+// A page of reports as a board (a topic's reports), and the numbered pages under it.
 import { IntentLink } from "../../components/ui/IntentLink";
 import { useMemo } from "react";
 import type { FeedItemSummary } from "@aihot/contracts/site";
