@@ -127,9 +127,9 @@ const LIVE_STORY_JOIN = sql`LEFT JOIN LATERAL (
  * issue, never to one already out). A report that arrived more than a day before the period began and
  * was released only within it is old news there. A report published within the period but found only
  * after it, or by a backfill (a new source's first import), is that period's news: it counts there once
- * released, so an issue written again carries it (the next issue then leaves it out, dailyMemory).
+ * released, so an issue written again carries it, unless a later issue of the same kind already did.
  */
-export async function periodReports(start: Date, end: Date): Promise<ReportRow[]> {
+export async function periodReports(kind: "daily" | "weekly" | "monthly", start: Date, end: Date): Promise<ReportRow[]> {
   return sql.begin("isolation level read committed", async (tx) => {
     // Wait for in-flight releases and keep later ones outside this snapshot. The following SELECT
     // gets a fresh READ COMMITTED snapshot; model calls and report writes happen after the lock ends.
@@ -147,7 +147,10 @@ export async function periodReports(start: Date, end: Date): Promise<ReportRow[]
             OR (p.visible_after > p.timeline_at AND p.visible_after >= ${start} AND p.visible_after < ${end})
           )
           AND p.timeline_at >= ${start}::timestamptz - interval '24 hours')
-        OR ((p.backfill OR p.discovered_at >= ${end}) AND p.published_at >= ${start} AND p.published_at < ${end} AND p.visible_after <= now()))`;
+        OR ((p.backfill OR p.discovered_at >= ${end}) AND p.published_at >= ${start} AND p.published_at < ${end} AND p.visible_after <= now()
+          AND NOT EXISTS (SELECT 1 FROM reports later WHERE later.kind = ${kind} AND later.window_start >= ${end}
+            AND later.window_start <= greatest(p.timeline_at, p.visible_after) AND later.window_end > greatest(p.timeline_at, p.visible_after)
+            AND later.generated_at >= p.visible_after)))`;
   });
 }
 
@@ -180,8 +183,8 @@ function groupBy<T>(rows: T[], key: (row: T) => string): Map<string, T[]> {
 }
 
 /** A weekly's or monthly's candidates: each fact once, by its representative, best scored first. */
-export async function candidates(start: Date, end: Date): Promise<Candidate[]> {
-  const rows = await periodReports(start, end);
+export async function candidates(kind: "weekly" | "monthly", start: Date, end: Date): Promise<Candidate[]> {
+  const rows = await periodReports(kind, start, end);
   return [...groupBy(rows, factKeyOf)]
     .map(([factKey, members]): Candidate => {
       const r = pickRepresentative(members);
@@ -371,7 +374,7 @@ interface Fact { key: string; rows: ReportRow[]; selected: boolean; sources: str
  * selected reports and missed facts, minus what the week's issues already carried, one entry per event.
  */
 export async function dailyEdition(date: string, start: Date, end: Date): Promise<{ entries: EditionEntry[]; stats: Record<string, number> }> {
-  const [memory, selected, missed, judged] = await Promise.all([dailyMemory(date), periodReports(start, end), missedFacts(start, end), judgedReports(start, end)]);
+  const [memory, selected, missed, judged] = await Promise.all([dailyMemory(date), periodReports("daily", start, end), missedFacts(start, end), judgedReports(start, end)]);
   const raw = [
     ...[...groupBy(selected, factKeyOf)].map(([key, rows]) => ({ key, rows, selected: true })),
     ...missed.map((m) => ({ ...m, selected: false })),

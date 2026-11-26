@@ -58,7 +58,7 @@ test("reports assign delayed and boundary releases to the period readers first s
   await publishArticle(groupedLate, { now: editionAt("daily", "2020-01-02", -120) }); // waits for identity confirmation
   await sql`UPDATE articles SET grouping_status = 'complete', grouped_at = ${editionAt("daily", "2020-01-02", -10)} WHERE id = ${groupedLate}`;
   const boundary = editionAt("daily", "2020-01-02");
-  const previous = new Set((await candidates(editionAt("daily", "2020-01-01"), boundary)).map((c) => c.itemId));
+  const previous = new Set((await candidates("weekly", editionAt("daily", "2020-01-01"), boundary)).map((c) => c.itemId));
 
   assert.equal(previous.has(onTime), true);
   assert.equal(previous.has(groupedBefore), true);
@@ -68,7 +68,7 @@ test("reports assign delayed and boundary releases to the period readers first s
   await publishArticle(groupedLate, { now: editionAt("daily", "2020-01-02", 10) });
   const [release] = await sql<{ visible_after: Date }[]>`SELECT visible_after FROM publications WHERE article_id = ${groupedLate}`;
   assert.equal(release!.visible_after.toISOString(), editionAt("daily", "2020-01-02", 10).toISOString());
-  const next = new Set((await candidates(boundary, editionAt("daily", "2020-01-03"))).map((c) => c.itemId));
+  const next = new Set((await candidates("weekly", boundary, editionAt("daily", "2020-01-03"))).map((c) => c.itemId));
   assert.equal(next.has(onTime), false);
   assert.equal(next.has(groupedBefore), false);
   for (const id of [delayed, atBoundary, groupedLate]) assert.equal(next.has(id), true);
@@ -134,8 +134,8 @@ for (const lock of ["article", "fact seat", "report snapshot"] as const) {
       assert.equal(published!.visible_after.toISOString(), editionAt("daily", "2020-01-02", 10).toISOString());
       assert.equal(published!.changed_at.toISOString(), published!.visible_after.toISOString());
       const boundary = editionAt("daily", "2020-01-02");
-      assert.equal((await candidates(editionAt("daily", "2020-01-01"), boundary)).some((c) => c.itemId === id), false);
-      assert.equal((await candidates(boundary, editionAt("daily", "2020-01-03"))).some((c) => c.itemId === id), true);
+      assert.equal((await candidates("weekly", editionAt("daily", "2020-01-01"), boundary)).some((c) => c.itemId === id), false);
+      assert.equal((await candidates("weekly", boundary, editionAt("daily", "2020-01-03"))).some((c) => c.itemId === id), true);
     } finally {
       release.open();
       await Promise.allSettled([holding, publication]);
@@ -171,7 +171,7 @@ test("daily composition waits for a pre-cutoff release to commit instead of losi
     const hasItem = (key: string) => reports.find((r) => r.key === key)!.content.sections.some((s) => s.items.some((item) => item.itemId === id));
     assert.equal(hasItem("2020-01-04"), true);
     assert.equal(reports.some((r) => r.key === "2020-01-05"), false);
-    assert.equal((await candidates(editionAt("daily", "2020-01-04"), editionAt("daily", "2020-01-05"))).some((c) => c.itemId === id), false);
+    assert.equal((await candidates("weekly", editionAt("daily", "2020-01-04"), editionAt("daily", "2020-01-05"))).some((c) => c.itemId === id), false);
   } finally {
     commit.open();
     await Promise.allSettled([publication, report]);
@@ -195,10 +195,16 @@ test("news published in a period but found after it, or by a first import, belon
   const foundLate = await late("found-late", new Date(end.getTime() - 3 * 3_600_000), new Date(end.getTime() + 5 * 3_600_000));
   const firstImport = await late("first-import", new Date(end.getTime() - 9 * 3_600_000), new Date(end.getTime() - 2 * 3_600_000), "first-import");
   const older = await late("older-import", new Date(start.getTime() - 30 * 3_600_000), new Date(end.getTime() - 2 * 3_600_000), "first-import");
-  const period = new Set((await candidates(start, end)).map((c) => c.itemId));
+  const period = new Set((await candidates("weekly", start, end)).map((c) => c.itemId));
   assert.equal(period.has(foundLate), true);
   assert.equal(period.has(firstImport), true);
   assert.equal(period.has(older), false, "history published before the period is not its news");
-  const next = new Set((await candidates(end, editionAt("daily", "2020-02-03"))).map((c) => c.itemId));
+  const next = new Set((await candidates("weekly", end, editionAt("daily", "2020-02-03"))).map((c) => c.itemId));
   assert.equal(next.has(foundLate), true, "an issue already out does not change: the next one still carries it");
+  // Once the next issue is out with it, writing this period again does not repeat it.
+  await sql`INSERT INTO reports (kind, key, window_start, window_end, content, generated_at)
+            VALUES ('weekly', ${`late-${T}`}, ${end}, ${editionAt("daily", "2020-02-03")}, '{}'::jsonb, now())`;
+  const again = new Set((await candidates("weekly", start, end)).map((c) => c.itemId));
+  assert.equal(again.has(foundLate), false);
+  assert.equal(again.has(firstImport), true);
 });
