@@ -70,7 +70,7 @@ async function report(suffix: string, opts: { title: string; backfill?: string; 
     publishedAt: opts.publishedAt ?? new Date(), backfill: opts.backfill ?? null,
   });
   await sql`INSERT INTO analyses (article_id, input_revision, origin, relevance, category, title_zh, summary_zh, score, selected, output)
-            VALUES (${articleId}, 1, 'rule', 'pass', 'ai-models', ${opts.title}, '摘要', 80, false, ${sql.json({ fact: { title: opts.title } })})`;
+            VALUES (${articleId}, 1, 'rule', 'pass', 'fin-ai', ${opts.title}, '摘要', 80, false, ${sql.json({ fact: { title: opts.title } })})`;
   await publishArticle(articleId);
   return articleId;
 }
@@ -204,7 +204,7 @@ test("a late re-evaluation that finds nothing keeps a post's heat in a story rec
   assert.deepEqual((await sql`SELECT story_id FROM story_signals WHERE article_id = ${articleId}`).map((r) => Number(r.story_id)), [storyId]);
 });
 
-test("history waits behind live work and founds no event; a new source's post from today is news", async () => {
+test("history waits behind live work and founds no event; a new source's post from today, or from this fortnight, is news", async () => {
   const old = await report("old", { title: `旧闻 ${T}`, backfill: "first-import", publishedAt: new Date(Date.now() - 30 * 86_400_000) });
   await queueProcessing(old, { step: "analyze" });
   assert.deepEqual([(await job(old))?.name, (await job(old))?.priority], ["content.analyze", -2]);
@@ -216,6 +216,11 @@ test("history waits behind live work and founds no event; a new source's post fr
   assert.equal((await job(fresh))?.priority, 0);
   assert.notEqual((await groupArticle(fresh)).verdict, "historical");
   assert.equal((await sql`SELECT 1 FROM fact_articles WHERE article_id = ${fresh}`).length, 1);
+
+  // A first import of this fortnight's news meets the other reports of its news (production, 2026-11-26).
+  const recent = await report("recent", { title: `近闻 ${T}`, backfill: "first-import", publishedAt: new Date(Date.now() - 5 * 86_400_000) });
+  assert.notEqual((await groupArticle(recent)).verdict, "historical");
+  assert.equal((await sql`SELECT 1 FROM fact_articles WHERE article_id = ${recent}`).length, 1);
 });
 
 test("a discussion post that quotes a post not yet collected joins its story when the original arrives", async () => {
@@ -236,7 +241,7 @@ test("a discussion post that quotes a post not yet collected joins its story whe
     via: "fetch", publishedAt: new Date(Date.now() - 60_000), xPost: { tweetId, authorName: "Anthropic", handle: "AnthropicAI", text: `Introducing ${TOPIC} Sonnet` },
   });
   await sql`INSERT INTO analyses (article_id, input_revision, origin, relevance, category, title_zh, summary_zh, score, selected, output)
-            VALUES (${originalId}, 1, 'rule', 'pass', 'ai-models', ${`Anthropic 发布 ${TOPIC} Sonnet`}, '摘要', 80, false, ${sql.json({ fact: { title: "Sonnet" } })})`;
+            VALUES (${originalId}, 1, 'rule', 'pass', 'fin-ai', ${`Anthropic 发布 ${TOPIC} Sonnet`}, '摘要', 80, false, ${sql.json({ fact: { title: "Sonnet" } })})`;
   const joined = await groupArticle(originalId);
   assert.equal(joined.verdict, "same-fact");
   assert.equal(joined.storyId, first.storyId);

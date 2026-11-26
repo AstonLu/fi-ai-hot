@@ -2,7 +2,7 @@
 // loading bodies, translations, related stories or signed media that never appear on these cards.
 // In English (the English pages' cards) the article reads as its English page does.
 import type { Locale } from '@aihot/contracts/i18n';
-import { CATEGORY_LABELS, categoryLabel, type CategoryKey } from '@aihot/contracts/taxonomy';
+import { CATEGORY_LABELS, categoryLabel, isCategoryKey, type CategoryKey } from '@aihot/contracts/taxonomy';
 import { beijingDate, longDateEn } from '@aihot/contracts/time';
 import { ITEM_COPY, withSubject } from '@aihot/site';
 import type { OgCard } from '../media/og.ts';
@@ -21,7 +21,7 @@ export async function loadItemShare(id: string, lang: Locale = 'zh') {
     FROM publications p JOIN sources s ON s.id = p.source_id WHERE p.article_id = ${id}`;
   if (!row || !hasItemPage({ visibility: row.visibility, sourceMode: row.source_mode })) return null;
   const summaryOnly = row.visibility === 'summary-only';
-  const share = { id: row.id, title: row.title, summary: row.summary, category: summaryOnly ? null : row.category, selected: !summaryOnly && row.selected,
+  const share = { id: row.id, title: row.title, summary: row.summary, category: summaryOnly || !isCategoryKey(row.category) ? null : row.category, selected: !summaryOnly && row.selected,
     score: summaryOnly || row.score === null ? null : Math.round(Number(row.score)), timelineAt: row.timeline_at.toISOString(),
     source: { name: publicSourceName(row.source_name) } };
   if (lang === 'zh') return share;

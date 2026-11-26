@@ -28,11 +28,11 @@ export const SITE = {
    * 行業詞：拼進預設說法裡，比如“AI 日報”“AI 動態”。
    * 改成“法律”“HR”“黃金”之類，頁面上就會變成“法律日報”“法律動態”。
    */
-  subject: "AI",
+  subject: "金融 AI",
   /** 首頁的完整標題（瀏覽器標籤、搜尋結果）。 */
-  homeTitle: "金非昔比",
+  homeTitle: "金非昔比｜金融業 AI 導入每日精選",
   /** 主題目錄頁（/topics）的標題。 */
-  topicsTitle: "AI 主題：公司與模型、技術方向、內容形態的最新動態",
+  topicsTitle: "金融 AI 主題：金融機構、監理機關與導入場景的最新動態",
   /** 反饋表單輸入框裡的示例。 */
   feedbackExample: "例如：我在搜尋某個關鍵詞時遇到……我原本想……",
   /** 反饋頁標題下面的一句話。 */
@@ -40,7 +40,7 @@ export const SITE = {
   /** 反饋表單郵箱框裡的提示。 */
   feedbackEmailHint: "留下郵箱，我們可以回信聯絡你",
   /** 一句話介紹：搜尋引擎、分享卡片、RSS、llms.txt 會用。 */
-  description: `追蹤 AI 與金融業 AI 導入：從一批來源裡挑出值得看、值得寫的動態，把同一件事的多篇報導歸到一起，${EDITION_WHEN.daily} 出一份日報。`,
+  description: `追蹤金融業怎麼導入和管理 AI：銀行、保險、證券的實際做法與監理機關的要求，同一件事的多篇報導歸成一則，${EDITION_WHEN.daily} 出一份日報。`,
   /** llms.txt 裡一句話介紹下面的一段詳細介紹（選填）。 */
   llmsIntro: null as string | null,
   /** 一行小字：分享圖、海報下方。 */
@@ -203,7 +203,7 @@ export const ADMIN = {
 /** Agent 接入頁的示例。 */
 export const AGENT = {
   /** MCP 工具表裡“搜尋”一行：能搜什麼、可以怎麼問。 */
-  search: { scope: "按公司、產品、人物或話題搜最近 7 天", ask: "這家公司最近發了什麼？" },
+  search: { scope: "按金融機構、監理機關、人物或話題搜最近 7 天", ask: "這家銀行最近怎麼用 AI？" },
 };
 
 /** 日報、週報、月報版面上的說法。 */

@@ -6,12 +6,9 @@ type CategoryKey = (typeof CATEGORIES)[number]["key"];
 
 /** 类别：筛选标签、分类 RSS 标题、日报栏目。 */
 export const CATEGORY_EN: Record<CategoryKey, { label: string; feedLabel: string; section: string }> = {
-  "ai-models": { label: "Models", feedLabel: "AI Models", section: "Model releases & updates" },
-  "ai-products": { label: "Products", feedLabel: "AI Products", section: "Product launches & updates" },
   industry: { label: "Industry", feedLabel: "Industry News", section: "Industry news" },
   paper: { label: "Papers", feedLabel: "Papers", section: "Research papers" },
-  tip: { label: "Tutorials", feedLabel: "Tutorials", section: "Tips & opinions" },
-  opinion: { label: "Opinion", feedLabel: "Opinion", section: "Tips & opinions" },
+  opinion: { label: "Opinion", feedLabel: "Opinion", section: "Opinions & interviews" },
   "fin-ai": { label: "Finance AI", feedLabel: "AI in Finance", section: "AI adoption in financial services" },
   "fin-reg": { label: "Regulation", feedLabel: "Financial AI Regulation", section: "Financial AI regulation" },
 };
