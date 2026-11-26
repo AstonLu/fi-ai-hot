@@ -37,9 +37,10 @@ interface Availability {
 async function availability(ids: string[]): Promise<Map<string, Availability>> {
   const out = new Map<string, Availability>();
   if (ids.length === 0) return out;
-  const rows = await sql<{ id: string; available: boolean; summary: string | null; first_party: boolean; source_id: string; source_name: string | null; source_kind: SourceRefRow["source_kind"] | null; source_config: SourceRefRow["source_config"] | null; author: string | null; icon_url: string | null; story_id: string | null; at: Date | null }[]>`
+  const rows = await sql<{ id: string; available: boolean; summary: string | null; first_party: boolean; source_id: string; source_name: string | null; source_kind: SourceRefRow["source_kind"] | null; source_config: SourceRefRow["source_config"] | null; author: string | null; icon_url: string | null; outlet_icon_url: string | null; story_id: string | null; at: Date | null }[]>`
     SELECT p.article_id AS id, (${listedCondition(new Date())}) AS available, p.summary, (s.tier = 'T1') AS first_party, p.source_id, s.name AS source_name,
       s.kind AS source_kind, s.config AS source_config, (SELECT a.author FROM articles a WHERE a.id = p.article_id) AS author, s.icon_url,
+      (SELECT oi.icon_url FROM outlet_icons oi WHERE oi.host = lower(substring(p.url from '^[a-zA-Z][a-zA-Z0-9+.-]*://([^/:?#]+)'))) AS outlet_icon_url,
       live_st.public_id::text AS story_id, coalesce(p.published_at, p.discovered_at) AS at
     FROM publications p LEFT JOIN sources s ON s.id = p.source_id
     LEFT JOIN LATERAL (
@@ -52,7 +53,7 @@ async function availability(ids: string[]): Promise<Map<string, Availability>> {
     ) live_st ON p.story_id IS NOT NULL
     WHERE p.article_id IN ${sql(ids)}`;
   for (const r of rows) {
-    // A relayed report is cited by its outlet, which the source's icon does not stand for.
+    // A relayed report is cited by its outlet, with the outlet's icon: the source's does not stand for it.
     const outlet = r.source_kind && relayedOutlet({ kind: r.source_kind, config: r.source_config ?? {} }, r.author);
     out.set(r.id, {
       available: r.available,
@@ -60,7 +61,7 @@ async function availability(ids: string[]): Promise<Map<string, Availability>> {
       firstParty: r.first_party,
       sourceId: r.source_id,
       sourceName: outlet ?? r.source_name,
-      sourceIcon: outlet ? null : r.icon_url,
+      sourceIcon: outlet ? r.outlet_icon_url : r.icon_url,
       publishedAt: r.at,
       storyId: r.story_id,
     });

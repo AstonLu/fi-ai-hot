@@ -94,7 +94,7 @@ const Card = memo(function Card({ entry: { item, group }, kind, filters, read, o
     <article data-item-id={item.id} className={`board-card is-${kind} ${wide ? "board-wide" : ""}`}>
       {wide && picture}
       <header className="board-source">
-        <SourceAvatar id={source.id} name={name} avatarUrl={author?.avatarUrl} avatarSrcSet={author?.avatarSrcSet} iconUrl={sourceIcon(source.id)} size={wide ? 20 : 28} />
+        <SourceAvatar id={source.id} name={name} avatarUrl={author?.avatarUrl} avatarSrcSet={author?.avatarSrcSet} iconUrl={sourceIcon(source.id) ?? source.iconUrl} iconSrcSet={sourceIcon(source.id) ? undefined : source.iconSrcSet} size={wide ? 20 : 28} />
         <span className="min-w-0 truncate">{name}</span>
         <StarButton item={item} className="board-star size-7" />
       </header>

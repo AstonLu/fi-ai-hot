@@ -204,7 +204,7 @@ function SourceRow({ item, byline, at, dated, className = "" }: { item: Pick<Fee
   const source = cardSource(item.source);
   return (
     <div className={`flex flex-wrap items-center gap-x-2 gap-y-1 text-ui-label text-ink-4 ${className}`}>
-      <SourceAvatar id={source.id} name={post?.authorName ?? source.name} avatarUrl={post?.avatarUrl} avatarSrcSet={post?.avatarSrcSet} iconUrl={sourceIcon(source.id)} size={28} />
+      <SourceAvatar id={source.id} name={post?.authorName ?? source.name} avatarUrl={post?.avatarUrl} avatarSrcSet={post?.avatarSrcSet} iconUrl={sourceIcon(source.id) ?? source.iconUrl} iconSrcSet={sourceIcon(source.id) ? undefined : source.iconSrcSet} size={28} />
       <span className="font-semibold text-ink">{post?.authorName ?? source.name}</span>
       {post && <span>@{post.handle} · X</span>}
       {byline && <span>{byline}</span>}
