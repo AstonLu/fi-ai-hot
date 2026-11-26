@@ -26,9 +26,12 @@ export function echoesOfIndependent(sourceId: string): string[] {
 /**
  * The outlet a report came from when its source relays other outlets' reports (ServerModule.relays) and the
  * article names one as its author, under the one name the module gives it (ServerModule.outletName); null
- * otherwise, and the card names the source.
+ * otherwise, and the card names the source. A pushed X post names its author the same way.
  */
-export function relayedOutlet(source: Pick<SourceRow, "kind" | "config">, author: string | null): string | null {
+export function relayedOutlet(source: Pick<SourceRow, "kind" | "config">, author: string | null, postAuthor?: string | null): string | null {
+  // An X post pushed in from outside (a scheduled search) is cited by the post's author, not by the push.
+  const poster = source.kind === "external" ? postAuthor?.trim() : undefined;
+  if (poster) return poster.slice(0, 200);
   const outlet = author?.trim();
   const relay = outlet ? serverModules().find((m) => m.relays?.(source)) : undefined;
   return outlet && relay ? (relay.outletName?.(outlet) ?? outlet) : null;
@@ -42,6 +45,8 @@ export interface SourceRefRow {
   /** Read only to tell whether the source relays other outlets' reports (relayedOutlet). */
   source_config: SourceRow["config"];
   author: string | null;
+  /** The display name in the article's X post (x_post.authorName), read for a pushed post (relayedOutlet). */
+  post_author?: string | null;
   /** The source's own icon (sources.icon_url), shown when no outlet stands in for it. */
   source_icon_url?: string | null;
   /** The icon of the outlet on the report's host (outlet_icons), shown for a relayed report. */
@@ -50,7 +55,7 @@ export interface SourceRefRow {
 
 /** A source as readers see it on a report: its public name, and the outlet of a relayed report. */
 export function sourceRef(row: SourceRefRow): SourceRef {
-  const outlet = relayedOutlet({ kind: row.source_kind, config: row.source_config }, row.author);
+  const outlet = relayedOutlet({ kind: row.source_kind, config: row.source_config }, row.author, row.post_author);
   // A relayed report shows its outlet's icon, never the search's.
   const icon = outlet ? row.outlet_icon_url : row.source_icon_url;
   const iconUrl = proxiedImage(icon, "avatar");

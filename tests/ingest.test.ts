@@ -6,6 +6,7 @@ import { after, test } from "node:test";
 import { closeDb, sql } from "@aihot/backend/db";
 import { IngestError, ingestItems } from "@aihot/backend/ingest/items";
 import { stopBoss } from "@aihot/backend/jobs/queue";
+import { ITEM_COLUMNS, ITEM_FROM, toFeedItemSummary, type ItemRow } from "@aihot/backend/publication/items";
 import { tag } from "./setup.ts";
 
 after(async () => {
@@ -68,4 +69,18 @@ test("a pushed page with text keeps it as the body and needs no title", async ()
   assert.equal(row!.title, "First line is the title");
   assert.equal(row!.body_status, "ok");
   assert.equal(row!.x_post, null);
+});
+
+test("a card for a pushed X post names the post's author, not the push", async () => {
+  const sourceId = `test-x-author-${tag()}`;
+  const tweetId = `18${BigInt(`0x${randomUUID().replace(/-/g, "").slice(0, 15)}`)}`;
+  const url = `https://x.com/obussmann/status/${tweetId}`;
+  await ingestItems({ sourceId, sourceName: "X 金融 AI（Grok 推送）", items: [{ url, text: "Agent liability is becoming a contract term.", authorName: "Oliver Bussmann", publishedAt: "2026-11-26T07:31:01Z" }] });
+  const [a] = await sql<{ id: string; title: string }[]>`SELECT id, title FROM articles WHERE source_id = ${sourceId}`;
+  const at = new Date("2026-11-26T08:00:00Z");
+  await sql`INSERT INTO publications (article_id, title, source_id, channel, url, discovered_at, timeline_at, published_at, sort_at,
+      eligible, selected, visible_after, visibility, tags, summary)
+    VALUES (${a!.id}, ${a!.title}, ${sourceId}, 'x', ${url}, ${at}, ${at}, ${at}, ${at}, true, false, ${at}, 'public', '{}', 'summary')`;
+  const [row] = await sql<ItemRow[]>`SELECT ${ITEM_COLUMNS} ${ITEM_FROM} WHERE p.article_id = ${a!.id}`;
+  assert.deepEqual(toFeedItemSummary(row!).source, { id: sourceId, name: "X 金融 AI", outlet: "Oliver Bussmann" });
 });
