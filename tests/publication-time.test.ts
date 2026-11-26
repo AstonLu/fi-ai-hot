@@ -57,7 +57,7 @@ test("RSS gives no pubDate for an item without a known publication time", async 
 
 test("a card is dated by its publication, else its collection, and by its event when that came days before", async () => {
   const writeUp = new Date("2026-11-20T21:05:45Z"); // 11月21日 in Beijing
-  const cases = { earlier: "2026-11-04", sameDay: "2026-11-21", utcDay: "2026-11-20", month: "2026-11", none: null, undated: "2026-11-04" };
+  const cases = { earlier: "2026-11-04", sameDay: "2026-11-21", utcDay: "2026-11-20", twoDays: "2026-11-19", month: "2026-11", none: null, undated: "2026-11-04" };
   for (const [name, occurredAt] of Object.entries(cases)) {
     const id = `${T}-card-${name}`;
     const at = name === "undated" ? null : writeUp;
@@ -73,8 +73,9 @@ test("a card is dated by its publication, else its collection, and by its event 
   const rows = await sql<ItemRow[]>`SELECT ${ITEM_COLUMNS} ${ITEM_FROM} WHERE p.article_id LIKE ${`${T}-card-%`}`;
   const cards = Object.fromEntries(rows.map((r) => [r.id.slice(`${T}-card-`.length), toFeedItemSummary(r)]));
   assert.equal(cards.earlier!.eventDate, "2026-11-04");
-  assert.equal(cards.utcDay!.eventDate, "2026-11-20", "the day before the write-up's Beijing day");
-  for (const name of ["sameDay", "month", "none"]) assert.equal(cards[name]!.eventDate, undefined, name);
+  assert.equal(cards.twoDays!.eventDate, "2026-11-19");
+  // The day before its Beijing day is the day it was written in the US: the card shows when it was published.
+  for (const name of ["sameDay", "utcDay", "month", "none"]) assert.equal(cards[name]!.eventDate, undefined, name);
   assert.equal(cards.earlier!.publishedAt, writeUp.toISOString());
   // Without a publication time the collection time stands in, for the card and for the comparison.
   assert.equal(cards.undated!.publishedAt, null);

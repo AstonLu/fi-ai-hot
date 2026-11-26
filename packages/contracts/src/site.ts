@@ -92,8 +92,8 @@ export interface ItemSummary {
 /** The fields rendered by a site feed card; full original text lives in the item detail. */
 export interface FeedItemSummary extends Pick<ItemSummary, "id" | "title" | "summary" | "reason" | "source" | "publishedAt" | "discoveredAt" | "timelineAt" | "category" | "tags" | "score" | "selected" | "channel"> {
   /**
-   * The day (YYYY-MM-DD) the report's one event happened, as its analysis dates it, when that is before the
-   * Beijing day it was published: the card dates the report by its event, not by a later write-up.
+   * The day (YYYY-MM-DD) the report's one event happened, as its analysis dates it, when that is two or more
+   * days before the Beijing day it was published: the card dates the report by its event, not by a later write-up.
    */
   eventDate?: string;
   x: (Pick<XPostView, "authorName" | "handle" | "avatarUrl" | "avatarSrcSet" | "media" | "article"> & {

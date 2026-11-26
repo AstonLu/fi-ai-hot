@@ -3,7 +3,7 @@
 import { CATEGORY_KEYS, isCategoryKey, toPublicApiCategory, type CategoryKey, type ChannelKey, type PublicApiCategoryKey } from "@aihot/contracts/taxonomy";
 import { STORY_INDEX_MIN_SOURCES, type FeedItemSummary, type ItemSummary, type MediaView, type XPostView } from "@aihot/contracts/site";
 import { itemUrl } from "./links.ts";
-import { beijingDate, beijingMidnight } from "@aihot/contracts/time";
+import { addDays, beijingDate, beijingMidnight } from "@aihot/contracts/time";
 import { POLICY, SITE } from "@aihot/site";
 import { sql, type Db } from "../db.ts";
 import { isChineseText } from "../lib/text.ts";
@@ -287,13 +287,14 @@ export function cardPicture(row: Pick<ItemRow, "source_id" | "body_mode" | "card
 
 /**
  * The day the report's one event happened (its analysis's fact.occurredAt, a calendar date), when that is
- * before the Beijing day the report was published, or collected when that is unknown; else null.
+ * two or more days before the Beijing day the report was published, or collected when that is unknown; else null.
  */
 export function eventDateOf(row: Pick<ItemRow, "occurred_at" | "published_at" | "discovered_at">): string | null {
   const day = row.occurred_at?.trim() ?? "";
   const midnight = /^\d{4}-\d{2}-\d{2}$/.test(day) ? beijingMidnight(day) : null;
   if (!midnight || !Number.isFinite(+midnight) || beijingDate(midnight) !== day) return null;
-  return day < beijingDate(row.published_at ?? row.discovered_at) ? day : null;
+  // The day before can be the same day where the report was written (a US evening is the next Beijing day).
+  return day < addDays(beijingDate(row.published_at ?? row.discovered_at), -1) ? day : null;
 }
 
 /** Project the shared public article into the exact fields a site card renders. */
