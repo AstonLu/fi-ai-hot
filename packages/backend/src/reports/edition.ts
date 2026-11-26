@@ -125,7 +125,9 @@ const LIVE_STORY_JOIN = sql`LEFT JOIN LATERAL (
  * The selected reports a period [start, end) carries. Each counts once, in the period readers first saw
  * it: by arrival, or by release when that came later (a release after the cutoff belongs to the next
  * issue, never to one already out). A report that arrived more than a day before the period began and
- * was released only within it is old news there.
+ * was released only within it is old news there. A report published within the period but found only
+ * after it, or by a backfill (a new source's first import), is that period's news: it counts there once
+ * released, so an issue written again carries it (the next issue then leaves it out, dailyMemory).
  */
 export async function periodReports(start: Date, end: Date): Promise<ReportRow[]> {
   return sql.begin("isolation level read committed", async (tx) => {
@@ -138,12 +140,14 @@ export async function periodReports(start: Date, end: Date): Promise<ReportRow[]
       LEFT JOIN facts f ON f.id = p.fact_id AND ${ownFactEvidenceCondition()}
       ${LIVE_STORY_JOIN}
       -- Attribute each item by the later of arrival and release; either range can use its index.
-      WHERE p.visibility = 'public' AND p.selected AND NOT p.backfill
-        AND (
-          (p.visible_after <= p.timeline_at AND p.timeline_at >= ${start} AND p.timeline_at < ${end})
-          OR (p.visible_after > p.timeline_at AND p.visible_after >= ${start} AND p.visible_after < ${end})
-        )
-        AND p.timeline_at >= ${start}::timestamptz - interval '24 hours'`;
+      WHERE p.visibility = 'public' AND p.selected
+        AND ((NOT p.backfill
+          AND (
+            (p.visible_after <= p.timeline_at AND p.timeline_at >= ${start} AND p.timeline_at < ${end})
+            OR (p.visible_after > p.timeline_at AND p.visible_after >= ${start} AND p.visible_after < ${end})
+          )
+          AND p.timeline_at >= ${start}::timestamptz - interval '24 hours')
+        OR ((p.backfill OR p.discovered_at >= ${end}) AND p.published_at >= ${start} AND p.published_at < ${end} AND p.visible_after <= now()))`;
   });
 }
 

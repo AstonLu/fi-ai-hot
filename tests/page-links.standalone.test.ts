@@ -41,7 +41,7 @@ before(async () => {
     if (url.pathname === "/api/site/pool") {
       return {
         filters: { channel: "all", category: null, tag: null, q: null, tab: "time" },
-        items: [{ id: "links-tags", title: "帶標籤", summary: "摘要", reason: null, source: { name: "Fixture" }, publishedAt: FIXTURE_AT, timelineAt: FIXTURE_AT, category: "ai-models", tags: ["Agent", "OpenAI", "框架"], score: 80, selected: true, channel: "news", x: null }],
+        items: [{ id: "links-tags", title: "帶標籤", summary: "摘要", reason: null, source: { name: "Fixture" }, publishedAt: FIXTURE_AT, timelineAt: FIXTURE_AT, category: "fin-ai", tags: ["Agent", "OpenAI", "框架"], score: 80, selected: true, channel: "news", x: null }],
         tagTopics: { Agent: "agent", OpenAI: "openai" },
         page: 1, pageCount: 1, total: 1, todayCount: 1, freshness: FIXTURE_AT,
       };
@@ -95,7 +95,7 @@ test("a tag that is a topic's own leads to the topic page, and not beside that t
   assert.ok($('a[href="/topics/openai"]').toArray().every((el) => !$(el).attr("rel")));
 
   const pool = await page("/all");
-  assert.equal(pool('a[href="/all?category=ai-models"]').first().attr("rel"), "nofollow");
+  assert.equal(pool('a[href="/all?category=fin-ai"]').first().attr("rel"), "nofollow");
 });
 
 test("an article in an indexable event visibly links to the event page even without other facts; a single-report event does not", async () => {

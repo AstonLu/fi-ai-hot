@@ -12,14 +12,11 @@
  * feedLabel 是分類 RSS 標題裡的名字（不寫就用 label）。公開介面、RSS 和 MCP 裡要把一類並進另一類發布，寫在站點設定裡（site/site.ts 的 PUBLIC_CATEGORIES）。
  */
 export const CATEGORIES = [
-  { key: "ai-models", tagColor: "indigo", label: "模型", feedLabel: "AI 模型", section: "模型發布/更新", guide: "模型本身的發布、版本、權重開放、能力或價格變化，以及既有榜單上的模型成績。公布一次跑分不是發布新基準，也不是教學。" },
-  { key: "ai-products", tagColor: "turquoise", label: "產品", feedLabel: "AI 產品", section: "產品發布/更新", guide: "可使用的 AI 產品、功能、應用、工具、API、平臺和工程元件的發布更新。AI 廠商推出的金融版產品，沒有具名金融機構採用時仍歸產品。" },
-  { key: "fin-ai", tagColor: "red", label: "金融 AI", feedLabel: "金融業 AI 導入", section: "金融業 AI 導入", guide: "銀行、保險、證券、投信投顧、支付與金融科技業者把 AI 用進業務的具體動作：上線、試點、採購、合作、成效數字、預算與人力配置、組織調整、喊停或失敗。必須有具名的金融機構或可指認的金融業務；只是 AI 廠商對金融業的行銷歸產品。" },
+  { key: "fin-ai", tagColor: "red", label: "金融 AI", feedLabel: "金融業 AI 導入", section: "金融業 AI 導入", guide: "銀行、保險、證券、投信投顧、支付與金融科技業者把 AI 用進業務的具體動作：上線、試點、採購、合作、成效數字、預算與人力配置、組織調整、喊停或失敗。必須有具名的金融機構或可指認的金融業務；AI 廠商推出金融版產品、沒有具名金融機構採用時歸產業。" },
   { key: "fin-reg", tagColor: "carmine", label: "監理", feedLabel: "金融 AI 監理", section: "監理與政策", guide: "金融監理機關、央行、國際組織（BIS、FSB、IOSCO、巴塞爾委員會）與立法機關，針對 AI、模型風險、資料治理、資安、委外與消費者保護的規範、指引、諮詢文件、裁罰、問卷結果與官員演講。不限金融業的一般 AI 政策歸產業。" },
-  { key: "industry", tagColor: "orange", label: "產業", feedLabel: "產業動態", section: "產業動態", guide: "已發生的公司經營、融資併購、人事、合作、訴訟、一般政策、真實安全事故及調查進展。新聞由當事人發文、帶有態度，也不因此變成觀點。" },
-  { key: "paper", tagColor: "violet", label: "研究", feedLabel: "研究報告", section: "研究報告", guide: "以新方法、實驗、調查或資料為核心的論文、技術報告、新基準、研究資料集，以及顧問公司、研究機構、國際組織發表的產業調查與指數。既有榜單成績歸模型，真實事故的新聞調查歸產業。" },
-  { key: "tip", tagColor: "green", label: "實作", feedLabel: "實作教學", section: "實作與觀點", guide: "讀者可以照著使用的方法、提示詞、工具用法、工程實踐復盤與技術講解。重點是可複用的做法；單純發布工具歸產品，只有態度和預測而無做法歸觀點。", commentary: true },
-  { key: "opinion", tagColor: "purple", label: "觀點", section: "實作與觀點", guide: "重點是作者的解釋、判斷、主張、預測、評論或訪談觀點。討論市場不自動歸產業，作者是名人不自動歸觀點。", commentary: true },
+  { key: "industry", tagColor: "orange", label: "產業", feedLabel: "產業動態", section: "產業動態", guide: "已發生的公司經營、融資併購、人事、合作、訴訟、一般政策、真實安全事故及調查進展，以及非金融企業的 AI 導入與 AI 廠商推出的金融版產品。新聞由當事人發文、帶有態度，也不因此變成觀點。" },
+  { key: "paper", tagColor: "violet", label: "研究", feedLabel: "研究報告", section: "研究報告", guide: "以新方法、實驗、調查或資料為核心的論文、技術報告、新基準、研究資料集，以及顧問公司、研究機構、國際組織發表的產業調查與指數。真實事故的新聞調查歸產業。" },
+  { key: "opinion", tagColor: "purple", label: "觀點", section: "觀點與訪談", guide: "重點是作者的解釋、判斷、主張、預測、評論或訪談觀點，以及做法分享、經驗復盤與技術講解。討論市場不自動歸產業，作者是名人不自動歸觀點。", commentary: true },
 ] as const satisfies ReadonlyArray<{ key: string; tagColor: string; label: string; feedLabel?: string; section: string; guide: string; commentary?: true }>;
 
 /**
@@ -27,7 +24,7 @@ export const CATEGORIES = [
  * category 是類別，tag 是標籤，兩者都對上才算；unit 接在數字後面。
  * 沒有這樣一類時設成 null，報頭就不顯示這個數。
  */
-export const RELEASE: { category: string; tag: string; unit: string } | null = { category: "ai-models", tag: "模型發布", unit: "個新模型" };
+export const RELEASE: { category: string; tag: string; unit: string } | null = null;
 
 /** 週報月報的總述可以直接寫、不必在報導裡找到出處的通用詞（小寫）。站名會自動算進去。 */
 export const PLAIN_TERMS: readonly string[] = ["ai", "api", "llm", "gpu", "agi", "ceo", "ipo", "kyc", "aml", "esg", "rwa"];

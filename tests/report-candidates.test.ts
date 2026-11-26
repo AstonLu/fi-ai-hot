@@ -35,7 +35,7 @@ async function analyzed(label: string, timelineAt: Date): Promise<string> {
   });
   assert.equal(backfill, false);
   await sql`INSERT INTO analyses (article_id, input_revision, origin, relevance, category, title_zh, summary_zh, score, selected)
-            VALUES (${articleId}, 1, 'rule', 'pass', 'ai-models', ${`标题 ${label}`}, ${`摘要 ${label}`}, 90, true)`;
+            VALUES (${articleId}, 1, 'rule', 'pass', 'fin-ai', ${`标题 ${label}`}, ${`摘要 ${label}`}, 90, true)`;
   return articleId;
 }
 
@@ -176,4 +176,29 @@ test("daily composition waits for a pre-cutoff release to commit instead of losi
     commit.open();
     await Promise.allSettled([publication, report]);
   }
+});
+
+// Failure mode (production, 2026-11-26): the issue went out at its edition time with one entry; the
+// day's other news came in hours later from new sources (as a first import) and was in no issue.
+test("news published in a period but found after it, or by a first import, belongs to that period", async () => {
+  const start = editionAt("daily", "2020-02-01"), end = editionAt("daily", "2020-02-02");
+  const late = async (label: string, publishedAt: Date, discoveredAt: Date, backfill?: string) => {
+    const { articleId } = await upsertMaterial({
+      sourceId: SOURCE, url: `https://example.com/report-late-${T}-${label}`, title: `Report late ${label}`, bodyText: `Report late ${label} body`,
+      bodyStatus: "ok", publishedAt, discoveredAt, via: "fetch", ...(backfill ? { backfill } : {}),
+    });
+    await sql`INSERT INTO analyses (article_id, input_revision, origin, relevance, category, title_zh, summary_zh, score, selected)
+              VALUES (${articleId}, 1, 'rule', 'pass', 'fin-ai', ${`标题 ${label}`}, ${`摘要 ${label}`}, 90, true)`;
+    assert.equal((await publishArticle(articleId, { now: discoveredAt, releasedAt: discoveredAt }))?.selected, true);
+    return articleId;
+  };
+  const foundLate = await late("found-late", new Date(end.getTime() - 3 * 3_600_000), new Date(end.getTime() + 5 * 3_600_000));
+  const firstImport = await late("first-import", new Date(end.getTime() - 9 * 3_600_000), new Date(end.getTime() - 2 * 3_600_000), "first-import");
+  const older = await late("older-import", new Date(start.getTime() - 30 * 3_600_000), new Date(end.getTime() - 2 * 3_600_000), "first-import");
+  const period = new Set((await candidates(start, end)).map((c) => c.itemId));
+  assert.equal(period.has(foundLate), true);
+  assert.equal(period.has(firstImport), true);
+  assert.equal(period.has(older), false, "history published before the period is not its news");
+  const next = new Set((await candidates(end, editionAt("daily", "2020-02-03"))).map((c) => c.itemId));
+  assert.equal(next.has(foundLate), true, "an issue already out does not change: the next one still carries it");
 });

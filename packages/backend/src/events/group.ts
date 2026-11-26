@@ -15,8 +15,8 @@
 // reports merges into where it went, so its address keeps working. A discussion post is recalled by
 // reports and by the posts already attached to a fact; one that found no story gets another look,
 // while it still counts for heat, whenever a fact close to it gains evidence (rematchSignals). History
-// (isHistorical) founds no event. A report about to open a card is compared with the cards readers
-// already see (cards.ts). Runs serially (queue concurrency 1).
+// older than the recall window founds no event (foundsNoEvent). A report about to open a card is
+// compared with the cards readers already see (cards.ts). Runs serially (queue concurrency 1).
 import { modelFor, modelRoute } from "../editorial/models.ts";
 import { beijingDate, beijingMidnight } from "@aihot/contracts/time";
 import { sql, type Db, type Tx } from "../db.ts";
@@ -216,6 +216,15 @@ async function redirectEmptiedStories(articleId: string, storyId: number): Promi
 
 class GroupingSupersededError extends Error {}
 
+/**
+ * History founds no event and adds no heat (isHistorical), except a backfill published inside the
+ * recall window: this fortnight's news found late, typically a new source's first import. It groups
+ * like news, so it meets the other reports of its news instead of opening a card of its own.
+ */
+function foundsNoEvent(a: { backfill: boolean; published_at: Date | null; discovered_at: Date }): boolean {
+  return isHistorical(a) && !(a.published_at && a.discovered_at.getTime() - a.published_at.getTime() <= RECALL_DAYS * 86_400_000);
+}
+
 async function lockCurrentRevision(db: Db, articleId: string, revision: number) {
   const [current] = await db<{ revision: number }[]>`SELECT revision FROM articles WHERE id = ${articleId} FOR UPDATE`;
   if (current?.revision !== revision) throw new GroupingSupersededError("Grouping input changed; the replacement revision has its own analysis");
@@ -327,7 +336,7 @@ async function decide(articleId: string, opts: GroupOptions, revision: number, r
   }
   const composite = an?.composite === true;
   const unsupported = unsupportedMaterial(an?.output);
-  const historical = isHistorical(a);
+  const historical = foundsNoEvent(a);
   const left = composite || unsupported || historical
     ? await sql.begin(async (tx) => { await lockCurrentRevision(tx, articleId, a.revision); return resetAutomatic(tx, articleId); })
     : [];
@@ -354,7 +363,7 @@ async function decide(articleId: string, opts: GroupOptions, revision: number, r
     return card ? { selection: { addsValue: false, reason: alreadyOnCard(card.title) }, into: card } : { selection };
   };
 
-  // History founds no event and adds no heat (isHistorical); a regroup takes it out of any it joined.
+  // History founds no event and adds no heat (foundsNoEvent); a regroup takes it out of any it joined.
   // It comes back at its own date, next to the card that told it when it was news.
   if (historical) {
     const faced = await faceCards({ addsValue: true, reason: "历史资料按原文时间归档" });

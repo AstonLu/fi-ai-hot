@@ -78,7 +78,7 @@ async function report(text: string, scope = "single", selected = true, from = so
   const { articleId } = await upsertMaterial({ sourceId: from, url: `https://example.org/value/${randomUUID()}`, title: text,
     bodyText: text, bodyStatus: "ok", via: "fetch", publishedAt });
   await sql`INSERT INTO analyses(article_id,input_revision,origin,relevance,title_zh,summary_zh,category,score,selected,output)
-    VALUES(${articleId},1,'rule','pass',${text},${text},'ai-products',80,${selected},${sql.json({ scope, fact: scope === "composite" ? null : { title: text, subject: text, action: "发布", object: text } })})`;
+    VALUES(${articleId},1,'rule','pass',${text},${text},'fin-reg',80,${selected},${sql.json({ scope, fact: scope === "composite" ? null : { title: text, subject: text, action: "发布", object: text } })})`;
   await publishArticle(articleId);
   return articleId;
 }
@@ -180,7 +180,7 @@ test("a material revision rechecks value in the same batch while keeping its con
     await upsertMaterial({ sourceId, url: article!.url, title: revised, bodyText: revised,
       bodyStatus: "ok", via: "fetch", publishedAt: article!.published_at });
     await sql`INSERT INTO analyses(article_id,input_revision,origin,relevance,title_zh,summary_zh,category,score,selected,output)
-      VALUES(${id},${revision},'rule','pass',${revised},${revised},'ai-products',80,true,
+      VALUES(${id},${revision},'rule','pass',${revised},${revised},'fin-reg',80,true,
         ${sql.json({ scope: "single", fact: { title: revised, subject: text, action: "介绍", object: text } })})`;
     assert.deepEqual([(await state(id)).grouping_status,(await state(id)).selected], ["pending",false]);
     selection = { addsValue, reason: addsValue ? "补充了新测量结果" : "仅措辞变化" };
@@ -443,7 +443,8 @@ test("history telling the news of a card around its date stays out of selection 
   sameNewsAhead();
   const text = family();
   const shown = await root(text);
-  const late = await report(text + "晚到", "single", true, sourceId, daysAgo(3));
+  await sql`UPDATE publications SET timeline_at = ${daysAgo(20)} WHERE article_id = ${shown.id}`;
+  const late = await report(text + "晚到", "single", true, sourceId, daysAgo(20));
   assert.equal((await groupArticle(late)).verdict, "historical");
   const row = await state(late);
   assert.deepEqual([row.selected, row.eligible, row.selection_adds_value, row.fact_id], [false, true, false, null]);
@@ -451,7 +452,7 @@ test("history telling the news of a card around its date stays out of selection 
   assert.equal(await cards([shown.id, late]), 1);
 
   otherNews("SAME_STORY");
-  const own = await report(text + "另有其事", "single", true, sourceId, daysAgo(3));
+  const own = await report(text + "另有其事", "single", true, sourceId, daysAgo(20));
   assert.equal((await groupArticle(own)).verdict, "historical");
   assert.deepEqual([(await state(own)).selected, (await state(own)).selection_value_reason], [true, "历史资料按原文时间归档"]);
 });
@@ -636,7 +637,7 @@ test("a revision that lets the owner's article into selection replaces their pos
   const revised = text + "文章补全";
   await upsertMaterial({ sourceId: ownArticles, url: row!.url, title: revised, bodyText: revised, bodyStatus: "ok", via: "fetch", publishedAt: new Date(Date.now() - 60_000) });
   await sql`INSERT INTO analyses(article_id,input_revision,origin,relevance,title_zh,summary_zh,category,score,selected,output)
-    VALUES(${article},2,'rule','pass',${revised},${revised},'ai-products',80,true,${sql.json({ scope: "single", fact: { title: revised, subject: text, action: "发布", object: text } })})`;
+    VALUES(${article},2,'rule','pass',${revised},${revised},'fin-reg',80,true,${sql.json({ scope: "single", fact: { title: revised, subject: text, action: "发布", object: text } })})`;
   const result = await groupArticle(article);
   assert.deepEqual([result.verdict, result.retired], ["kept", [post]]);
   assert.deepEqual([(await state(article)).selected, (await state(post)).selected], [true, false]);
@@ -673,7 +674,7 @@ test("a revision of a report that stayed out does not bring its card back", asyn
   const revised = text + "帖子改了措辞";
   await upsertMaterial({ sourceId: ownPosts, url: row!.url, title: revised, bodyText: revised, bodyStatus: "ok", via: "fetch", publishedAt: new Date(Date.now() - 60_000) });
   await sql`INSERT INTO analyses(article_id,input_revision,origin,relevance,title_zh,summary_zh,category,score,selected,output)
-    VALUES(${post},2,'rule','pass',${revised},${revised},'ai-products',80,true,${sql.json({ scope: "single", fact: { title: revised, subject: text, action: "发布", object: text } })})`;
+    VALUES(${post},2,'rule','pass',${revised},${revised},'fin-reg',80,true,${sql.json({ scope: "single", fact: { title: revised, subject: text, action: "发布", object: text } })})`;
   assert.equal((await groupArticle(post)).verdict, "kept");
   assert.deepEqual([(await state(post)).selected, (await state(article.id)).selected], [false, true]);
 });

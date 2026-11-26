@@ -14,14 +14,12 @@ import { QUEUES, getBoss, stopBoss } from "@aihot/backend/jobs/queue";
 
 after(async () => { await stopBoss(); await closeDb(); });
 
-test("new models require a launch classification as well as an official, new model event", () => {
-  const base = { category: "ai-models", tags: ["模型發布"], authority: 0, previous: null,
+test("an industry without a headline launch kind has no release figure", () => {
+  const base = { category: "fin-ai", tags: ["AI 導入案例"], authority: 0, previous: null,
     entry: { sourceId: "official", firstParty: true } } as EditionEntry;
-  const rows = [base, { ...base, tags: ["評測/基準"] }, { ...base, tags: ["產品更新"] },
-    { ...base, category: "ai-products" }, { ...base, authority: 3 },
-    { ...base, previous: { key: "2026-09-30", title: "已报过的发布" } }, { ...base, tags: [] }];
-  assert.equal(dailyMetrics(rows).modelsReleased, 1);
-  assert.equal(dailyMetrics(rows).totalEvents, 7);
+  const metrics = dailyMetrics([base, { ...base, category: "fin-reg" }, { ...base, authority: 3 }]);
+  assert.equal("modelsReleased" in metrics, false);
+  assert.equal(metrics.totalEvents, 3);
 });
 
 test("category corrections revise every standard report atomically without selecting, rewriting or notifying", async () => {
@@ -30,26 +28,26 @@ test("category corrections revise every standard report atomically without selec
   await sql`INSERT INTO sources (id,name,kind,tier,participation_mode) VALUES (${sourceId},'Category fixture','rss','T1','editorial')`;
   const { articleId } = await upsertMaterial({ sourceId, url: `https://example.com/${sourceId}`, title: "开源推理工具", bodyText: "工具正文", bodyStatus: "ok", via: "fetch", publishedAt: new Date(Date.now() - 60_000) });
   await sql`INSERT INTO analyses (article_id,input_revision,origin,relevance,category,tags,title_zh,summary_zh,score,selected)
-    VALUES (${articleId},1,'rule','pass','ai-models',ARRAY['模型發布','DeepSeek'],'开源推理工具','冻结摘要',88,true)`;
+    VALUES (${articleId},1,'rule','pass','fin-ai',ARRAY['模型發布','DeepSeek'],'开源推理工具','冻结摘要',88,true)`;
   const [story] = await sql`INSERT INTO stories (public_id,title) VALUES (gen_random_uuid(),'工具事件') RETURNING id`;
   const [fact] = await sql`INSERT INTO facts (public_id,title,story_id) VALUES (${`f-${tag()}`},'工具发布',${story!.id}) RETURNING id`;
   await sql`INSERT INTO fact_articles (fact_id,article_id,role) VALUES (${fact!.id},${articleId},'report')`;
   await publishArticle(articleId, { releasedAt: new Date(Date.now() - 60_000) });
   const entry = { itemId: articleId, title: "冻结标题", summary: "冻结摘要", sourceId, firstParty: true, role: "官方" };
   const contents = [
-    { kind: "daily", key: "2097-01-02", content: { leadItemId: articleId, lead: { title: "冻结头条" }, highlights: [articleId], flashes: [], sections: [{ label: "模型發布/更新", items: [entry] }], metrics: { totalEvents: 1, modelsReleased: 1 } } },
-    ...(["weekly", "monthly"] as const).map(kind => ({ kind, key: kind === "weekly" ? "2097-W01" : "2097-01", content: { headline: "冻结头条", leadItemId: articleId, storyOrder: [articleId], overview: "保留总述", themes: [{ heading: "模型發布/更新", summary: "旧模型导读", storyRefs: [entry] }], metrics: { totalStories: 1 } } })),
+    { kind: "daily", key: "2097-01-02", content: { leadItemId: articleId, lead: { title: "冻结头条" }, highlights: [articleId], flashes: [], sections: [{ label: "金融業 AI 導入", items: [entry] }], metrics: { totalEvents: 1, modelsReleased: 1 } } },
+    ...(["weekly", "monthly"] as const).map(kind => ({ kind, key: kind === "weekly" ? "2097-W01" : "2097-01", content: { headline: "冻结头条", leadItemId: articleId, storyOrder: [articleId], overview: "保留总述", themes: [{ heading: "金融業 AI 導入", summary: "旧模型导读", storyRefs: [entry] }], metrics: { totalStories: 1 } } })),
   ];
   for (const r of contents) await sql`INSERT INTO reports (kind,key,window_start,window_end,content,generated_at)
     VALUES (${r.kind},${r.key},now(),now(),${sql.json(r.content as never)},now())`;
   const [before] = await sql`SELECT selected,seat,score,visible_after,selected_ready_at FROM publications WHERE article_id=${articleId}`;
-  const change = (actor: string) => overrideFields(articleId, { fields: { category: "ai-products", tags: ["開源/倉庫", "DeepSeek"] }, version: 0, reason: "工具不是模型" }, actor);
+  const change = (actor: string) => overrideFields(articleId, { fields: { category: "fin-reg", tags: ["開源/倉庫", "DeepSeek"] }, version: 0, reason: "工具不是模型" }, actor);
   await sql.unsafe(`CREATE FUNCTION reject_category_audit() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN
     IF NEW.actor = 'reject-category' THEN RAISE EXCEPTION 'category audit rejected'; END IF; RETURN NEW; END $$`);
   await sql.unsafe("CREATE TRIGGER reject_category_audit BEFORE INSERT ON audit_log FOR EACH ROW EXECUTE FUNCTION reject_category_audit()");
   try {
     await assert.rejects(change("reject-category"), /category audit rejected/);
-    assert.equal((await sql`SELECT category FROM publications WHERE article_id=${articleId}`)[0]!.category, "ai-models");
+    assert.equal((await sql`SELECT category FROM publications WHERE article_id=${articleId}`)[0]!.category, "fin-ai");
     assert.equal((await sql`SELECT 1 FROM report_revisions WHERE report_id IN (SELECT id FROM reports WHERE key IN ('2097-01-02','2097-W01','2097-01'))`).length, 0);
   } finally {
     await sql.unsafe("DROP TRIGGER reject_category_audit ON audit_log; DROP FUNCTION reject_category_audit()");
@@ -62,12 +60,13 @@ test("category corrections revise every standard report atomically without selec
     const c = saved!.content;
     assert.equal(c.leadItemId, articleId);
     if (r.kind === "daily") {
-      assert.deepEqual(c.sections, [{ key: "ai-products", label: "產品發布/更新", items: [entry] }]);
-      assert.equal(c.metrics.modelsReleased, 0);
+      assert.deepEqual(c.sections, [{ key: "fin-reg", label: "監理與政策", items: [entry] }]);
+      // Without a release kind (RELEASE) the frozen figure is left as it was.
+      assert.equal(c.metrics.modelsReleased, 1);
       assert.deepEqual(c.highlights, [articleId]);
       assert.equal(c.lead.title, "冻结头条");
     } else {
-      assert.deepEqual(c.themes, [{ key: "ai-products", heading: "產品發布/更新", summary: null, storyRefs: [entry] }]);
+      assert.deepEqual(c.themes, [{ key: "fin-reg", heading: "監理與政策", summary: null, storyRefs: [entry] }]);
       assert.deepEqual(c.storyOrder, [articleId]);
       assert.equal(c.overview, "保留总述");
     }
@@ -76,7 +75,7 @@ test("category corrections revise every standard report atomically without selec
   assert.equal((await sql`SELECT count(*)::int AS n FROM pgboss.job WHERE name=${QUEUES.digest}`)[0]!.n, digestCount);
   await overrideFields(articleId, { fields: {}, clear: ["category", "tags"], version: 1, reason: "验证撤销纠错" }, "test-category");
   const [restored] = await sql`SELECT content FROM reports WHERE kind='daily' AND key='2097-01-02'`;
-  assert.equal(restored!.content.sections[0].label, "模型發布/更新");
+  assert.equal(restored!.content.sections[0].label, "金融業 AI 導入");
   assert.equal(restored!.content.metrics.modelsReleased, 1);
 });
 
@@ -85,19 +84,19 @@ test("a correction keeps the introduction of the section it moves into", async (
   await sql`INSERT INTO sources (id,name,kind,tier,participation_mode) VALUES (${sourceId},'Category intro fixture','rss','T2','editorial')`;
   const { articleId } = await upsertMaterial({ sourceId, url: `https://example.com/${sourceId}`, title: "推理工具更新", bodyText: "正文", bodyStatus: "ok", via: "fetch", publishedAt: new Date(Date.now() - 60_000) });
   await sql`INSERT INTO analyses (article_id,input_revision,origin,relevance,category,tags,title_zh,summary_zh,score,selected)
-    VALUES (${articleId},1,'rule','pass','ai-models',ARRAY['模型發布'],'推理工具更新','工具更新摘要',70,true)`;
+    VALUES (${articleId},1,'rule','pass','fin-ai',ARRAY['模型發布'],'推理工具更新','工具更新摘要',70,true)`;
   await publishArticle(articleId, { releasedAt: new Date(Date.now() - 60_000) });
   const moved = { itemId: articleId, title: "推理工具更新", summary: "工具更新摘要" };
   const other = (n: number, title: string) => ({ itemId: `${articleId}-${n}`, title, summary: `${title}摘要` });
   const themes = [
-    { heading: "模型發布/更新", summary: "本周模型导读", storyRefs: [moved, other(1, "模型甲"), other(2, "模型乙"), other(3, "模型丙")] },
-    { heading: "產品發布/更新", summary: "本周产品导读", storyRefs: [other(4, "产品甲"), other(5, "产品乙"), other(6, "产品丙")] },
+    { heading: "金融業 AI 導入", summary: "本周模型导读", storyRefs: [moved, other(1, "模型甲"), other(2, "模型乙"), other(3, "模型丙")] },
+    { heading: "監理與政策", summary: "本周产品导读", storyRefs: [other(4, "产品甲"), other(5, "产品乙"), other(6, "产品丙")] },
   ];
   await sql`INSERT INTO reports (kind,key,window_start,window_end,content,generated_at)
     VALUES ('weekly','2097-W02',now(),now(),${sql.json({ headline: "冻结头条", leadItemId: articleId, storyOrder: [articleId], overview: "保留总述", themes, metrics: { totalStories: 7 } } as never)},now())`;
-  await overrideFields(articleId, { fields: { category: "ai-products" }, version: 0, reason: "工具不是模型" }, "test-category");
+  await overrideFields(articleId, { fields: { category: "fin-reg" }, version: 0, reason: "工具不是模型" }, "test-category");
   const [saved] = await sql`SELECT content FROM reports WHERE kind='weekly' AND key='2097-W02'`;
   const intros = Object.fromEntries((saved!.content.themes as Array<{ heading: string; summary: string | null }>).map(g => [g.heading, g.summary]));
   // The section it left may name it, so its introduction goes; the target's names only what is still there.
-  assert.deepEqual(intros, { "模型發布/更新": null, "產品發布/更新": "本周产品导读" });
+  assert.deepEqual(intros, { "金融業 AI 導入": null, "監理與政策": "本周产品导读" });
 });
