@@ -202,9 +202,11 @@ test("news published in a period but found after it, or by a first import, belon
   assert.equal(period.has(older), false, "history published before the period is not its news");
   const next = new Set((await candidates("weekly", end, editionAt("daily", "2020-02-03"))).map((c) => c.itemId));
   assert.equal(next.has(foundLate), true, "an issue already out does not change: the next one still carries it");
-  // Once the next issue is out with it, writing this period again does not repeat it.
+  // A next issue out without it leaves it here; once one carries it, writing this period again does not repeat it.
   await sql`INSERT INTO reports (kind, key, window_start, window_end, content, generated_at)
             VALUES ('weekly', ${`late-${T}`}, ${end}, ${editionAt("daily", "2020-02-03")}, '{}'::jsonb, now())`;
+  assert.equal((await candidates("weekly", start, end)).some((c) => c.itemId === foundLate), true);
+  await sql`UPDATE reports SET content = ${sql.json({ storyOrder: [foundLate] })} WHERE kind = 'weekly' AND key = ${`late-${T}`}`;
   const again = new Set((await candidates("weekly", start, end)).map((c) => c.itemId));
   assert.equal(again.has(foundLate), false);
   assert.equal(again.has(firstImport), true);

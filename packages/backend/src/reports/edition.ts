@@ -127,8 +127,8 @@ const LIVE_STORY_JOIN = sql`LEFT JOIN LATERAL (
  * issue, never to one already out). A report that arrived more than a day before the period began and
  * was released only within it is old news there. A report published within the period but found only
  * after it, or by a backfill (a new source's first import), is that period's news: it counts there once
- * released, so an issue written again carries it, unless a later issue of the same kind already did (a
- * backfill never belongs to a later one).
+ * released, so an issue written again carries it, unless a later issue of the same kind already
+ * carries it (a backfill never belongs to a later one).
  */
 export async function periodReports(kind: "daily" | "weekly" | "monthly", start: Date, end: Date): Promise<ReportRow[]> {
   return sql.begin("isolation level read committed", async (tx) => {
@@ -151,7 +151,7 @@ export async function periodReports(kind: "daily" | "weekly" | "monthly", start:
         OR ((p.backfill OR p.discovered_at >= ${end}) AND p.published_at >= ${start} AND p.published_at < ${end} AND p.visible_after <= now()
           AND (p.backfill OR NOT EXISTS (SELECT 1 FROM reports later WHERE later.kind = ${kind} AND later.window_start >= ${end}
             AND later.window_start <= greatest(p.timeline_at, p.visible_after) AND later.window_end > greatest(p.timeline_at, p.visible_after)
-            AND later.generated_at >= p.visible_after))))`;
+            AND later.generated_at >= p.visible_after AND strpos(later.content::text, '"' || p.article_id || '"') > 0))))`;
   });
 }
 
