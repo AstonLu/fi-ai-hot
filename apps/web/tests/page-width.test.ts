@@ -17,7 +17,7 @@ const longTitle = "一條很長的標題".repeat(30);
 const keys = { daily: "2026-10-15", weekly: "2026-W42", monthly: "2026-10" };
 // The banner's stories: one per category, a long headline and a relayed report named by its outlet.
 const banner = CATEGORY_KEYS.slice(0, 3).map((category, i) => feedItem({
-  id: `hero-${i}`, title: i ? `橫幅報導 ${i}` : longTitle, category, score: 90 - i,
+  id: `hero-${i}`, title: i ? `橫幅報導 ${i}` : "一則很長的橫幅標題".repeat(30), category, score: 90 - i,
   source: i ? { name: "Fixture" } : { id: "fixture-relay", name: "Google 新聞：銀行 AI", outlet: "The National Law Review" },
 }));
 const leadTitle = "金融業導入生成式 AI：監理機關要求銀行逐項說明模型風險與客戶告知";
