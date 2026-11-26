@@ -194,6 +194,7 @@ test("news published in a period but found after it, or by a first import, belon
   };
   const foundLate = await late("found-late", new Date(end.getTime() - 3 * 3_600_000), new Date(end.getTime() + 5 * 3_600_000));
   const firstImport = await late("first-import", new Date(end.getTime() - 9 * 3_600_000), new Date(end.getTime() - 2 * 3_600_000), "first-import");
+  const importedAfter = await late("imported-after", new Date(end.getTime() - 4 * 3_600_000), new Date(end.getTime() + 6 * 3_600_000), "first-import");
   const older = await late("older-import", new Date(start.getTime() - 30 * 3_600_000), new Date(end.getTime() - 2 * 3_600_000), "first-import");
   const period = new Set((await candidates("weekly", start, end)).map((c) => c.itemId));
   assert.equal(period.has(foundLate), true);
@@ -207,4 +208,5 @@ test("news published in a period but found after it, or by a first import, belon
   const again = new Set((await candidates("weekly", start, end)).map((c) => c.itemId));
   assert.equal(again.has(foundLate), false);
   assert.equal(again.has(firstImport), true);
+  assert.equal(again.has(importedAfter), true, "a first import is in no later issue, so this period keeps it");
 });
