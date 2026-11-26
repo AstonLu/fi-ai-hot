@@ -1,4 +1,5 @@
-// What the home page's banner shows: the best recent report of each category.
+// What the home page's banner shows: the best recent report of each category. A report whose event another
+// card holds (sameEvent) stays out, so one event does not take two places (2026-11-26: one bank's terms, twice).
 import type { FeedItemSummary } from "@aihot/contracts/site";
 import { coverOf } from "./layout.ts";
 
@@ -10,6 +11,7 @@ const MOST = 5;
 export function heroStories(items: readonly FeedItemSummary[]): HeroStory[] | null {
   const best = new Map<string, FeedItemSummary>();
   for (const item of items) {
+    if (item.sameEvent) continue;
     const before = item.category && best.get(item.category);
     if (item.category && (!before || (item.score ?? 0) > (before.score ?? 0))) best.set(item.category, item);
   }
