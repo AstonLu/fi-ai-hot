@@ -19,6 +19,8 @@ const pages: Record<string, string> = {
   "/missing": feed(entry("") + entry('<link rel="alternate"/>')),
   "/dates": feed(entry('<link href="undated"/>') + entry('<link href="published"/><published>2020-02-15T00:00:00Z</published>') + entry('<link href="invalid"/><published>unknown</published>')),
   "/rss/feed.xml": `<rss version="2.0"><channel><title>Blog</title><item><title>Release notes</title><link>/blog/zh/posts/release/</link></item><item><title>Elsewhere</title><link>https://publisher.example/post</link></item></channel></rss>`,
+  // FINRA's news releases wrap each title in a link and give two-digit years.
+  "/linked-titles.xml": `<rss version="2.0"><channel><title>News Releases</title><item><title><a href="/media/fine" hreflang="en">FINRA Fines Webull &amp; Co $4.2 Million</a></title><link>https://publisher.example/media/fine</link><pubDate>Thu, 05 Nov 26 12:00:00 +0000</pubDate></item></channel></rss>`,
   "/fragments": feed(entry('<link href="notes#first"/>') + entry('<link href="notes#second"/>'), ' xml:base="https://publisher.example/"'),
 };
 const server = http.createServer((req, res) => {
@@ -82,4 +84,10 @@ test("Atom update time never substitutes for missing or malformed publication ti
   for (const item of [unknown, published, invalid]) {
     assert.equal(item!.sourceUpdatedAt?.toISOString(), "2026-10-01T00:00:00.000Z");
   }
+});
+
+test("an RSS title that is only a link reads as the link's text", async () => {
+  const [item] = await read("/linked-titles.xml");
+  assert.equal(item!.title, "FINRA Fines Webull & Co $4.2 Million");
+  assert.equal(item!.publishedAt?.toISOString(), "2026-11-05T12:00:00.000Z");
 });

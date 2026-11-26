@@ -37,6 +37,17 @@ function text(v: unknown): string {
   return "";
 }
 
+/** Text of an element whose only content is markup, e.g. FINRA's <title><a href="…">Headline</a></title>. */
+function elementText(v: unknown): string {
+  const own = text(v);
+  if (own || !v || typeof v !== "object" || Array.isArray(v)) return own;
+  return Object.entries(v as Record<string, unknown>)
+    .filter(([key]) => !key.startsWith("@"))
+    .map(([, child]) => elementText(child))
+    .filter(Boolean)
+    .join(" ");
+}
+
 /** Atom defaults to text: XML entities have already been decoded, and literal markup is not HTML. */
 function atomPlainText(v: unknown): string | null {
   const type = v && typeof v === "object" ? (v as Record<string, unknown>)["@type"] : undefined;
@@ -188,7 +199,7 @@ export async function fetchRss(source: SourceRow, opts: { force?: boolean } = {}
       // which a browser plays. Its identity stays the one its guid gives, and it has no page to read a body from.
       const mediaFile = !page && guid ? enclosures.find((e) => /^(audio|video)\//.test(e?.["@type"] ?? ""))?.["@url"] ?? "" : "";
       const link = page || mediaFile || guid;
-      const title = collapseWhitespace(stripTags(text(it.title)));
+      const title = collapseWhitespace(stripTags(elementText(it.title)));
       if (!link || !title) continue;
       const contentEncoded = text(it["content:encoded"]);
       const description = text(it.description);
