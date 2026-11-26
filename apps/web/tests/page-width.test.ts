@@ -4,15 +4,24 @@
 // 711 for an Android foldable, which reads the desktop pages) and three-column (941) widths.
 // Narrow desktops read in one column (2026-10-30): what a side column holds there (an article's reason,
 // topics, original and outline; the switch between reports) must stay within reach.
+// On a phone the home page's banner took the whole first screen, the list's first title below it (2026-11-26).
 import assert from "node:assert/strict";
 import { after, before, test } from "node:test";
 import { chromium, webkit, expect, type Browser, type Page } from "@playwright/test";
 import type { ReportDetail, ReportKind } from "@aihot/contracts/site";
+import { CATEGORY_KEYS } from "@aihot/contracts/taxonomy";
 import { FIXTURE_AT as at, fakeApi, feedItem, itemDetail, startWebServer, visit, type WebServer } from "./web-server.ts";
 
 const longText = "檢視完整說明 https://example.org/announcements/" + "a".repeat(100) + "。";
 const longTitle = "一條很長的標題".repeat(30);
 const keys = { daily: "2026-10-15", weekly: "2026-W42", monthly: "2026-10" };
+// The banner's stories: one per category, a long headline and a relayed report named by its outlet.
+const banner = CATEGORY_KEYS.slice(0, 3).map((category, i) => feedItem({
+  id: `hero-${i}`, title: i ? `橫幅報導 ${i}` : longTitle, category, score: 90 - i,
+  source: i ? { name: "Fixture" } : { id: "fixture-relay", name: "Google 新聞：銀行 AI", outlet: "The National Law Review" },
+}));
+const leadTitle = "金融業導入生成式 AI：監理機關要求銀行逐項說明模型風險與客戶告知";
+const leadCard = { key: "lead", anchorAt: at, item: feedItem({ id: "lead", title: leadTitle }), group: null };
 const groupCard = { key: "g1", anchorAt: at, item: feedItem({ id: "rep-1", title: "代表文章" }), group: { factId: "f1", additionalSourceCount: 1, reportCount: 2, memberIds: ["rep-1"] } };
 const outline = Array.from({ length: 4 }, (_, i) => ({ id: `part-${i}`, level: 2, text: `第${i + 1}部分` }));
 const article = itemDetail({
@@ -24,8 +33,9 @@ const api = fakeApi((url) => {
   const path = url.pathname;
   if (path === "/api/site/items/fit") return article;
   if (path === "/api/site/topics") return { groups: [], topics: [] };
+  if (path === "/api/site/pool") return { filters: { channel: "all", category: null, tag: null, q: null, tab: "time" }, items: banner, page: 1, pageCount: 1, total: banner.length, todayCount: 0 };
   if (path === "/api/site/hot") return { computedAt: at, windowHours: 48, entries: [] };
-  if (path === "/api/site/timeline") return { filters: { channel: "all", category: null, tag: null }, cards: [groupCard], nextCursor: null, hot: null, dayCounts: { "2026-10-04": 1 } };
+  if (path === "/api/site/timeline") return { filters: { channel: "all", category: null, tag: null }, cards: [leadCard, groupCard], nextCursor: null, hot: null, dayCounts: { "2026-10-04": 2 } };
   if (path === "/api/site/groups/f1/reports") {
     return { factId: "f1", reports: [
       { id: "rep-1", title: "代表文章", source: { name: "Fixture" }, timelineAt: at, originalUrl: "https://example.org/1" },
@@ -78,6 +88,7 @@ const PAGES: Array<{ path: string; ready: (page: Page, width: number) => Promise
   {
     path: "/",
     ready: async (page: Page, width: number) => {
+      await expect(page.getByRole("region", { name: "近期值得看" })).toBeVisible();
       // Desktop opens the group in place; phones open it in a sheet.
       if (width < 700) return expect(page.getByRole("link", { name: "代表文章", exact: true })).toBeVisible();
       await page.getByRole("button", { name: "另外 1 家也報導了" }).filter({ visible: true }).click();
@@ -117,4 +128,15 @@ for (const engine of ["Chromium", "WebKit"] as const) test(`${engine}: pages sta
       }
     } finally { await context.close(); }
   }
+});
+
+test("on a phone the list's first title shows on the first screen, under the banner", async () => {
+  const context = await chrome.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, reducedMotion: "reduce" });
+  try {
+    const page = await context.newPage();
+    await visit(page, web.origin + "/");
+    await expect(page.getByRole("region", { name: "近期值得看" })).toBeVisible();
+    const title = await page.getByRole("link", { name: leadTitle, exact: true }).boundingBox();
+    assert.ok(title && title.y + title.height <= 844, `the first title ends at ${title && title.y + title.height}px`);
+  } finally { await context.close(); }
 });
