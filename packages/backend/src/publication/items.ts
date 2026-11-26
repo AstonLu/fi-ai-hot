@@ -72,7 +72,7 @@ export const ITEM_COLUMNS = sql`
   p.selected, p.seat, p.channel, p.discovered_at, p.timeline_at, p.visibility,
   p.body_mode, p.suppress_original, p.indexable, p.fact_id, s.id AS source_id, s.participation_mode AS source_mode,
   s.kind AS source_kind, s.config AS source_config,
-  (SELECT an.output->'fact'->>'occurredAt' FROM analyses an WHERE an.id = p.analysis_id) AS occurred_at,
+  CASE WHEN NOT p.suppress_original THEN (SELECT an.output->'fact'->>'occurredAt' FROM analyses an WHERE an.id = p.analysis_id) END AS occurred_at,
   CASE WHEN NOT p.suppress_original THEN a.x_post END AS x_post,
   CASE WHEN p.body_mode = 'full' THEN a.x_article - 'html' END AS x_article,
   CASE WHEN p.channel = 'news' AND NOT p.suppress_original THEN coalesce(a.cover, (
