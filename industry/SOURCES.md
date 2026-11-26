@@ -21,7 +21,7 @@
 | 繁中 | `hl=zh-TW&gl=TW&ceid=TW:zh-Hant` |
 | 日文 | `hl=ja&gl=JP&ceid=JP:ja` |
 
-建議的查詢（2026-11-26 實測，7 天內各有十幾到六十幾則）：
+建議的查詢（2026-11-26 實測，7 天內各有幾則到六十幾則；券商的查詢量少但準）：
 
 | ID | 查詢 | 建議 |
 |---|---|---|
@@ -37,9 +37,14 @@
 | `gnews-ja-bank-genai` | `銀行 生成AI when:7d` | 選用 |
 | `gnews-ja-megabanks-genai` | `(三菱UFJ OR 三井住友 OR みずほ OR りそな) 生成AI when:7d` | 選用 |
 | `gnews-ja-insurer-ai` | `(損保 OR 生保 OR 東京海上 OR 第一生命) AI 導入 when:7d` | 選用，雜訊較多 |
+| `gnews-en-broker-ai-agents` | `("agentic trading" OR "AI trading agent" OR "AI agents" OR "AI assistant") (Robinhood OR Schwab OR "Interactive Brokers" OR eToro OR Webull OR Public.com OR "E*Trade") when:7d` | 開（券商） |
+| `gnews-en-capital-markets-ai` | `("trading desk" OR "capital markets" OR "equity research") ("generative AI" OR "AI agent" OR agentic) when:7d` | 開（券商） |
+| `gnews-tw-broker-genai` | `(證券 OR 券商) (導入 OR 推出 OR 上線) 生成式AI when:7d` | 開（券商） |
+| `gnews-tw-brokers-ai` | `(凱基證 OR 元大證 OR 富邦證 OR 永豐金證 OR 國泰證 OR 群益 OR 統一證) (生成式AI OR AI助理 OR AI客服 OR AI理專 OR 導入AI) when:7d` | 開（券商） |
+| `gnews-ja-brokers-ai` | `(野村 OR 大和証券 OR SBI証券 OR 楽天証券 OR マネックス OR 松井証券) (生成AI OR AIエージェント) (導入 OR 活用 OR 実証) when:7d` | 選用（券商） |
 
-- 只寫公司名加 AI 的查詢（例如只列大銀行名稱）會混進大量股市評論，要再加「generative AI」「AI agent」這類詞收窄。
-- 「證券 AI」「金管會 AI」「メガバンク AI」實測多半是 AI 股市、券商研報或不相關的同名詞，不建議開。
+- 只寫公司名加 AI 的查詢（例如只列大銀行或券商名稱）會混進大量股市評論和 AI 主題 ETF，要再加「generative AI」「AI agent」「生成式AI」「導入」這類詞收窄。
+- 「證券 AI」「金管會 AI」「メガバンク AI」「broker-dealer AI」實測多半是 AI 股市、券商研報、裁罰新聞或不相關的同名詞，不建議開。
 - 同一篇文章被幾個查詢同時抓到時，用原文網址去重，只算一篇。
 
 例如第一個查詢的採集配置：
