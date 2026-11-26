@@ -71,7 +71,8 @@ export const SOURCE_ICON_COLUMNS = sql`s.icon_url AS source_icon_url,
 
 /** What rules.ts sourceRef reads, over the report `p` and its source `s`, for reads without the article joined. */
 export const SOURCE_REF_COLUMNS = sql`s.id AS source_id, s.name AS source_name, s.kind AS source_kind, s.config AS source_config,
-  (SELECT sa.author FROM articles sa WHERE sa.id = p.article_id) AS author, ${SOURCE_ICON_COLUMNS}`;
+  (SELECT sa.author FROM articles sa WHERE sa.id = p.article_id) AS author,
+  (SELECT sa.x_post->>'authorName' FROM articles sa WHERE sa.id = p.article_id) AS post_author, ${SOURCE_ICON_COLUMNS}`;
 
 /** Columns every item listing selects. Internal judgement details never leave this layer. */
 export const ITEM_COLUMNS = sql`
@@ -85,7 +86,7 @@ export const ITEM_COLUMNS = sql`
   CASE WHEN p.channel = 'news' AND NOT p.suppress_original THEN coalesce(a.cover, (
     SELECT m FROM jsonb_array_elements(a.media) m
     WHERE m->>'kind' = 'image' AND coalesce((m->>'width')::numeric, 800) >= 480 LIMIT 1)) END AS card_picture,
-  a.author, a.language, ${SOURCE_ICON_COLUMNS},
+  a.author, a.x_post->>'authorName' AS post_author, a.language, ${SOURCE_ICON_COLUMNS},
   CASE WHEN NOT p.suppress_original AND s.kind = 'x_search' AND ${sourceOwnsPost(sql`s.config`, sql`a.x_post`)} THEN s.icon_url END AS author_avatar_url,
   st.public_id::text AS story_public_id, st.title AS story_title,
   CASE WHEN p.channel = 'x' AND NOT p.suppress_original THEN tr.body_text END AS zh_text,
