@@ -41,6 +41,7 @@ const api = fakeApi((url, res) => {
     if (tag === "read") {
       return { filters: { channel: "all", category: null, tag: "read" }, cards: [card("c1", "第一頁文章甲")], nextCursor: null, hot: null, dayCounts: { "2026-10-04": 1 } };
     }
+    if (cursor === "stale") { res.statusCode = 400; return { code: "invalid_cursor" }; }
     if (cursor === "p2") {
       if (failNextPage) { res.statusCode = 503; return { code: "unavailable" }; }
       return { filters: { channel: "all", category: null, tag: null }, cards: [card("c3", "第二頁文章甲", earlier), card("c4", "第二頁文章乙", earlier)], nextCursor: null, hot: null, dayCounts: { "2026-10-03": 2 } };
@@ -192,20 +193,34 @@ test("with everything read and no more pages, the filter says so instead of look
   }
 });
 
-test("all-read pages stop at the automatic bound and can continue manually without changing local records", async () => {
+test("all-read pages keep loading by themselves to the end without changing local records", async () => {
   const context = await readerWith(["boundary-1", "boundary-2", "boundary-3", "boundary-4"]);
   const page = await context.newPage();
   try {
     await page.goto(`${origin}/?tag=boundary`);
     const raw = await page.evaluate(() => localStorage.getItem("aihot-read-items"));
     await page.getByRole("button", { name: "只看未讀" }).click();
-    const more = page.getByRole("button", { name: "載入更多", exact: true });
-    await expect(more).toBeVisible();
-    await more.click();
-    await expect(more).toBeVisible();
-    await expect(page.getByText("這批精選都讀過了", { exact: true })).toBeVisible();
-    await more.click();
     await expect(page.getByRole("link", { name: "批次 5", exact: true })).toBeVisible();
+    await expect(page.getByText("已經到底", { exact: true })).toBeVisible();
+    assert.equal(await page.getByRole("button", { name: "載入更多", exact: true }).count(), 0, "no button to continue by hand");
     assert.equal(await page.evaluate(() => localStorage.getItem("aihot-read-items")), raw);
+  } finally { await context.close(); }
+});
+
+test("without JavaScript the foot is a link to the next page by its cursor", async () => {
+  const context = await chrome.newContext({ javaScriptEnabled: false });
+  const page = await context.newPage();
+  try {
+    await page.goto(`${origin}/`);
+    const next = page.getByRole("link", { name: "下一頁" });
+    await expect(next).toHaveAttribute("href", "/?cursor=p2");
+    await next.click();
+    await expect(page.getByRole("link", { name: "第二頁文章甲", exact: true })).toBeVisible();
+    assert.equal(await page.getByText("已經到底", { exact: true }).count(), 0, "the end line needs JavaScript");
+    assert.equal(await page.getByRole("link", { name: "下一頁" }).count(), 0, "the last page has no next link");
+    // A cursor that no longer fits (an old link) starts the list over.
+    await page.goto(`${origin}/?cursor=stale`);
+    assert.equal(new URL(page.url()).search, "");
+    await expect(page.getByRole("link", { name: "第一頁文章甲", exact: true })).toBeVisible();
   } finally { await context.close(); }
 });
