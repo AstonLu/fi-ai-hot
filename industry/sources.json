@@ -1047,6 +1047,138 @@
       "site_fulltext": false,
       "syndicate_fulltext": false,
       "enabled": true
+    },
+    {
+      "id": "gnews-en-asia-banks-genai",
+      "name": "Google 新聞：亞洲銀行 生成式AI（英）",
+      "kind": "rss",
+      "config": {
+        "feedUrl": "https://news.google.com/rss/search?q=(DBS%20OR%20OCBC%20OR%20UOB%20OR%20%22Standard%20Chartered%22%20OR%20%22HDFC%20Bank%22%20OR%20ICICI%20OR%20Mizuho)%20(%22generative%20AI%22%20OR%20%22AI%20agent%22%20OR%20agentic)%20when:7d&hl=en-US&gl=US&ceid=US:en",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
+      "tier": "T2",
+      "owner_entity_id": null,
+      "participation_mode": "editorial",
+      "interval_minutes": 120,
+      "tags": [
+        "Google新聞",
+        "銀行"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "gnews-en-credit-union-ai",
+      "name": "Google 新聞：信用合作社 AI（英）",
+      "kind": "rss",
+      "config": {
+        "feedUrl": "https://news.google.com/rss/search?q=%22credit%20union%22%20(%22generative%20AI%22%20OR%20%22AI%20agent%22%20OR%20agentic)%20when:7d&hl=en-US&gl=US&ceid=US:en",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
+      "tier": "T2",
+      "owner_entity_id": null,
+      "participation_mode": "editorial",
+      "interval_minutes": 120,
+      "tags": [
+        "Google新聞",
+        "銀行"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "gnews-en-fintech-launch-ai",
+      "name": "Google 新聞：金融科技 AI 上線（英）",
+      "kind": "rss",
+      "config": {
+        "feedUrl": "https://news.google.com/rss/search?q=fintech%20(launches%20OR%20%22rolls%20out%22)%20(%22AI%20agent%22%20OR%20%22generative%20AI%22)%20when:7d&hl=en-US&gl=US&ceid=US:en",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
+      "tier": "T2",
+      "owner_entity_id": null,
+      "participation_mode": "editorial",
+      "interval_minutes": 120,
+      "tags": [
+        "Google新聞",
+        "金融科技"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "gnews-en-regulators-ai",
+      "name": "Google 新聞：監理機關 AI（英）",
+      "kind": "rss",
+      "config": {
+        "feedUrl": "https://news.google.com/rss/search?q=(FCA%20OR%20OCC%20OR%20FINRA%20OR%20MAS%20OR%20HKMA)%20(%22AI%20agent%22%20OR%20%22generative%20AI%22)%20(bank%20OR%20banks%20OR%20insurers)%20when:7d&hl=en-US&gl=US&ceid=US:en",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
+      "tier": "T2",
+      "owner_entity_id": null,
+      "participation_mode": "editorial",
+      "interval_minutes": 120,
+      "tags": [
+        "Google新聞",
+        "監理"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "gnews-tw-insurers-genai",
+      "name": "Google 新聞：壽險產險 AI",
+      "kind": "rss",
+      "config": {
+        "feedUrl": "https://news.google.com/rss/search?q=(%E5%A3%BD%E9%9A%AA%20OR%20%E7%94%A2%E9%9A%AA)%20(%E7%94%9F%E6%88%90%E5%BC%8FAI%20OR%20AI%E7%90%86%E8%B3%A0%20OR%20AI%E6%A0%B8%E4%BF%9D)%20when:7d&hl=zh-TW&gl=TW&ceid=TW:zh-Hant",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
+      "tier": "T2",
+      "owner_entity_id": null,
+      "participation_mode": "editorial",
+      "interval_minutes": 120,
+      "tags": [
+        "Google新聞",
+        "保險"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
+    },
+    {
+      "id": "gnews-tw-banks-ai-agent",
+      "name": "Google 新聞：銀行 AI代理",
+      "kind": "rss",
+      "config": {
+        "feedUrl": "https://news.google.com/rss/search?q=(%E5%9C%8B%E9%8A%80%20OR%20%E9%87%91%E6%8E%A7%20OR%20%E9%8A%80%E8%A1%8C%E6%A5%AD)%20(AI%E4%BB%A3%E7%90%86%20OR%20AI%E5%8A%A9%E7%90%86%20OR%20%E6%99%BA%E8%83%BD%E5%AE%A2%E6%9C%8D)%20when:7d&hl=zh-TW&gl=TW&ceid=TW:zh-Hant",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
+      "tier": "T2",
+      "owner_entity_id": null,
+      "participation_mode": "editorial",
+      "interval_minutes": 120,
+      "tags": [
+        "Google新聞",
+        "銀行"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": true
     }
   ]
 }

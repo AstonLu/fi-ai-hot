@@ -1,6 +1,6 @@
 # 第一批來源說明
 
-`sources.json` 共 39 個來源，31 個預設開啟。所有網址都還沒有實際連線驗證，上線後請在後台「來源」頁逐一按「預覽抓取」，抓到的是文章而不是導覽列、日期正確再留著。
+`sources.json` 共 54 個來源，25 個預設開啟。所有網址都還沒有實際連線驗證，上線後請在後台「來源」頁逐一按「預覽抓取」，抓到的是文章而不是導覽列、日期正確再留著。
 
 ## AI
 - `json-aihot-selected`：直接讀 aihot.news 公開 API 的精選（`/api/v1/items?mode=selected&window=24h`），每小時一次，原文連結當作條目網址，跟自己的官方來源可以去重。上線前請先讀 aihot.news 的使用條款，確認允許這樣轉用；回應裡的 attribution 欄位建議保留。
@@ -8,7 +8,7 @@
 
 ## 金融業 AI 導入
 - 監理：Fed 演講與新聞稿（開啟）、Bank of England、FSB、BIS（關閉，網址待確認）、金管會新聞稿（網頁列表，選擇器是猜的，關閉）。
-- 國際媒體：Finextra、Fintech Futures、Banking Dive、Payments Dive、The Financial Brand、PYMNTS（開啟）、Insurance Journal（關閉）。
+- 國際媒體：Banking Dive、PYMNTS（開啟）；Finextra、Fintech Futures、The Financial Brand、Payments Dive、Insurance Journal（關閉）。2026-11-26 重測：Finextra、Fintech Futures、The Financial Brand 從本機和主機都被 Cloudflare 擋（HTTP 403），不繞過；Payments Dive 回 200，但近 30 天 10 則沒有一則講 AI。這四個維持關閉。
 - 電子報：Fintech Business Weekly、Net Interest、Fintech Brainfood（開啟）、This Week in Fintech（關閉）。只收公開版，付費全文之後走 Gmail 標籤轉進來。
 - 台灣：iThome（開啟）、數位時代（關閉）。
 
@@ -42,9 +42,18 @@
 | `gnews-tw-broker-genai` | `(證券 OR 券商) (導入 OR 推出 OR 上線) 生成式AI when:7d` | 開（券商） |
 | `gnews-tw-brokers-ai` | `(凱基證 OR 元大證 OR 富邦證 OR 永豐金證 OR 國泰證 OR 群益 OR 統一證) (生成式AI OR AI助理 OR AI客服 OR AI理專 OR 導入AI) when:7d` | 開（券商） |
 | `gnews-ja-brokers-ai` | `(野村 OR 大和証券 OR SBI証券 OR 楽天証券 OR マネックス OR 松井証券) (生成AI OR AIエージェント) (導入 OR 活用 OR 実証) when:7d` | 選用（券商） |
+| `gnews-en-asia-banks-genai` | `(DBS OR OCBC OR UOB OR "Standard Chartered" OR "HDFC Bank" OR ICICI OR Mizuho) ("generative AI" OR "AI agent" OR agentic) when:7d` | 開 |
+| `gnews-en-credit-union-ai` | `"credit union" ("generative AI" OR "AI agent" OR agentic) when:7d` | 開 |
+| `gnews-en-fintech-launch-ai` | `fintech (launches OR "rolls out") ("AI agent" OR "generative AI") when:7d` | 開，雜訊較多 |
+| `gnews-en-regulators-ai` | `(FCA OR OCC OR FINRA OR MAS OR HKMA) ("AI agent" OR "generative AI") (bank OR banks OR insurers) when:7d` | 開（監理） |
+| `gnews-tw-insurers-genai` | `(壽險 OR 產險) (生成式AI OR AI理賠 OR AI核保) when:7d` | 開，量少 |
+| `gnews-tw-banks-ai-agent` | `(國銀 OR 金控 OR 銀行業) (AI代理 OR AI助理 OR 智能客服) when:7d` | 開 |
+
+上表最後 6 個寫在 `sources.json`，主機更新時自動匯入；前面的是在後台手動新增的。最後 6 個 2026-11-26 用上面的網址實測（則數／切題）：亞洲銀行 40／21、信用合作社 18／10、金融科技上線 22／14、監理機關 43／28、壽險產險 7 天 2 則、30 天 7／6、銀行 AI代理 38／22（不少是同一則路透報導的轉載，事件歸組會併成一則）。亞洲銀行和信用合作社剛過一半，跑兩週後看精選通過率，太低就關掉。同一個查詢把括號寫成 `%28` `%29` 時，Google 回的則數不同，要以實際填進去的網址為準。
 
 - 只寫公司名加 AI 的查詢（例如只列大銀行或券商名稱）會混進大量股市評論和 AI 主題 ETF，要再加「generative AI」「AI agent」「生成式AI」「導入」這類詞收窄。
 - 「證券 AI」「金管會 AI」「メガバンク AI」「broker-dealer AI」實測多半是 AI 股市、券商研報、裁罰新聞或不相關的同名詞，不建議開。
+- `(銀行 OR 金控) (AI代理 OR AI助理 OR 智能客服) 導入` 實測 32 則只有 15 則切題，多是 AI 代理人職缺和一般企業導入，改用上表的 `gnews-tw-banks-ai-agent`。
 - 同一篇文章被幾個查詢同時抓到時，用原文網址去重，只算一篇。
 
 例如第一個查詢的採集配置：
