@@ -13,7 +13,7 @@ import { stopBoss } from "@aihot/backend/jobs/queue";
 import { installModules } from "@aihot/backend/modules";
 import { ITEM_COLUMNS, ITEM_FROM, toFeedItemSummary, type ItemRow } from "@aihot/backend/publication/items";
 import { collectSource } from "@aihot/backend/sources/collect";
-import { splitTitle } from "../backend/links.ts";
+import { outletName, splitTitle } from "../backend/links.ts";
 import { googleNewsModule } from "../server.ts";
 
 const T = tag();
@@ -158,4 +158,11 @@ test("cards name a report's outlet, and the source when no outlet is known", asy
     { id: plain, name: "Writer feed" },
     { id: SOURCE, name: "Google 新聞：金控 AI" },
   ]);
+});
+
+test("an outlet named differently by each edition reads under one name", () => {
+  assert.equal(outletName("BigGo Finance"), "BigGo 財經");
+  assert.equal(outletName("biggo  finance"), "BigGo 財經");
+  assert.equal(outletName("BigGo 財經"), "BigGo 財經");
+  assert.equal(outletName("經濟日報"), "經濟日報");
 });

@@ -17,7 +17,7 @@
 - `industry_event`：融資、收購、一般 AI 政策與監管、訴訟、商業動作或人事
 - `opinion_analysis`：觀點、行業判斷、復盤或長訪談
 - `tutorial_explainer`：教程、科普、解讀或評測
-- `fin_ai_adoption`：金融業者把 AI 用進業務的具體動作，包括上線、試點、採購、合作、成效數字、預算與人力配置、組織調整、喊停或失敗。必須有具名的金融機構（銀行、保險、證券、投信投顧、資產管理、支付、金融科技業者），或可指認的金融業務線（如某國銀行業的授信審核、某公司的理賠流程）
+- `fin_ai_adoption`：金融業者把 AI 用進業務的具體動作，包括上線、試點、採購、合作、成效數字、預算與人力配置、組織調整、喊停或失敗。必須有具名的金融機構（銀行、保險、證券、投信投顧、資產管理、支付、金融科技業者），或可指認的金融業務線（如某國銀行業的授信審核、某公司的理賠流程）。也包括具名金融機構針對 AI 訂的政策與條款，例如改寫服務條款界定客戶 AI 代理的責任、封鎖或開放外部 AI 代理登入
 - `fin_regulation`：金融監理機關、央行、國際標準制定組織（BIS、FSB、IOSCO、巴塞爾委員會等）或立法機關，針對金融業的 AI、資料治理、模型風險、資安、委外與消費者保護所做的規範、指引、諮詢文件、裁罰、表態或官員演講
 - `survey_data`：以調查、指數或統計數據的發布為核心，例如顧問公司、研究機構、公會、國際組織或監理機關公布的問卷結果、採用率、排名與指數
 
@@ -26,6 +26,7 @@
 - `fin_ai_adoption` 對 `industry_event`：金融機構的 AI、資料或自動化導入歸 `fin_ai_adoption`；金融機構與 AI 無關的經營、融資、人事，以及非金融業的商業動作，歸 `industry_event`。
 - `fin_ai_adoption` 對 `product_launch`：AI 廠商推出金融版產品或對金融業行銷，沒有具名金融機構採用時仍是 `product_launch`；廠商稿中具名金融機構已經採用並交代用在哪項業務時，才是 `fin_ai_adoption`。只寫「某大型銀行」「多家金融機構」而無法指認的，不算具名。
 - `fin_regulation` 對 `industry_event`：行為主體是金融監理機關、央行、標準制定組織或立法機關，且內容針對金融業的 AI、資料或模型風險，歸 `fin_regulation`；不限金融業的一般 AI 政策、法案與訴訟仍歸 `industry_event`。金融機構回應或評論監理，沒有監理方的新動作時，按內容歸 `fin_ai_adoption` 或 `opinion_analysis`。
+- `fin_ai_adoption` 對 `opinion_analysis`：核心是具名金融機構的新動作（上線、條款、政策、封鎖）時，即使原文以評論或部落格口吻寫成，也歸 `fin_ai_adoption`；沒有新動作、重點是作者對金融業 AI 的判斷時，才歸 `opinion_analysis`。
 - `survey_data` 對 `research_paper`：核心是問卷、指數、統計數字本身，歸 `survey_data`；核心是新方法、實驗或技術論證的論文與技術報告，歸 `research_paper`。監理機關發布問卷結果並同時提出監理立場或後續措施時，歸 `fin_regulation`；只公布數字時歸 `survey_data`。
 - `survey_data` 對 `fin_ai_adoption`：單一機構公布自家成效數字是 `fin_ai_adoption`；跨機構、跨市場的彙總數字才是 `survey_data`。
 

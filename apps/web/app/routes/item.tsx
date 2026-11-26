@@ -12,7 +12,7 @@ import { cachedPage, loadOr404, pagePathname } from "../lib/api.server";
 import { loadFollowups } from "../features/item/followups.server";
 import { pageReuse } from "../lib/page-reuse";
 import { articleLd, breadcrumbLd, pageMeta, siteUrl, titled, titleCacheSeconds } from "../lib/seo";
-import { fullDateTime, timeAgo } from "../lib/format";
+import { cardSource, fullDateTime, timeAgo } from "../lib/format";
 import { markRead } from "../lib/local-state";
 import { copyText } from "../lib/clipboard";
 import { SameEventBadge, SelectedBadge } from "../components/ui/Badge";
@@ -196,15 +196,16 @@ function Toast({ text }: { text: string | null }) {
   );
 }
 
-/** Who published it and when: the source's icon and name, as on its card. */
+/** Who published it and when: the source's icon and name as its card shows them, a relayed report's outlet included. */
 function SourceRow({ item, byline, at, dated, className = "" }: { item: Pick<FeedItemSummary, "source" | "channel"> & { x: Pick<NonNullable<FeedItemSummary["x"]>, "authorName" | "handle" | "avatarUrl" | "avatarSrcSet"> | null }; byline: string | null; at: string; dated: boolean; className?: string }) {
   const t = useT();
   const locale = useLocale();
   const post = item.channel === "x" ? item.x : null;
+  const source = cardSource(item.source);
   return (
     <div className={`flex flex-wrap items-center gap-x-2 gap-y-1 text-ui-label text-ink-4 ${className}`}>
-      <SourceAvatar id={item.source.id} name={post?.authorName ?? item.source.name} avatarUrl={post?.avatarUrl} avatarSrcSet={post?.avatarSrcSet} iconUrl={sourceIcon(item.source.id)} size={28} />
-      <span className="font-semibold text-ink">{post?.authorName ?? item.source.name}</span>
+      <SourceAvatar id={source.id} name={post?.authorName ?? source.name} avatarUrl={post?.avatarUrl} avatarSrcSet={post?.avatarSrcSet} iconUrl={sourceIcon(source.id)} size={28} />
+      <span className="font-semibold text-ink">{post?.authorName ?? source.name}</span>
       {post && <span>@{post.handle} · X</span>}
       {byline && <span>{byline}</span>}
       <span>
@@ -341,7 +342,8 @@ function ItemView({ item, followups }: Loaded) {
   const isX = item.channel === "x" && !!item.x;
   // A post reads under its author; one that publishes a long X Article reads like an article, under its headline.
   const isPost = isX && !item.x!.article;
-  const byline = isX ? null : bylineOf(item.author, item.source.name);
+  // A relayed report's author is its outlet, which the row already names.
+  const byline = isX || item.source.outlet ? null : bylineOf(item.author, item.source.name);
   // Without a reliable date from the original, the time shown is when it was collected, labelled as such.
   const shownAt = item.publishedAt ?? item.discoveredAt;
   const summaryOnly = item.readingMode === "summary-only";

@@ -252,6 +252,12 @@ export interface ServerModule {
    */
   relays?: (source: Pick<SourceRow, "kind" | "config">) => boolean;
   /**
+   * The one name readers see for an outlet a relaying source (relays) gives under several names, such as
+   * one outlet named differently by each language edition of a news search; a name it does not know is
+   * returned as is.
+   */
+  outletName?: (outlet: string) => string;
+  /**
    * Uses of sources besides the news pipeline, by name (sources.uses, sources/uses.ts): the module reads the
    * articles of the sources that name one itself, so nothing is collected twice.
    */
