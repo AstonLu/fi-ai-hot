@@ -116,7 +116,7 @@ test("mentions cannot choose a timeline origin, anchor, representative, or a lat
   assert.equal(detail.latest, "Dots 后续更新");
   assert.equal(detail.officialReports.length, 1, "only tier T1 has the first-party label");
   assert.equal(detail.developments[0]!.representative.source.firstParty, false);
-  const edition = await candidates(at(100), now);
+  const edition = await candidates("weekly", at(100), now);
   assert.equal(edition.find((c) => c.factId === g.factPublicId)?.itemId, official, "report editions use the same authority within their own time window");
   assert.equal(edition.find((c) => c.itemId === official)?.firstParty, false);
   assert.equal(edition.find((c) => c.itemId === earlyMention)?.factId, null, "a related roundup stays independent in reports");
@@ -179,7 +179,7 @@ test("digest input excludes mentions and preserves scoped conditions", async () 
   const mention = await report(s, g, { title: "MENTION MUST NOT ENTER DIGEST", hours: 1, role: "mention" });
   const composite = await report(s, g, { title: "COMPOSITE WAITING FOR GROUP CLEANUP", hours: 1 });
   await sql`UPDATE analyses SET output=output || '{"scope":"composite"}'::jsonb WHERE article_id=${composite}`;
-  assert.equal((await candidates(at(100), now)).find((c) => c.itemId === composite)?.factId, null, "known composites cannot occupy a report's fact before projection repair");
+  assert.equal((await candidates("weekly", at(100), now)).find((c) => c.itemId === composite)?.factId, null, "known composites cannot occupy a report's fact before projection repair");
   assert.equal((await composeStoryDigest(g.storyId)).updated, true);
   assert.ok(digestPrompt.includes("Tasks consume usage.") && digestPrompt.includes("自主执行任务消耗额度"));
   assert.ok(!digestPrompt.includes(mention) && !digestPrompt.includes("MENTION MUST NOT ENTER DIGEST"));

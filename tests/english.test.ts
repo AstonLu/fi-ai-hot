@@ -112,7 +112,7 @@ async function report(sourceId: string, texts: { title: string; summary: string;
     publishedAt: new Date(Date.now() - 3_600_000),
   });
   await sql`INSERT INTO analyses (article_id,input_revision,origin,relevance,category,tags,title_zh,summary_zh,reason_zh,score,selected)
-    VALUES (${articleId},1,'rule','pass','ai-models',ARRAY['模型发布'],${texts.title},${texts.summary},${texts.reason},88,true)`;
+    VALUES (${articleId},1,'rule','pass','fin-ai',ARRAY['模型发布'],${texts.title},${texts.summary},${texts.reason},88,true)`;
   if (fact) await sql`INSERT INTO fact_articles (fact_id, article_id, role) VALUES (${fact}, ${articleId}, 'primary')`;
   await publishArticle(articleId, { releasedAt: new Date(Date.now() - 60_000) });
   return articleId;
@@ -160,14 +160,14 @@ before(async () => {
     lead: { title: "今日头条：甲公司发布新模型", leadParagraph: "甲公司的新模型是今天最受关注的发布。" },
     highlights: [a],
     // The second entry was frozen before its report was edited: the issue keeps its own words.
-    sections: [{ key: "ai-models", label: "模型发布/更新", items: [entry(a, `甲公司发布新模型${T}`, "甲公司今天发布了新模型，推理速度提升一倍。"), entry(b, "编辑前的旧标题", "编辑前的旧摘要。")] }],
+    sections: [{ key: "fin-ai", label: "模型发布/更新", items: [entry(a, `甲公司发布新模型${T}`, "甲公司今天发布了新模型，推理速度提升一倍。"), entry(b, "编辑前的旧标题", "编辑前的旧摘要。")] }],
     flashes: [],
     metrics: { totalEvents: 2 },
   };
   // A report it named was withdrawn since: the overview is composed by rule, and English pages say it in English.
   const weekly = {
     headline: "本周头条：甲公司发布新模型", overview: "本周最重要的是甲公司的新模型。",
-    themes: [{ key: "ai-models", heading: "新模型密集发布", summary: "这一周有两家公司发布了新模型。", storyRefs: [
+    themes: [{ key: "fin-ai", heading: "新模型密集发布", summary: "这一周有两家公司发布了新模型。", storyRefs: [
       entry(a, `甲公司发布新模型${T}`, "甲公司今天发布了新模型，推理速度提升一倍。"), entry(gone, `已撤下的报道${T}`, "这条报道后来撤下了。"),
       entry(w, `丁公司发布智能体${T}`, "丁公司发布了新的智能体产品。"),
     ] }],
@@ -175,7 +175,7 @@ before(async () => {
   };
   const monthly = {
     headline: "本月头条：甲公司发布新模型", overview: "这个月最重要的是甲公司的新模型。",
-    themes: [{ key: "ai-models", heading: "本月的模型发布", summary: "这个月的模型发布一览。", storyRefs: [entry(a, `甲公司发布新模型${T}`, "甲公司今天发布了新模型，推理速度提升一倍。")] }],
+    themes: [{ key: "fin-ai", heading: "本月的模型发布", summary: "这个月的模型发布一览。", storyRefs: [entry(a, `甲公司发布新模型${T}`, "甲公司今天发布了新模型，推理速度提升一倍。")] }],
     metrics: { totalStories: 1 },
   };
   for (const [kind, key, content] of [["daily", "2099-01-02", daily], ["weekly", "2099-W01", weekly], ["monthly", "2099-01", monthly]] as const) {
@@ -448,7 +448,7 @@ test("an English feed lists only what reads in English, links to the English pag
   const later = (itemId: string, title: string) => ({ itemId, title, summary: "", sourceId: wire, sourceName: `English Wire ${T}`, sourceUrl: "https://example.com/x", firstParty: false, role: "媒体" });
   await sql`INSERT INTO reports (kind, key, window_start, window_end, content, generated_at) VALUES ('daily', '2099-01-03', now(), now(), ${sql.json({
     lead, highlights: [], flashes: [], metrics: { totalEvents: 2 },
-    sections: [{ key: "ai-models", label: "模型发布/更新", items: [later(original, `己公司发布年度报告${T}`), later(zhOriginal, `目录里总被漏掉的条目${T}`)] }],
+    sections: [{ key: "fin-ai", label: "模型发布/更新", items: [later(original, `己公司发布年度报告${T}`), later(zhOriginal, `目录里总被漏掉的条目${T}`)] }],
   } as never)}, now())`;
   for (const [zh, kind] of [[lead.title, "headline"], [lead.leadParagraph, "text"]]) {
     await sql`INSERT INTO english_copy (zh_hash, zh, kind, en) VALUES (${copyKey(zh!)}, ${zh!}, ${kind!}, ${english(zh!)})`;
@@ -459,7 +459,7 @@ test("an English feed lists only what reads in English, links to the English pag
     assert.match(String(res.headers["content-type"]), /application\/rss\+xml/);
     return res.body;
   };
-  const feeds = Object.fromEntries(await Promise.all(["/feed.xml", "/feed/full.xml", "/feed/all.xml", "/feed/daily.xml", "/feed/weekly.xml", "/feed/monthly.xml", "/feed/category/ai-models.xml"]
+  const feeds = Object.fromEntries(await Promise.all(["/feed.xml", "/feed/full.xml", "/feed/all.xml", "/feed/daily.xml", "/feed/weekly.xml", "/feed/monthly.xml", "/feed/category/fin-ai.xml"]
     .map(async (path) => [path, await read(`/en${path}`)] as const)));
   for (const [path, xml] of Object.entries(feeds)) {
     assert.match(xml, /<language>en<\/language>/, path);

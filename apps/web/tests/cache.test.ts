@@ -178,7 +178,7 @@ test("browser freshness shares the selected deadline and never renews an expired
 // A withdrawal purges the list pages at their bare addresses (modules/ops/backend/purge.ts): a filtered or later page
 // is an entry of its own at the edge, gone only when it expires. Check every language the site serves.
 test("filtered and later list pages stay in shared caches a minute at most", async () => {
-  const pathnames = ["/?tag=x", "/?category=ai-models", "/_.data?tag=x", "/all?page=2", "/all.data?page=2"];
+  const pathnames = ["/?tag=x", "/?category=fin-ai", "/_.data?tag=x", "/all?page=2", "/all.data?page=2"];
   if (ENGLISH) pathnames.push("/en?tag=x", "/en.data?tag=x", "/en/all?page=2", "/en/all.data?page=2");
   const savedDeadline = deadline;
   try {

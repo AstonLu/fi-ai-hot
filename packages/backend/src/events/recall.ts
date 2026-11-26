@@ -158,8 +158,13 @@ export function cosine32(a: Float32Array, b: Float32Array): number {
   return na && nb ? dot / Math.sqrt(na * nb) : 0;
 }
 
-/** The lexical fallback's bar: shared bigrams are not on the cosine scale, so it has its own. */
-const LEXICAL_MIN = 0.25;
+/**
+ * The lexical fallback's bar: shared bigrams are not on the cosine scale, so it has its own. Reports of
+ * one news written by different outlets (and translated) share few bigrams: on two weeks of real
+ * reports the pairs that were one news scored 0.14–0.26 and ranked first or second for their query,
+ * while at 0.12 a query met a median of 3 reports. Callers cap how many they take, and a model judges each.
+ */
+const LEXICAL_MIN = 0.12;
 
 /** Both identity candidates and reading context use the same stored vectors (or the lexical fallback). */
 async function similarReports(queryId: string, queryText: string, pool: Array<{ article_id: string; revision?: number }>, minScore: number,

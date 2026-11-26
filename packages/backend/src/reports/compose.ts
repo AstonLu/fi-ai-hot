@@ -222,7 +222,7 @@ async function composePeriod(kind: "weekly" | "monthly", key: string, startDate:
     }
     throw new Error(`${kind} ${key}: no daily entries in the period`);
   }
-  const selected = await candidates(start, end);
+  const selected = await candidates(kind, start, end);
   const groups = SECTIONS
     .map((s) => ({ key: s.key, label: s.label, items: top.filter((e) => sectionKeyOf(e.category) === s.key) }))
     .filter((g) => g.items.length > 0);
