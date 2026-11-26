@@ -12,7 +12,7 @@ import { cachedPage, loadOr404, pagePathname } from "../lib/api.server";
 import { pageReuse } from "../lib/page-reuse";
 import { breadcrumbLd, pageMeta, storyArticleLd, storyLd, titled, titleCacheSeconds } from "../lib/seo";
 import { beijingDate, beijingTime } from "@aihot/contracts/time";
-import { byBeijingDay, monthDay, monthDayTime, relativeTime } from "../lib/format";
+import { byBeijingDay, cardSource, monthDay, monthDayTime, relativeTime } from "../lib/format";
 import { useCurrentSection } from "../lib/motion";
 import { HeatChart } from "../features/story/HeatChart";
 import { sessionCache } from "../lib/session-cache";
@@ -120,7 +120,7 @@ function TimelineRow({ r }: { r: StoryReportView }) {
       </time>
       <div className="min-w-0">
         <div className="mt-1 flex min-w-0 flex-wrap items-center gap-1.5 text-ui-caption leading-[20px] text-ink-4 lg:mt-0">
-          <span className="min-w-0 truncate">{r.source.name}</span>
+          <span className="min-w-0 truncate">{cardSource(r.source).name}</span>
           {r.selected && <SelectedBadge />}
         </div>
         <IntentLink viewTransition to={`/items/${r.id}`} className="mt-1 block text-ui-body-lg font-[650] leading-[1.6] text-ink transition-colors hover:text-accent lg:text-ui-body-plus">
@@ -328,7 +328,7 @@ export default function StoryPage() {
                       {d.title}
                     </Link>
                     <div className="mt-0.5 truncate text-ui-caption-lg text-ink-4">
-                      {d.representative.source.name}{t("：", ": ")}{d.representative.title}
+                      {cardSource(d.representative.source).name}{t("：", ": ")}{d.representative.title}
                     </div>
                   </li>
                 ))}
@@ -440,7 +440,7 @@ export default function StoryPage() {
               <ul className="mt-1 divide-y divide-line-soft">
                 {story.officialReports.slice(0, 5).map((r) => (
                   <li key={r.id} className="py-3">
-                    <div className="truncate text-ui-caption-md text-ink-4">{r.source.name}</div>
+                    <div className="truncate text-ui-caption-md text-ink-4">{cardSource(r.source).name}</div>
                     <Link viewTransition to={`/items/${r.id}`} className="group mt-1 block text-ui-label-lg font-semibold leading-[1.6] text-ink transition-colors hover:text-accent">
                       {r.title}
                       <IconChevronRight size={13} className="ml-0.5 inline -translate-y-px text-ink-4 transition-transform group-hover:translate-x-0.5" />

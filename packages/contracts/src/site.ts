@@ -9,6 +9,11 @@ export interface SourceRef {
   id?: string;
   /** The name readers see (publication/rules.ts publicSourceName), as is every source name here. */
   name: string;
+  /**
+   * The outlet of a report the source relays from another outlet (a news search feed names its search, not
+   * the outlet; publication/rules.ts relayedOutlet). A card names it, and draws its avatar, in the source's place.
+   */
+  outlet?: string;
 }
 
 export interface MediaView {
@@ -85,7 +90,12 @@ export interface ItemSummary {
 }
 
 /** The fields rendered by a site feed card; full original text lives in the item detail. */
-export interface FeedItemSummary extends Pick<ItemSummary, "id" | "title" | "summary" | "reason" | "source" | "publishedAt" | "timelineAt" | "category" | "tags" | "score" | "selected" | "channel"> {
+export interface FeedItemSummary extends Pick<ItemSummary, "id" | "title" | "summary" | "reason" | "source" | "publishedAt" | "discoveredAt" | "timelineAt" | "category" | "tags" | "score" | "selected" | "channel"> {
+  /**
+   * The day (YYYY-MM-DD) the report's one event happened, as its analysis dates it, when that is before the
+   * Beijing day it was published: the card dates the report by its event, not by a later write-up.
+   */
+  eventDate?: string;
   x: (Pick<XPostView, "authorName" | "handle" | "avatarUrl" | "avatarSrcSet" | "media" | "article"> & {
     quoted: Omit<NonNullable<XPostView["quoted"]>, "url"> | null;
   }) | null;

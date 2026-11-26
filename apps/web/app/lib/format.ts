@@ -1,3 +1,4 @@
+import type { FeedItemSummary, SourceRef } from "@aihot/contracts/site";
 import { beijingDate, beijingTime, beijingWeekday, monthDay as engineMonthDay, monthDayEn, weekdayEn } from "@aihot/contracts/time";
 import { translator, zh, type Locale } from "./i18n.ts";
 
@@ -55,6 +56,22 @@ export function fullDateTime(iso: string): string {
 /** "9月24日 10:51" / "Sep 24, 10:51" (Beijing), for lists that span days. */
 export function monthDayTime(iso: string, locale: Locale = "zh"): string {
   return locale === "en" ? `${monthDayEn(beijingDate(iso))}, ${beijingTime(iso)}` : `${monthDay(beijingDate(iso))} ${beijingTime(iso)}`;
+}
+
+/** The source a card names and draws: a relayed report's outlet (SourceRef.outlet), its avatar from its name; else the source. */
+export function cardSource(source: SourceRef): { id?: string; name: string } {
+  return source.outlet ? { name: source.outlet } : source;
+}
+
+/**
+ * When a list card dates its report: the day of its event when that came before it was published (eventDate),
+ * else when it was published, or collected when that is unknown. Today's reads as the time, an earlier one as the date.
+ */
+export function cardTime(item: Pick<FeedItemSummary, "publishedAt" | "discoveredAt" | "eventDate">, now = Date.now(), locale: Locale = "zh"): { dateTime: string; text: string } {
+  if (item.eventDate) return { dateTime: item.eventDate, text: monthDay(item.eventDate, now, locale) };
+  const at = item.publishedAt ?? item.discoveredAt;
+  const day = beijingDate(at);
+  return { dateTime: at, text: day === beijingDate(now) ? beijingTime(at) : monthDay(day, now, locale) };
 }
 
 export function sourceInitial(name: string): string {

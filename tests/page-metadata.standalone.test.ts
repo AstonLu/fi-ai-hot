@@ -29,8 +29,8 @@ import { dateLine } from "../apps/web/app/features/report/format.ts";
 import { startWebServer, type WebServer } from "../apps/web/tests/web-server.ts";
 
 const at = "2026-10-04T08:00:00.000Z";
-const item: FeedItemSummary = { id: "metadata-fixture", title: "可核實的測試報導", summary: "報導摘要", reason: null, source: { name: "Fixture" }, publishedAt: at, timelineAt: at, category: "ai-models", tags: [], score: 80, selected: true, channel: "news", x: null };
-const detail: SiteItemDetail = { ...item, x: null, originalTitle: null, links: { original: "https://example.org/report" }, discoveredAt: at, story: null, readingMode: "full", author: null, body: { zh: "<p>可核實的測試正文。</p>", original: null, zhKind: "original", complete: true }, outline: [], relatedStories: [], topics: [], tagTopics: {}, daily: null, indexable: true, googleNoindex: false, markdownAvailable: true, group: null, hasTranslation: false, bodyLanguage: "zh", mentions: [] };
+const item: FeedItemSummary = { id: "metadata-fixture", title: "可核實的測試報導", summary: "報導摘要", reason: null, source: { name: "Fixture" }, publishedAt: at, discoveredAt: at, timelineAt: at, category: "ai-models", tags: [], score: 80, selected: true, channel: "news", x: null };
+const detail: SiteItemDetail = { ...item, x: null, originalTitle: null, links: { original: "https://example.org/report" }, story: null, readingMode: "full", author: null, body: { zh: "<p>可核實的測試正文。</p>", original: null, zhKind: "original", complete: true }, outline: [], relatedStories: [], topics: [], tagTopics: {}, daily: null, indexable: true, googleNoindex: false, markdownAvailable: true, group: null, hasTranslation: false, bodyLanguage: "zh", mentions: [] };
 /** Article pages by id: the fixture, one kept from Google only, one kept from every engine. */
 const details: Record<string, SiteItemDetail> = {
   [item.id]: detail,

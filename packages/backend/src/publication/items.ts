@@ -3,13 +3,14 @@
 import { CATEGORY_KEYS, toPublicApiCategory, type CategoryKey, type ChannelKey, type PublicApiCategoryKey } from "@aihot/contracts/taxonomy";
 import { STORY_INDEX_MIN_SOURCES, type FeedItemSummary, type ItemSummary, type MediaView, type XPostView } from "@aihot/contracts/site";
 import { itemUrl } from "./links.ts";
+import { beijingDate, beijingMidnight } from "@aihot/contracts/time";
 import { POLICY, SITE } from "@aihot/site";
 import { sql, type Db } from "../db.ts";
 import { isChineseText } from "../lib/text.ts";
 import { isEmptyOrLinkOnly, withXArticle } from "../content/posts.ts";
 import { proxiedImage, proxiedImageSet } from "../media/imgproxy.ts";
 import { sourceOwnsPost } from "../sources/account.ts";
-import { displayTags, publicSourceName } from "./rules.ts";
+import { displayTags, sourceRef, type SourceRefRow } from "./rules.ts";
 import { foldableSelectionCondition, seatedCondition, storyReportCondition } from "./scope.ts";
 
 export interface ItemRow {
@@ -36,6 +37,8 @@ export interface ItemRow {
   fact_id: number | null;
   source_id: string;
   source_name: string;
+  source_kind: SourceRefRow["source_kind"];
+  source_config: SourceRefRow["source_config"];
   /** Participation mode of the source now (editorial, hot_signal, isolated). */
   source_mode: string;
   x_post: Record<string, any> | null;
@@ -46,6 +49,8 @@ export interface ItemRow {
   /** Current source icon only when that account is this post's author. */
   author_avatar_url?: string | null;
   author: string | null;
+  /** The event date its analysis gives (fact.occurredAt), as written. */
+  occurred_at: string | null;
   language: string | null;
   story_public_id: string | null;
   story_title: string | null;
@@ -57,11 +62,17 @@ export interface ItemRow {
 /** The article fields shared by the website, API, Agent tools and both RSS formats. */
 export const PUBLIC_ITEM_COLUMNS = sql`p.article_id AS id, p.title, p.summary, p.url, p.category, p.published_at, s.name AS source_name`;
 
+/** What rules.ts sourceRef reads, over the report `p` and its source `s`, for reads without the article joined. */
+export const SOURCE_REF_COLUMNS = sql`s.id AS source_id, s.name AS source_name, s.kind AS source_kind, s.config AS source_config,
+  (SELECT sa.author FROM articles sa WHERE sa.id = p.article_id) AS author`;
+
 /** Columns every item listing selects. Internal judgement details never leave this layer. */
 export const ITEM_COLUMNS = sql`
   ${PUBLIC_ITEM_COLUMNS}, p.original_title, p.reason, p.tags, p.score,
   p.selected, p.seat, p.channel, p.discovered_at, p.timeline_at, p.visibility,
   p.body_mode, p.suppress_original, p.indexable, p.fact_id, s.id AS source_id, s.participation_mode AS source_mode,
+  s.kind AS source_kind, s.config AS source_config,
+  (SELECT an.output->'fact'->>'occurredAt' FROM analyses an WHERE an.id = p.analysis_id) AS occurred_at,
   CASE WHEN NOT p.suppress_original THEN a.x_post END AS x_post,
   CASE WHEN p.body_mode = 'full' THEN a.x_article - 'html' END AS x_article,
   CASE WHEN p.channel = 'news' AND NOT p.suppress_original THEN coalesce(a.cover, (
@@ -251,7 +262,7 @@ export function toItemSummary(row: ItemRow): ItemSummary {
     originalTitle: row.original_title,
     summary: row.summary,
     reason: row.selected ? row.reason : null,
-    source: { id: row.source_id, name: publicSourceName(row.source_name) },
+    source: sourceRef(row),
     links: { original: row.url },
     publishedAt: row.published_at?.toISOString() ?? null,
     discoveredAt: row.discovered_at.toISOString(),
@@ -274,14 +285,27 @@ export function cardPicture(row: Pick<ItemRow, "source_id" | "body_mode" | "card
   return mediaView(row.card_picture, "thumb", true);
 }
 
+/**
+ * The day the report's one event happened (its analysis's fact.occurredAt, a calendar date), when that is
+ * before the Beijing day the report was published, or collected when that is unknown; else null.
+ */
+export function eventDateOf(row: Pick<ItemRow, "occurred_at" | "published_at" | "discovered_at">): string | null {
+  const day = row.occurred_at?.trim() ?? "";
+  const midnight = /^\d{4}-\d{2}-\d{2}$/.test(day) ? beijingMidnight(day) : null;
+  if (!midnight || !Number.isFinite(+midnight) || beijingDate(midnight) !== day) return null;
+  return day < beijingDate(row.published_at ?? row.discovered_at) ? day : null;
+}
+
 /** Project the shared public article into the exact fields a site card renders. */
 export function toFeedItemSummary(row: ItemRow): FeedItemSummary {
   const item = toItemSummary(row);
   const x = showsPost(row) ? xView(row, true) : null;
   const cover = cardPicture(row);
+  const eventDate = eventDateOf(row);
   return {
     id: item.id, title: item.title, summary: item.summary ?? (x?.text || null), reason: item.reason,
-    source: item.source, publishedAt: item.publishedAt, timelineAt: item.timelineAt,
+    source: item.source, publishedAt: item.publishedAt, discoveredAt: item.discoveredAt, timelineAt: item.timelineAt,
+    ...(eventDate ? { eventDate } : {}),
     category: item.category, tags: item.tags, score: item.score, selected: item.selected, channel: item.channel,
     x: x ? {
       authorName: x.authorName, handle: x.handle, avatarUrl: x.avatarUrl,

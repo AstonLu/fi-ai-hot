@@ -246,6 +246,12 @@ export interface ServerModule {
    */
   listing?: (source: SourceRow, found: Candidate[]) => Promise<Candidate[]>;
   /**
+   * Whether a source relays other outlets' reports, such as a news search feed, and keeps each report's
+   * outlet as its article's author: readers then see that outlet where a card names its source
+   * (publication/rules.ts relayedOutlet).
+   */
+  relays?: (source: Pick<SourceRow, "kind" | "config">) => boolean;
+  /**
    * Uses of sources besides the news pipeline, by name (sources.uses, sources/uses.ts): the module reads the
    * articles of the sources that name one itself, so nothing is collected twice.
    */

@@ -1,6 +1,6 @@
 import type { StoryFollowup, StoryFollowupsResponse, StoryRef } from "@aihot/contracts/site";
 import { MoreLink } from "../../components/ui/Page";
-import { relativeTime } from "../../lib/format";
+import { cardSource, relativeTime } from "../../lib/format";
 import { Link } from "../../lib/link";
 import { useLocale, useT } from "../../lib/i18n";
 
@@ -47,7 +47,7 @@ function Followups({items, more, story}: {items: StoryFollowup[]; more: boolean;
                 <span className="min-w-0 text-ui-label-lg leading-snug text-ink-2 group-hover:text-accent sm:truncate">{d.representative.title}</span>
               </span>
               <span className="shrink-0 pl-[46px] text-ui-caption text-ink-4 sm:pl-0" suppressHydrationWarning>
-                {d.representative.source.name} · {relativeTime(d.representative.timelineAt, undefined, locale)}
+                {cardSource(d.representative.source).name} · {relativeTime(d.representative.timelineAt, undefined, locale)}
               </span>
             </Link>
           </li>

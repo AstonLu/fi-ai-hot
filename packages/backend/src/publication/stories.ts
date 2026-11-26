@@ -9,7 +9,8 @@ import { behindSources, currentSignals, heatSeries, sourceClocks, type HotRankin
 import { relatedEvidence, RELATED_MIN_REPORTS } from "../events/related.ts";
 import { pickRepresentative, REPRESENTATIVE_COLUMNS, type RepresentativeIdentity } from "./representative.ts";
 import { compositeCondition, evidenceCondition, listedCondition, storyReportCondition } from "./scope.ts";
-import { publicSourceName } from "./rules.ts";
+import { publicSourceName, sourceRef, type SourceRefRow } from "./rules.ts";
+import { SOURCE_REF_COLUMNS } from "./items.ts";
 import { latestHotRanking, rankingParticipants } from "./hot.ts";
 import { storyTexts } from "./story-text.ts";
 import { topicsOfStory } from "./topics.ts";
@@ -48,7 +49,7 @@ export async function resolveStory(publicId: string): Promise<StoryLookup> {
   return { kind: "found", storyId: s!.id, publicId };
 }
 
-interface ReportRow extends RepresentativeIdentity {
+interface ReportRow extends RepresentativeIdentity, SourceRefRow {
   role: string;
   body_mode: "full" | "summary";
   score: number | null;
@@ -59,8 +60,6 @@ interface ReportRow extends RepresentativeIdentity {
   url: string;
   selected: boolean;
   at: Date;
-  source_id: string;
-  source_name: string;
   first_party: boolean;
   fact_id: number;
 }
@@ -74,7 +73,7 @@ interface ReportRow extends RepresentativeIdentity {
 async function storyReports(storyId: number, now: Date): Promise<ReportRow[]> {
   return sql<ReportRow[]>`
     SELECT DISTINCT ON (p.article_id) p.article_id AS id, p.title, p.summary, p.url, p.selected,
-      coalesce(p.published_at, p.discovered_at) AS at, s.id AS source_id, s.name AS source_name,
+      coalesce(p.published_at, p.discovered_at) AS at, ${SOURCE_REF_COLUMNS},
       (s.tier = 'T1') AS first_party, f.id AS fact_id,
       CASE WHEN ${compositeCondition()} THEN 'mention' ELSE fa.role END AS role, p.body_mode, p.score, p.timeline_at, ${REPRESENTATIVE_COLUMNS}
     FROM facts f JOIN fact_articles fa ON fa.fact_id = f.id JOIN publications p ON p.article_id = fa.article_id
@@ -88,7 +87,7 @@ function reportView(r: ReportRow): StoryReportView {
     id: r.id,
     title: r.title,
     summary: r.summary,
-    source: { id: r.source_id, name: publicSourceName(r.source_name), firstParty: r.first_party },
+    source: { ...sourceRef(r), firstParty: r.first_party },
     publishedAt: r.at.toISOString(),
     selected: r.selected,
   };
@@ -128,7 +127,8 @@ async function storyContent(storyId: number, now: Date) {
   const latestAt = latest.at;
   // Without a digest or a summary of its own, the story opens with its first development's representative report.
   const origin = developments[developments.length - 1]?.representative;
-  const excerpt = !text.digest && !text.summary && origin?.summary ? { itemId: origin.id, text: origin.summary, sourceId: origin.source_id, sourceName: publicSourceName(origin.source_name) } : null;
+  const cited = origin && sourceRef(origin);
+  const excerpt = !text.digest && !text.summary && origin?.summary ? { itemId: origin.id, text: origin.summary, sourceId: origin.source_id, sourceName: cited!.outlet ?? cited!.name } : null;
   const head = {
     publicId: s.public_id,
     title: s.title,
