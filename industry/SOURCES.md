@@ -13,10 +13,39 @@
 - 台灣：iThome（開啟）、數位時代（關閉）。
 
 ## Google 新聞搜尋
-台灣金控、銀行、保險導入 AI 的中文報導，主要靠 Google 新聞搜尋的 RSS。在後台新增 `rss` 來源，`feedUrl` 填搜尋網址，例如：
+金融業導入 AI 的案例以英文報導最多、最早，台灣金控、銀行、保險的中文報導次之，日文選用。這些都靠 Google 新聞搜尋的 RSS 補上。在後台新增 `rss` 來源，`feedUrl` 填搜尋網址：`https://news.google.com/rss/search?q=<查詢，URL 編碼>&<語言參數>`。`when:7d` 的冒號不要編碼。
+
+| 語言 | 語言參數 |
+|---|---|
+| 英文 | `hl=en-US&gl=US&ceid=US:en` |
+| 繁中 | `hl=zh-TW&gl=TW&ceid=TW:zh-Hant` |
+| 日文 | `hl=ja&gl=JP&ceid=JP:ja` |
+
+建議的查詢（2026-11-26 實測，7 天內各有十幾到六十幾則）：
+
+| ID | 查詢 | 建議 |
+|---|---|---|
+| `gnews-en-bank-genai` | `bank "generative AI" when:7d` | 開 |
+| `gnews-en-bank-agentic` | `bank ("AI agent" OR agentic) when:7d` | 開 |
+| `gnews-en-big-banks-ai` | `(JPMorgan OR "Goldman Sachs" OR "Morgan Stanley" OR Citi OR "Bank of America" OR HSBC OR "Wells Fargo") ("generative AI" OR "AI agent" OR agentic OR "AI tool" OR "AI assistant") when:7d` | 開 |
+| `gnews-en-insurer-ai` | `insurer ("generative AI" OR "AI agent" OR agentic) when:7d` | 開 |
+| `gnews-en-wealth-ai` | `("wealth management" OR "asset manager") AI when:7d` | 開 |
+| `gnews-en-agentic-payments` | `("agentic payments" OR "agentic commerce") (Visa OR Mastercard OR PayPal OR Stripe OR bank) when:7d` | 開 |
+| `gnews-fhc-ai` | `金控 AI when:7d` | 開 |
+| `gnews-bank-genai` | `銀行 生成式AI when:7d` | 開 |
+| `gnews-insurance-ai` | `保險 AI 導入 when:7d` | 開 |
+| `gnews-ja-bank-genai` | `銀行 生成AI when:7d` | 選用 |
+| `gnews-ja-megabanks-genai` | `(三菱UFJ OR 三井住友 OR みずほ OR りそな) 生成AI when:7d` | 選用 |
+| `gnews-ja-insurer-ai` | `(損保 OR 生保 OR 東京海上 OR 第一生命) AI 導入 when:7d` | 選用，雜訊較多 |
+
+- 只寫公司名加 AI 的查詢（例如只列大銀行名稱）會混進大量股市評論，要再加「generative AI」「AI agent」這類詞收窄。
+- 「證券 AI」「金管會 AI」「メガバンク AI」實測多半是 AI 股市、券商研報或不相關的同名詞，不建議開。
+- 同一篇文章被幾個查詢同時抓到時，用原文網址去重，只算一篇。
+
+例如第一個查詢的採集配置：
 
 ```json
-{ "feedUrl": "https://news.google.com/rss/search?q=%E9%87%91%E6%8E%A7+AI+when:7d&hl=zh-TW&gl=TW&ceid=TW:zh-Hant" }
+{ "feedUrl": "https://news.google.com/rss/search?q=bank+%22generative+AI%22+when:7d&hl=en-US&gl=US&ceid=US:en" }
 ```
 
 `modules/google-news/` 會自動處理 `news.google.com` 的訂閱：
