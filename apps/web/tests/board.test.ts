@@ -37,6 +37,9 @@ test("the banner holds the best report of each category, and needs two", () => {
   const of = (id: string, category: "fin-ai" | "fin-reg", score: number) => feedItem({ id, title: id, category, score });
   assert.deepEqual(heroStories([of("a", "fin-ai", 50), of("b", "fin-ai", 80), of("c", "fin-reg", 60)])?.map((s) => s.id), ["b", "c"]);
   assert.equal(heroStories([of("a", "fin-ai", 50), of("b", "fin-ai", 80)]), null);
+  // A report of an event another card holds gives its category's place to the next report.
+  const held = { ...of("d", "fin-reg", 90), sameEvent: { id: "b", title: "b" } };
+  assert.deepEqual(heroStories([of("b", "fin-ai", 80), held, of("c", "fin-reg", 60)])?.map((s) => s.id), ["b", "c"]);
 });
 
 test("a card is dated by its event when that came first, else by its publication, else by its collection", () => {
