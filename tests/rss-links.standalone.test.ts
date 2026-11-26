@@ -21,8 +21,8 @@ const pages: Record<string, string> = {
   "/rss/feed.xml": `<rss version="2.0"><channel><title>Blog</title><item><title>Release notes</title><link>/blog/zh/posts/release/</link></item><item><title>Elsewhere</title><link>https://publisher.example/post</link></item></channel></rss>`,
   // FINRA's news releases wrap each title in a link and give two-digit years.
   "/linked-titles.xml": `<rss version="2.0"><channel><title>News Releases</title><item><title><a href="/media/fine" hreflang="en">FINRA Fines Webull &amp; Co $4.2 Million</a></title><link>https://publisher.example/media/fine</link><pubDate>Thu, 05 Nov 26 12:00:00 +0000</pubDate></item></channel></rss>`,
-  // Richer markup stays skipped: the parser drops its text order, and a script is not a headline.
-  "/marked-up-titles.xml": `<rss version="2.0"><channel><title>News</title>${["<script>debug()</script><style>b{}</style>", "<b>New</b><b>research</b>", '<a href="/x">FINRA fines <em>Webull</em> today</a>', "<script>debug()</script>"].map((title, i) => `<item><title>${title}</title><link>https://publisher.example/${i}</link></item>`).join("")}</channel></rss>`,
+  // Any other markup stays skipped: the parser drops its text order, and a script is not a headline.
+  "/marked-up-titles.xml": `<rss version="2.0"><channel><title>News</title>${["<script>debug()</script><style>b{}</style>", "<script>debug()</script>", "<b>New</b><b>research</b>", '<a href="/x">FINRA fines <em>Webull</em> today</a>', "<xhtml:script>debug()</xhtml:script>", "<noscript>Enable JavaScript</noscript>", "<a>Before <![CDATA[Headline]]> after</a>", "<a><![CDATA[New]]><![CDATA[research]]></a>"].map((title, i) => `<item><title>${title}</title><link>https://publisher.example/${i}</link></item>`).join("")}</channel></rss>`,
   "/fragments": feed(entry('<link href="notes#first"/>') + entry('<link href="notes#second"/>'), ' xml:base="https://publisher.example/"'),
 };
 const server = http.createServer((req, res) => {

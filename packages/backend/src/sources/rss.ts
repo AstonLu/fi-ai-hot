@@ -37,18 +37,18 @@ function text(v: unknown): string {
   return "";
 }
 
-/** A title whose only content is one plain-text element, e.g. FINRA's <title><a href="…">Headline</a></title>.
- * Anything richer stays empty, as before: the parser loses the order of mixed text and markup. */
-function elementText(v: unknown): string {
+/** A title that is only a link, e.g. FINRA's <title><a href="…">Headline</a></title>, reads as the link's text.
+ * Any other markup stays empty, as before: the parser loses the order of mixed text and markup. */
+function linkOnlyText(v: unknown): string {
   const own = text(v);
   if (own || !v || typeof v !== "object" || Array.isArray(v)) return own;
-  const children = Object.entries(v as Record<string, unknown>).filter(([key]) => !key.startsWith("@"));
-  if (children.length !== 1) return "";
-  const [name, child] = children[0]!;
-  if (/^(script|style)$/i.test(name) || Array.isArray(child)) return "";
-  const plain = typeof child === "string" || typeof child === "number" ||
-    (!!child && typeof child === "object" && Object.keys(child).every((key) => key.startsWith("@") || key === "#text" || key === "#cdata"));
-  return plain ? text(child) : "";
+  const children = Object.keys(v).filter((key) => !key.startsWith("@"));
+  if (children.length !== 1 || children[0] !== "a") return "";
+  const link = (v as Record<string, unknown>).a;
+  if (typeof link === "string") return link;
+  if (!link || typeof link !== "object" || Array.isArray(link)) return "";
+  const content = Object.entries(link).filter(([key]) => !key.startsWith("@"));
+  return content.length === 1 && (content[0]![0] === "#text" || content[0]![0] === "#cdata") && typeof content[0]![1] === "string" ? content[0]![1] : "";
 }
 
 /** Atom defaults to text: XML entities have already been decoded, and literal markup is not HTML. */
@@ -202,7 +202,7 @@ export async function fetchRss(source: SourceRow, opts: { force?: boolean } = {}
       // which a browser plays. Its identity stays the one its guid gives, and it has no page to read a body from.
       const mediaFile = !page && guid ? enclosures.find((e) => /^(audio|video)\//.test(e?.["@type"] ?? ""))?.["@url"] ?? "" : "";
       const link = page || mediaFile || guid;
-      const title = collapseWhitespace(stripTags(elementText(it.title)));
+      const title = collapseWhitespace(stripTags(linkOnlyText(it.title)));
       if (!link || !title) continue;
       const contentEncoded = text(it["content:encoded"]);
       const description = text(it.description);
