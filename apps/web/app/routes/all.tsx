@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { redirect, useLoaderData, useNavigation, useSearchParams } from "react-router";
+import { redirect, useLoaderData, useLocation, useNavigation, useSearchParams } from "react-router";
 import type { Route } from "./+types/all";
 import type { PoolResponse } from "@aihot/contracts/site";
 import { displayTagIn } from "@aihot/contracts/taxonomy";
@@ -11,7 +11,7 @@ import { pageReuse } from "../lib/page-reuse";
 import { feedListPath, filterParams, hasFeedFilters, itemListLd, listPath, pageMeta, readFilters } from "../lib/seo";
 import { ActiveFilters, CategoryRow, FeedBar } from "../features/feed/Filters";
 import { PillTabs } from "../components/ui/Tabs";
-import { ItemBoard, Pagination } from "../features/feed/ItemBoard";
+import { PoolFeed } from "../features/feed/PoolFeed";
 import { EmptyState } from "../components/ui/Page";
 import { IconSearch } from "../components/icons";
 import { PhoneBar } from "../components/shell/PhoneBar";
@@ -79,6 +79,7 @@ export default function AllPage() {
   const { data } = useLoaderData<typeof loader>();
   const [params] = useSearchParams();
   const navigation = useNavigation();
+  const location = useLocation();
   const t = useT();
   const locale = useLocale();
   const f = data.filters;
@@ -156,11 +157,14 @@ export default function AllPage() {
             </EmptyState>
           </div>
         ) : (
-          <ItemBoard items={data.items} />
+          <PoolFeed
+            key={location.key}
+            initial={data}
+            api={listPath(apiIn("/pool", locale), { ...filterParams(f), q: f.q, tab: f.q && f.tab === "relevance" ? "relevance" : null })}
+            pageHref={(p) => pageHref(params, p)}
+          />
         )}
       </div>
-      <Pagination page={data.page} pageCount={data.pageCount} href={(p) => pageHref(params, p)} />
-      {data.page >= 50 && <p className="mt-4 text-center text-ui-caption text-ink-4">{t("最多提供 50 頁，更早的內容請使用搜索或主題頁。", "Only the first 50 pages are shown. For older news, use Search or Topics.")}</p>}
     </div>
   );
 }

@@ -1,14 +1,12 @@
 // The 精選 home's feed as one board of cards, newest first. Keeps its place across back navigation and loads
-// further pages. There is no "new items" prompt: readers refresh for the latest head.
+// further pages as the reader scrolls, to the end. There is no "new items" prompt: readers refresh for the latest head.
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigation } from "react-router";
 import { ToggleChip } from "../../components/ui/Controls";
 import type { TimelineCard, TimelineFilters, TimelineResponse } from "@aihot/contracts/site";
 import { SITE } from "@aihot/site";
-import { IconArrowRight } from "../../components/icons";
-import { RingMark } from "@aihot/site/brand/Logo.tsx";
-import { Link } from "../../lib/link";
 import { Board, type BoardEntry } from "./Board";
+import { FeedEnd } from "./FeedEnd";
 import { EmptyState } from "../../components/ui/Page";
 import { apiIn, useLocale, useT } from "../../lib/i18n";
 import { isHydrated } from "../../lib/hydration";
@@ -16,18 +14,15 @@ import { markRead, setUnreadOnly, useReadSet, useUnreadOnly } from "../../lib/lo
 import { filterParams, listPath } from "../../lib/seo";
 import { isReload, readSnapshot, restoreAnchor, saveSnapshot, useSaveOnLeave } from "../../lib/restore";
 
-const AUTO_BATCHES = 3;
-
 interface ListState {
   version: 3;
   /** The pages as they were loaded: each is laid out on from the one before. */
   pages: TimelineCard[][];
   nextCursor: string | null;
-  batches: number;
 }
 
 function fromResponse(r: TimelineResponse): ListState {
-  return { version: 3, pages: [r.cards], nextCursor: r.nextCursor, batches: 1 };
+  return { version: 3, pages: [r.cards], nextCursor: r.nextCursor };
 }
 
 /** 只看未讀, kept in this browser: at the end of the home page's category row. */
@@ -157,7 +152,6 @@ export function Timeline({ initial, filters }: { initial: TimelineResponse; filt
           ...prev,
           pages: [...prev.pages, added],
           nextCursor: page.nextCursor,
-          batches: prev.batches + 1,
         };
       });
     } catch {
@@ -169,18 +163,6 @@ export function Timeline({ initial, filters }: { initial: TimelineResponse; filt
       }
     }
   }, [filters]);
-
-  // Auto-load a few batches when the sentinel nears the viewport, then hand over to a button.
-  const sentinel = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    const el = sentinel.current;
-    if (!el || !state.nextCursor || state.batches >= AUTO_BATCHES) return;
-    const io = new IntersectionObserver((entries) => {
-      if (entries.some((e) => e.isIntersecting)) void loadMore();
-    }, { rootMargin: "900px 0px" });
-    io.observe(el);
-    return () => io.disconnect();
-  }, [state.nextCursor, state.batches, loadMore]);
 
   // 只看未讀 hides cards read in this browser: an ordinary card by its own id, a reading group by any
   // of its selected reports, so a read representative does not hide the unread reports behind it.
@@ -194,25 +176,17 @@ export function Timeline({ initial, filters }: { initial: TimelineResponse; filt
     [state.pages, unreadOnly, unreadVisible],
   );
   const visibleCount = useMemo(() => pages.reduce((n, page) => n + page.length, 0), [pages]);
-  // With the filter on, a page whose cards are all read would show nothing: keep paging until
-  // something is visible. It stops at the list's own automatic bound and leaves the rest to the
-  // button, so loading keeps a clear edge and a manual way to continue.
-  useEffect(() => {
-    if (!unreadOnly || visibleCount > 0 || loadingMore || loadError) return;
-    if (!state.nextCursor || state.batches >= AUTO_BATCHES) return;
-    void loadMore();
-  }, [unreadOnly, visibleCount, loadingMore, loadError, state.nextCursor, state.batches, loadMore]);
+  // With the filter on, a batch whose cards are all read shows nothing new; the foot stays in view, so
+  // loading goes on by itself until something unread appears or the list ends.
 
   return (
     <div>
-      {visibleCount === 0 && !loadingMore && (
+      {visibleCount === 0 && !loadingMore && (!state.nextCursor || loadError) && (
         <div>
           {unreadOnly ? (
             state.nextCursor ? (
               <EmptyState title={t("這批精選都讀過了", "You've read all of these")}>
-                {loadError
-                  ? t("載入更早內容失敗，點下方重試按鈕繼續檢視。", "Couldn't load older picks. Try again below.")
-                  : t("點下方“載入更多”，繼續看更早的未讀精選。", "Use “Load more” below for older unread picks.")}
+                {t("載入更早內容失敗，點下方重試按鈕繼續檢視。", "Couldn't load older picks. Try again below.")}
               </EmptyState>
             ) : (
               <EmptyState title={t("沒有未讀的精選內容", "No unread top picks")}>{t("關掉「只看未讀」可以看到全部內容。", "Turn off “Unread only” to see everything.")}</EmptyState>
@@ -232,39 +206,14 @@ export function Timeline({ initial, filters }: { initial: TimelineResponse; filt
         onOpen={markRead}
       />
 
-      <div ref={sentinel} aria-hidden="true" />
-      <FeedEnd loading={loadingMore} error={loadError} hasMore={!!state.nextCursor} manual={state.batches >= AUTO_BATCHES} empty={visibleCount === 0} onMore={loadMore} />
-    </div>
-  );
-}
-
-/** The foot of a paged list: loading, retry, "載入更多" after a few automatic pages, or at the end the way to everything tracked. */
-function FeedEnd({ loading, error, hasMore, manual, empty, onMore }: { loading: boolean; error: boolean; hasMore: boolean; manual: boolean; empty: boolean; onMore: () => void }) {
-  const t = useT();
-  return (
-    <div className="flex justify-center py-10">
-      {loading ? (
-        <span className="inline-flex items-center gap-2 text-ui-caption-lg text-ink-4">
-          <RingMark className="size-4 text-accent" spinning /> {t("正在載入", "Loading")}
-        </span>
-      ) : error ? (
-        <button type="button" onClick={onMore} className="btn btn-quiet text-hot">
-          {t("載入失敗，點此重試", "Couldn't load. Try again")}
-        </button>
-      ) : hasMore ? (
-        manual && (
-          <button type="button" onClick={onMore} className="btn btn-quiet">
-            {t("載入更多", "Load more")}
-          </button>
-        )
-      ) : (
-        !empty && (
-          <Link to="/all" className="btn btn-quiet">
-            {t("看全部動態", "See all news")}
-            <IconArrowRight size={17} className="btn-arrow" />
-          </Link>
-        )
-      )}
+      <FeedEnd
+        hasMore={!!state.nextCursor}
+        loading={loadingMore}
+        error={loadError}
+        empty={visibleCount === 0}
+        onMore={loadMore}
+        nextHref={state.nextCursor ? listPath("/", { ...filterParams(filters), cursor: state.nextCursor }) : null}
+      />
     </div>
   );
 }
