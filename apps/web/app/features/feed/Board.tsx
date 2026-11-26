@@ -4,13 +4,12 @@ import { memo, useMemo, type CSSProperties } from "react";
 import type { FeedItemSummary, GroupInfo, TimelineFilters } from "@aihot/contracts/site";
 import { categoryLabel } from "@aihot/contracts/taxonomy";
 import { shortAddresses } from "@aihot/contracts/addresses";
-import { beijingDate, beijingTime } from "@aihot/contracts/time";
 import { IntentLink } from "../../components/ui/IntentLink";
 import { Picture } from "../../components/ui/Picture";
 import { SourceAvatar } from "../../components/ui/SourceAvatar";
 import { sourceIcon } from "@aihot/site/brand/source-icons.ts";
 import { Link } from "../../lib/link";
-import { monthDay } from "../../lib/format";
+import { cardSource, cardTime } from "../../lib/format";
 import { useLocale, useT } from "../../lib/i18n";
 import { rememberPreview } from "../item/preview";
 import { coverOf, isPost, layoutBoard, type BoardCard } from "./layout";
@@ -19,7 +18,6 @@ import { StarButton, readTone } from "./parts";
 
 export interface BoardEntry {
   key: string;
-  at: string;
   item: FeedItemSummary;
   group: GroupInfo | null;
 }
@@ -53,7 +51,7 @@ export function Board({ pages, complete = true, filters, isRead, onOpen, fresh }
   );
 }
 
-const Card = memo(function Card({ entry: { at, item, group }, kind, filters, read, onOpen }: {
+const Card = memo(function Card({ entry: { item, group }, kind, filters, read, onOpen }: {
   entry: BoardEntry;
   kind: BoardCard["kind"];
   filters?: TimelineFilters;
@@ -76,10 +74,10 @@ const Card = memo(function Card({ entry: { at, item, group }, kind, filters, rea
     </IntentLink>
   );
   const author = item.channel === "x" ? item.x : null;
-  const name = author?.authorName ?? item.source.name;
+  const source = cardSource(item.source);
+  const name = author?.authorName ?? source.name;
   const tone = kind === "over" ? "" : readTone(read, "text-ink");
-  const today = beijingDate(Date.now());
-  const day = beijingDate(at);
+  const time = cardTime(item, Date.now(), locale);
   const picture = cover && (kind === "picture" || kind === "feature" || kind === "over") && (
     <span className="board-picture">
       <Picture
@@ -96,7 +94,7 @@ const Card = memo(function Card({ entry: { at, item, group }, kind, filters, rea
     <article data-item-id={item.id} className={`board-card is-${kind} ${wide ? "board-wide" : ""}`}>
       {wide && picture}
       <header className="board-source">
-        <SourceAvatar id={item.source.id} name={name} avatarUrl={author?.avatarUrl} avatarSrcSet={author?.avatarSrcSet} iconUrl={sourceIcon(item.source.id)} size={wide ? 20 : 28} />
+        <SourceAvatar id={source.id} name={name} avatarUrl={author?.avatarUrl} avatarSrcSet={author?.avatarSrcSet} iconUrl={sourceIcon(source.id)} size={wide ? 20 : 28} />
         <span className="min-w-0 truncate">{name}</span>
         <StarButton item={item} className="board-star size-7" />
       </header>
@@ -133,7 +131,7 @@ const Card = memo(function Card({ entry: { at, item, group }, kind, filters, rea
           <span className="min-w-0 truncate">
             {group && (group.additionalSourceCount > 0 || group.reportCount > 1) ? <GroupButton compact group={group} filters={filters} parentId={item.id} /> : wide && item.category ? categoryLabel(item.category, locale) : null}
           </span>
-          <time dateTime={at} suppressHydrationWarning className="shrink-0">{day === today ? beijingTime(at) : monthDay(day, undefined, locale)}</time>
+          <time dateTime={time.dateTime} suppressHydrationWarning className="shrink-0">{time.text}</time>
         </span>
       </footer>
     </article>

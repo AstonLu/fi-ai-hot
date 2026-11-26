@@ -1,7 +1,8 @@
 // A Google News search feed is stored under the original addresses: its entries link to Google's
 // article pages, whose signature batchexecute turns into the address. Titles lose the " - 媒體名"
 // Google appends, an id is resolved once, an entry that cannot be resolved waits for a later run, and
-// a run where every new link fails is a failed run. A local stand-in plays Google.
+// a run where every new link fails is a failed run. Cards name a report's outlet, not the search, and the
+// search only when no outlet is known. A local stand-in plays Google.
 import { tag } from "../../../tests/setup.ts";
 import assert from "node:assert/strict";
 import http from "node:http";
@@ -10,6 +11,7 @@ import { config } from "@aihot/backend/config";
 import { closeDb, sql } from "@aihot/backend/db";
 import { stopBoss } from "@aihot/backend/jobs/queue";
 import { installModules } from "@aihot/backend/modules";
+import { ITEM_COLUMNS, ITEM_FROM, toFeedItemSummary, type ItemRow } from "@aihot/backend/publication/items";
 import { collectSource } from "@aihot/backend/sources/collect";
 import { splitTitle } from "../backend/links.ts";
 import { googleNewsModule } from "../server.ts";
@@ -131,4 +133,29 @@ test("other feeds are left as they are", async () => {
   assert.deepEqual((await articles(OTHER)).map((a) => [a.title, a.excerpt]), [[`A plain entry - with a dash ${T}`, "Its own summary"]]);
   // The outlet is only taken off when Google's description names it.
   assert.deepEqual(splitTitle("AI 客服上線 - 經濟日報", "AI 客服上線"), { title: "AI 客服上線 - 經濟日報", outlet: null });
+});
+
+test("cards name a report's outlet, and the source when no outlet is known", async () => {
+  // A feed of another site, whose author is a writer, never an outlet.
+  const plain = `test-rss-writer-${T}`;
+  await sql`INSERT INTO sources (id, name, kind, config, tier, participation_mode) VALUES
+    (${plain}, 'Writer feed', 'rss', ${sql.json({ feedUrl: "https://writer.example.org/feed.xml" })}, 'T2', 'editorial')`;
+  await sql`INSERT INTO articles (id, source_id, identity_key, url, title, author, discovered_at, timeline_at)
+    VALUES (${`${T}-writer`}, ${plain}, ${`${T}-writer`}, ${`https://writer.example.org/${T}`}, 'A post', 'A Writer', now(), now())`;
+  // A Google report whose outlet was not read keeps the source's name.
+  await sql`UPDATE articles SET author = NULL WHERE url = ${`https://www.example.com/article/${T}`}`;
+  const stored = await sql<{ id: string; source_id: string; url: string; title: string }[]>`
+    SELECT id, source_id, url, title FROM articles WHERE source_id IN (${SOURCE}, ${plain}) ORDER BY url`;
+  const at = new Date();
+  for (const a of stored) {
+    await sql`INSERT INTO publications (article_id, title, source_id, channel, url, discovered_at, timeline_at, published_at, sort_at,
+        eligible, selected, visible_after, visibility, tags, summary)
+      VALUES (${a.id}, ${a.title}, ${a.source_id}, 'news', ${a.url}, ${at}, ${at}, ${at}, ${at}, true, false, ${at}, 'public', '{}', 'summary')`;
+  }
+  const rows = await sql<ItemRow[]>`SELECT ${ITEM_COLUMNS} ${ITEM_FROM} WHERE p.article_id IN ${sql(stored.map((a) => a.id))} ORDER BY p.url`;
+  assert.deepEqual(rows.map((r) => toFeedItemSummary(r).source), [
+    { id: SOURCE, name: "Google 新聞：金控 AI", outlet: "經濟日報" },
+    { id: plain, name: "Writer feed" },
+    { id: SOURCE, name: "Google 新聞：金控 AI" },
+  ]);
 });

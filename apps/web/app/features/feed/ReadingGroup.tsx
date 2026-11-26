@@ -5,7 +5,7 @@ import { Collapse } from "../../components/ui/Presence";
 import { Sheet } from "../../components/ui/Sheet";
 import type { GroupInfo, GroupReport, GroupReportsResponse, TimelineFilters } from "@aihot/contracts/site";
 import { IconArrowUpRight, IconChevronDown, IconChevronRight } from "../../components/icons";
-import { monthDayTime } from "../../lib/format";
+import { cardSource, monthDayTime } from "../../lib/format";
 import { useReadSet } from "../../lib/local-state";
 import { readTone } from "./parts";
 import { isReload } from "../../lib/restore";
@@ -139,7 +139,7 @@ export function GroupSources({ group, filters, parentId }: { group: GroupInfo; f
         <ul className="divide-y divide-line-soft">
           {others.map((r) => (
             <li key={r.id} className="flex items-baseline gap-2 py-1.5 text-ui-label">
-              <span className="w-[108px] shrink-0 truncate text-ink-4">{r.source.name}</span>
+              <span className="w-[108px] shrink-0 truncate text-ink-4">{cardSource(r.source).name}</span>
               <Link viewTransition to={`/items/${r.id}`} className={`min-w-0 flex-1 truncate hover:text-accent ${readTone(read.has(r.id), "text-ink-2")}`}>
                 {r.title}
               </Link>
@@ -205,7 +205,7 @@ function GroupSheet({ open, onClose, group, filters, parentId }: {
             <li key={r.id} className="flex items-start gap-2 py-3">
               <Link viewTransition to={`/items/${r.id}`} className="min-w-0 flex-1 active:opacity-60">
                 <span className="block text-ui-caption-lg text-ink-4">
-                  {r.source.name} · <span className="num">{monthDayTime(r.timelineAt, locale)}</span>
+                  {cardSource(r.source).name} · <span className="num">{monthDayTime(r.timelineAt, locale)}</span>
                 </span>
                 <span className={`mt-0.5 line-clamp-2 text-ui-body leading-[1.5] ${readTone(read.has(r.id), "text-ink-2")}`}>{r.title}</span>
               </Link>

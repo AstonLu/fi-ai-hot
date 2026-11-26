@@ -9,7 +9,7 @@ import { useT } from "../../lib/i18n";
 
 export function ItemBoard({ items }: { items: FeedItemSummary[] }) {
   const readSet = useReadSet();
-  const pages = useMemo(() => [items.map((item) => ({ key: item.id, at: item.timelineAt, item, group: null }))], [items]);
+  const pages = useMemo(() => [items.map((item) => ({ key: item.id, item, group: null }))], [items]);
   return <Board pages={pages} isRead={({ item }) => readSet.has(item.id)} onOpen={markRead} />;
 }
 

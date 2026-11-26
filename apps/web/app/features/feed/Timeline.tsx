@@ -190,7 +190,7 @@ export function Timeline({ initial, filters }: { initial: TimelineResponse; filt
     [readSet],
   );
   const pages = useMemo<BoardEntry[][]>(
-    () => state.pages.map((page) => (unreadOnly ? page.filter(unreadVisible) : page).map(({ key, anchorAt, item, group }) => ({ key, at: anchorAt, item, group }))),
+    () => state.pages.map((page) => (unreadOnly ? page.filter(unreadVisible) : page).map(({ key, item, group }) => ({ key, item, group }))),
     [state.pages, unreadOnly, unreadVisible],
   );
   const visibleCount = useMemo(() => pages.reduce((n, page) => n + page.length, 0), [pages]);

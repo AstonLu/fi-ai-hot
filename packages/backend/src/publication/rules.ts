@@ -1,5 +1,7 @@
 // Publication rules. Each rule is defined once here and used by every exit.
+import type { SourceRef } from "@aihot/contracts/site";
 import { serverModules } from '../modules.ts';
+import type { SourceRow } from "../sources/types.ts";
 
 /** Presentation exceptions never alter scoring, selection eligibility or fact membership. */
 export function independentSelectedSources(): string[] {
@@ -18,6 +20,31 @@ export function independentOfEcho(sourceId: string): string | null {
 
 export function echoesOfIndependent(sourceId: string): string[] {
   return serverModules().flatMap((m) => Object.entries(m.independentSelectedEchoes ?? {}).filter(([, of]) => of === sourceId).map(([echo]) => echo));
+}
+
+/**
+ * The outlet a report came from when its source relays other outlets' reports (ServerModule.relays) and the
+ * article names one as its author; null otherwise, and the card names the source.
+ */
+export function relayedOutlet(source: Pick<SourceRow, "kind" | "config">, author: string | null): string | null {
+  const outlet = author?.trim();
+  return outlet && serverModules().some((m) => m.relays?.(source)) ? outlet : null;
+}
+
+/** What sourceRef reads of a report (items.ts SOURCE_REF_COLUMNS). */
+export interface SourceRefRow {
+  source_id: string;
+  source_name: string;
+  source_kind: SourceRow["kind"];
+  /** Read only to tell whether the source relays other outlets' reports (relayedOutlet). */
+  source_config: SourceRow["config"];
+  author: string | null;
+}
+
+/** A source as readers see it on a report: its public name, and the outlet of a relayed report. */
+export function sourceRef(row: SourceRefRow): SourceRef {
+  const outlet = relayedOutlet({ kind: row.source_kind, config: row.source_config }, row.author);
+  return { id: row.source_id, name: publicSourceName(row.source_name), ...(outlet ? { outlet } : {}) };
 }
 
 export interface SourceFacts {

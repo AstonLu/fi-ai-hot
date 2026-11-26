@@ -403,6 +403,12 @@
   }
 }
 
+/*
+ * The feed bar's backdrop reaches the window's sides by 50vw, which also counts a classic scrollbar: that much
+ * passed the right edge and scrolled the page sideways (1440px, 2026-11-26). The page cuts what passes its sides.
+ */
+#main { overflow-x: clip; }
+
 /* The feed's bar: the categories, and once it has reached the top of the window the brand and the search too. */
 .feed-bar { position: relative; display: flex; align-items: center; height: 64px; margin-bottom: 8px; }
 .feed-row { mask-image: linear-gradient(to right, transparent, #000 var(--fade-back, 0px), #000 calc(100% - var(--fade-on, 0px)), transparent); }
@@ -439,7 +445,10 @@
 .hero-face:first-child { margin-left: -2px; }
 .hero-title { font-size: var(--text-ui-title-6); line-height: 1.25; font-weight: 700; letter-spacing: -0.01em; }
 .hero-words { display: grid; font-family: "Songti TC", "Noto Serif TC", "Source Han Serif TC", "PMingLiU", Georgia, serif; font-weight: 400; font-size: 1.06em; }
-.hero-word { grid-area: 1 / 1; white-space: nowrap; }
+/* Only the current word is there to read; the one leaving stays until its letters are gone. */
+.hero-word { grid-area: 1 / 1; white-space: nowrap; visibility: hidden; }
+.hero-word[data-state="on"] { visibility: visible; }
+.hero-word[data-state="off"] { transition: visibility 0s 700ms; }
 .hero-word > span { display: inline-block; opacity: 0; transform: translateY(60%); filter: blur(6px); }
 .hero-word[data-state="on"] > span { opacity: 1; transform: none; filter: none; transition: opacity 420ms, transform 620ms var(--ease-out-quart), filter 420ms; transition-delay: calc(90ms + var(--k) * 45ms); }
 .hero-word[data-state="off"] > span { transform: translateY(-60%); transition: opacity 260ms, transform 420ms var(--ease-out-quart), filter 260ms; transition-delay: calc(var(--k) * 25ms); }
@@ -472,6 +481,15 @@
 @media (hover: hover) {
   .hero-stage:hover .hero-bar, .hero:has(:focus-visible) .hero-bar { animation-play-state: paused; }
 }
+/* Phones: a shorter stack of headline cards, so the list's first title shows on the first screen. */
+@media (max-width: 699px) {
+  .hero { gap: 16px; padding: 20px; }
+  .hero-copy { gap: 16px; }
+  .hero-stage { height: 140px; }
+  .hero-card { height: 132px; }
+  .hero-picture, .hero-summary { display: none; }
+  .hero-text.is-plain .hero-headline { margin-top: 0; font-size: var(--text-ui-body-lg); -webkit-line-clamp: 3; }
+}
 @media (min-width: 700px) {
   .hero { grid-template-columns: minmax(0, 1fr) 280px; align-items: center; min-height: 372px; margin-top: 8px; padding: 28px; }
   .hero-copy { height: 100%; }
@@ -487,7 +505,7 @@
 @media (prefers-reduced-motion: reduce) {
   .hero-bar { display: none; }
   .hero-pause { display: none; }
-  .hero-card, .hero-card::after, .hero-word > span, .hero-word[data-state] > span, .btn, .pill, .pill-lens, .btn-arrow, .hero-pause-mark, .feed-bar::before, .feed-slot, .board-card, .board-picture img { transition: none; }
+  .hero-card, .hero-card::after, .hero-word[data-state], .hero-word > span, .hero-word[data-state] > span, .btn, .pill, .pill-lens, .btn-arrow, .hero-pause-mark, .feed-bar::before, .feed-slot, .board-card, .board-picture img { transition: none; }
   .btn:active:not(:disabled), .btn-white:hover, .btn:hover .btn-arrow, .board-card:hover .board-picture img { transform: none; }
 }
 

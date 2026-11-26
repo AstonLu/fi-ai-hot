@@ -4,6 +4,7 @@ import type { FeedItemSummary } from "@aihot/contracts/site";
 import { IconBookmark } from "../../components/icons";
 import { toggleStar, useIsStarred } from "../../lib/local-state";
 import { useT } from "../../lib/i18n";
+import { cardSource } from "../../lib/format";
 
 /** The text colour of a report: grey once this browser has opened it, so the unread ones stand out. */
 export const readTone = (read: boolean, unread: string) => (read ? "text-ink-4" : unread);
@@ -16,7 +17,7 @@ export function useStar(item: Starrable) {
   const [pulse, setPulse] = useState(0);
   const toggle = () => {
     const added = toggleStar({
-      id: item.id, title: item.title, summary: item.summary, sourceName: item.source.name,
+      id: item.id, title: item.title, summary: item.summary, sourceName: cardSource(item.source).name,
       publishedAt: item.publishedAt, score: item.score, aiSelected: item.selected,
     });
     if (added) setPulse((p) => p + 1);

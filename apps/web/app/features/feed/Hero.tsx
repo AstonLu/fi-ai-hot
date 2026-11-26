@@ -9,6 +9,7 @@ import { IconArrowRight } from "../../components/icons";
 import { IntentLink } from "../../components/ui/IntentLink";
 import { Picture } from "../../components/ui/Picture";
 import { SourceAvatar } from "../../components/ui/SourceAvatar";
+import { cardSource } from "../../lib/format";
 import { useLocale, useT } from "../../lib/i18n";
 import { reducedMotion } from "../../lib/motion";
 import type { HeroStory } from "./hero-stories";
@@ -17,13 +18,19 @@ export function Hero({ stories }: { stories: HeroStory[] }) {
   const t = useT();
   const locale = useLocale();
   const [turn, setTurn] = useState(0);
+  // The story the last turn took away, whose word leaves as the front card's comes in.
+  const [left, setLeft] = useState<number | null>(null);
   const [paused, setPaused] = useState(false);
   const [inView, setInView] = useState(true);
   const box = useRef<HTMLElement>(null);
   const n = stories.length;
   const at = turn % n;
   const front = stories[at]!;
-  const next = () => setTurn((v) => v + 1);
+  const go = (k: number) => {
+    setLeft(at);
+    setTurn((v) => v + k);
+  };
+  const next = () => go(1);
 
   // Out of sight or in a hidden tab nothing turns.
   useEffect(() => {
@@ -49,7 +56,8 @@ export function Hero({ stories }: { stories: HeroStory[] }) {
     e.currentTarget.style.removeProperty("--lean-x");
     e.currentTarget.style.removeProperty("--lean-y");
   };
-  const names = [...new Set(stories.map((s) => s.source.name))];
+  // Counted and drawn as the cards name them: a relayed report by its outlet.
+  const sources = [...new Map(stories.map((s) => cardSource(s.source)).map((s) => [s.name, s])).values()];
   const word = (s: HeroStory) => (s.category ? t(`${categoryLabel(s.category, "zh")}動態`, categoryLabel(s.category, locale)) : "");
 
   return (
@@ -57,17 +65,17 @@ export function Hero({ stories }: { stories: HeroStory[] }) {
       <div className="hero-copy">
         <p className="hero-sources">
           <span className="flex" aria-hidden="true">
-            {[...new Map(stories.map((s) => [s.source.name, s.source])).values()].slice(0, 4).map((s) => (
+            {sources.slice(0, 4).map((s) => (
               <span key={s.name} className="hero-face"><SourceAvatar id={s.id} name={s.name} iconUrl={sourceIcon(s.id)} size={36} /></span>
             ))}
           </span>
-          <span>{t(`來自 ${names.length} 個來源`, `From ${names.length} ${names.length === 1 ? "source" : "sources"}`)}</span>
+          <span>{t(`來自 ${sources.length} 個來源`, `From ${sources.length} ${sources.length === 1 ? "source" : "sources"}`)}</span>
         </p>
         <p className="hero-title">
           {t("近期值得看的", "Worth reading in")}
           <span className="hero-words">
             {stories.map((s, i) => (
-              <span key={s.id} className="hero-word" data-state={i === at ? "on" : turn > 0 && i === (turn - 1) % n ? "off" : undefined} aria-hidden={i !== at || undefined}>
+              <span key={s.id} className="hero-word" data-state={i === at ? "on" : i === left ? "off" : undefined} aria-hidden={i !== at || undefined}>
                 {[...word(s)].map((c, k) => <span key={k} style={{ "--k": k } as CSSProperties}>{c === " " ? " " : c}</span>)}
               </span>
             ))}
@@ -90,13 +98,14 @@ export function Hero({ stories }: { stories: HeroStory[] }) {
         {stories.map((s, i) => {
           const k = (i - at + n) % n;
           const place = k === 0 ? "front" : k === 1 ? "next" : k === n - 1 ? "last" : "behind";
+          const source = cardSource(s.source);
           return (
             // Only the front card is the link readers reach by keyboard; the ones behind turn the stack under a pointer.
-            <div key={s.id} className="hero-card" data-place={place} aria-hidden={k !== 0 || undefined} onClick={k ? () => setTurn((v) => v + k) : undefined}>
+            <div key={s.id} className="hero-card" data-place={place} aria-hidden={k !== 0 || undefined} onClick={k ? () => go(k) : undefined}>
               <span className={`hero-text ${s.cover ? "" : "is-plain"}`}>
                 <span className="hero-source">
-                  <SourceAvatar id={s.source.id} name={s.source.name} iconUrl={sourceIcon(s.source.id)} size={24} />
-                  <span className="min-w-0 truncate">{s.source.name}</span>
+                  <SourceAvatar id={source.id} name={source.name} iconUrl={sourceIcon(source.id)} size={24} />
+                  <span className="min-w-0 truncate">{source.name}</span>
                 </span>
                 {s.cover && <span className="hero-picture"><Picture src={s.cover.fullUrl || s.cover.poster || s.cover.url} alt="" decoding="async" /></span>}
                 <span className="hero-headline">{s.title}</span>

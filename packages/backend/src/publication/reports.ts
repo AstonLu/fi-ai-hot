@@ -7,7 +7,7 @@ import { cached, type Cached } from "../lib/cache.ts";
 import { proxiedImage, proxiedImageSet } from "../media/imgproxy.ts";
 import { isoWeekRange, monthRange } from "@aihot/contracts/time";
 import { dailyUrl, itemUrl, periodUrl } from "./links.ts";
-import { publicSourceName } from "./rules.ts";
+import { publicSourceName, relayedOutlet, type SourceRefRow } from "./rules.ts";
 import { listedCondition } from "./scope.ts";
 import { mentionsIn } from "./mentions.ts";
 
@@ -37,8 +37,9 @@ interface Availability {
 async function availability(ids: string[]): Promise<Map<string, Availability>> {
   const out = new Map<string, Availability>();
   if (ids.length === 0) return out;
-  const rows = await sql<{ id: string; available: boolean; summary: string | null; first_party: boolean; source_id: string; source_name: string | null; icon_url: string | null; story_id: string | null; at: Date | null }[]>`
-    SELECT p.article_id AS id, (${listedCondition(new Date())}) AS available, p.summary, (s.tier = 'T1') AS first_party, p.source_id, s.name AS source_name, s.icon_url,
+  const rows = await sql<{ id: string; available: boolean; summary: string | null; first_party: boolean; source_id: string; source_name: string | null; source_kind: SourceRefRow["source_kind"] | null; source_config: SourceRefRow["source_config"] | null; author: string | null; icon_url: string | null; story_id: string | null; at: Date | null }[]>`
+    SELECT p.article_id AS id, (${listedCondition(new Date())}) AS available, p.summary, (s.tier = 'T1') AS first_party, p.source_id, s.name AS source_name,
+      s.kind AS source_kind, s.config AS source_config, (SELECT a.author FROM articles a WHERE a.id = p.article_id) AS author, s.icon_url,
       live_st.public_id::text AS story_id, coalesce(p.published_at, p.discovered_at) AS at
     FROM publications p LEFT JOIN sources s ON s.id = p.source_id
     LEFT JOIN LATERAL (
@@ -51,13 +52,15 @@ async function availability(ids: string[]): Promise<Map<string, Availability>> {
     ) live_st ON p.story_id IS NOT NULL
     WHERE p.article_id IN ${sql(ids)}`;
   for (const r of rows) {
+    // A relayed report is cited by its outlet, which the source's icon does not stand for.
+    const outlet = r.source_kind && relayedOutlet({ kind: r.source_kind, config: r.source_config ?? {} }, r.author);
     out.set(r.id, {
       available: r.available,
       summary: r.summary,
       firstParty: r.first_party,
       sourceId: r.source_id,
-      sourceName: r.source_name,
-      sourceIcon: r.icon_url,
+      sourceName: outlet ?? r.source_name,
+      sourceIcon: outlet ? null : r.icon_url,
       publishedAt: r.at,
       storyId: r.story_id,
     });

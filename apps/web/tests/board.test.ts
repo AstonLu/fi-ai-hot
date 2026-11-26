@@ -1,9 +1,11 @@
 // Failures guarded: two cards share a place; loading a page moves the cards above it; the banner repeats a
-// category, shows a weaker report than it could, or turns with a single story.
+// category, shows a weaker report than it could, or turns with a single story; a card dated by when it was
+// collected (every card of a run said 13:17), or by a later write-up of an older event.
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { layoutBoard } from "../app/features/feed/layout.ts";
 import { heroStories } from "../app/features/feed/hero-stories.ts";
+import { cardTime } from "../app/lib/format.ts";
 import { feedItem } from "./web-server.ts";
 
 const items = Array.from({ length: 90 }, (_, i) => feedItem({
@@ -35,4 +37,15 @@ test("the banner holds the best report of each category, and needs two", () => {
   const of = (id: string, category: "fin-ai" | "fin-reg", score: number) => feedItem({ id, title: id, category, score });
   assert.deepEqual(heroStories([of("a", "fin-ai", 50), of("b", "fin-ai", 80), of("c", "fin-reg", 60)])?.map((s) => s.id), ["b", "c"]);
   assert.equal(heroStories([of("a", "fin-ai", 50), of("b", "fin-ai", 80)]), null);
+});
+
+test("a card is dated by its event when that came first, else by its publication, else by its collection", () => {
+  const now = Date.parse("2026-11-26T06:00:00Z"); // 14:00 in Beijing
+  const collected = "2026-11-26T05:17:30Z";
+  const at = (fields: Parameters<typeof cardTime>[0]) => cardTime(fields, now).text;
+  assert.equal(at({ publishedAt: "2026-11-26T00:21:57Z", discoveredAt: collected }), "08:21");
+  assert.equal(at({ publishedAt: "2026-11-24T13:35:08Z", discoveredAt: collected }), "11月24日");
+  assert.equal(at({ publishedAt: null, discoveredAt: collected }), "13:17");
+  assert.equal(at({ publishedAt: "2026-11-20T21:05:45Z", discoveredAt: collected, eventDate: "2026-11-04" }), "11月4日");
+  assert.equal(cardTime({ publishedAt: "2026-11-20T21:05:45Z", discoveredAt: collected, eventDate: "2026-11-04" }, now).dateTime, "2026-11-04");
 });
