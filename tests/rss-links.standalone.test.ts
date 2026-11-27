@@ -23,6 +23,8 @@ const pages: Record<string, string> = {
   "/linked-titles.xml": `<rss version="2.0"><channel><title>News Releases</title><item><title><a href="/media/fine" hreflang="en">FINRA Fines Webull &amp; Co $4.2 Million</a></title><link>https://publisher.example/media/fine</link><pubDate>Thu, 05 Nov 26 12:00:00 +0000</pubDate></item></channel></rss>`,
   // Any other markup stays skipped: the parser drops its text order, and a script is not a headline.
   "/marked-up-titles.xml": `<rss version="2.0"><channel><title>News</title>${["<script>debug()</script><style>b{}</style>", "<script>debug()</script>", "<b>New</b><b>research</b>", '<a href="/x">FINRA fines <em>Webull</em> today</a>', "<xhtml:script>debug()</xhtml:script>", "<noscript>Enable JavaScript</noscript>", "<a>Before <![CDATA[Headline]]> after</a>", "<a><![CDATA[New]]><![CDATA[research]]></a>"].map((title, i) => `<item><title>${title}</title><link>https://publisher.example/${i}</link></item>`).join("")}</channel></rss>`,
+  // Taiwan's FSC escapes "&" inside a CDATA link, where the parser leaves entities as written.
+  "/cdata-links.xml": `<rss version="2.0"><channel><title>新聞稿</title><item><title>公平待客</title><link><![CDATA[https://publisher.example/home.jsp?id=96&amp;dataserno=202611260002&amp;dtable=News]]></link></item><item><title>Plain</title><link>https://publisher.example/home.jsp?id=1&amp;page=2</link></item></channel></rss>`,
   "/fragments": feed(entry('<link href="notes#first"/>') + entry('<link href="notes#second"/>'), ' xml:base="https://publisher.example/"'),
 };
 const server = http.createServer((req, res) => {
@@ -64,6 +66,13 @@ test("relative Atom links use the final document URL after redirects", async () 
 
 test("relative RSS item links resolve against the final document URL; absolute ones are kept", async () => {
   assert.deepEqual((await read("/old/rss.xml")).map((item) => item.url), [root + "/blog/zh/posts/release/", "https://publisher.example/post"]);
+});
+
+test("RSS item links read the same whether the feed escapes them in CDATA or in plain XML", async () => {
+  assert.deepEqual((await read("/cdata-links.xml")).map((item) => item.url), [
+    "https://publisher.example/home.jsp?id=96&dataserno=202611260002&dtable=News",
+    "https://publisher.example/home.jsp?id=1&page=2",
+  ]);
 });
 
 test("absolute alternate links and the first-link fallback keep working", async () => {

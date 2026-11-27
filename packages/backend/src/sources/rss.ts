@@ -195,7 +195,8 @@ export async function fetchRss(source: SourceRow, opts: { force?: boolean } = {}
     for (const it of items) {
       const guid = text(it.guid);
       // A site-relative link resolves against the fetched document, as Atom links do; absolute ones stay as given.
-      const href = text(it.link);
+      // CDATA keeps entities literal, and some feeds (Taiwan's FSC) still escape the link's "&" inside it.
+      const href = text(it.link).replace(/&amp;/g, "&");
       const page = (href && !/^[a-z][a-z\d+.-]*:/i.test(href) ? URL.parse(href, res.url)?.toString() : href) || (normalizeUrl(guid) ? guid : "");
       const enclosures = arr(it.enclosure as Record<string, string> | Array<Record<string, string>>);
       // An episode with no page (no <link>, a guid that is no address) links to its audio or video file,
